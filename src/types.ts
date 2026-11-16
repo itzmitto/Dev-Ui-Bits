@@ -1,0 +1,11 @@
+import type { ComponentType } from 'react';
+import type { EffectProps } from './effects/types';
+export type { EffectProps } from './effects/types';
+export const categories = ['Text Animations','Animations','Components','Backgrounds','Micro Interactions'] as const;
+export type Category = typeof categories[number];
+export type Control = {key:string;label:string;type:'range'|'number'|'color'|'text'|'select'|'toggle';min?:number;max?:number;step?:number;options?:string[]};
+export type FileMap = Record<string,string>;
+export type Definition = {id:string;name:string;slug:string;category:Category;description:string;preview:ComponentType<EffectProps>;defaults:EffectProps;schema:Control[];dependencies:Record<string,string>;source:string;exportName:string;presets?:Record<string,EffectProps>;isNew?:boolean;styles?:string[];supportingFiles?:string[]};
+export type CustomComponent = {id:string;name:string;slug:string;category:Category;description:string;defaults:EffectProps;schema:Control[];files:FileMap;language:'tsx'|'jsx';styling:'css'|'tailwind';dependencies:Record<string,string>;createdAt:number;updatedAt:number};
+export const categorySlug=(category:string)=>category.toLowerCase().replaceAll(' ','-');
+export const componentPath=(item:{category:Category;slug:string})=>`/${categorySlug(item.category)}/${item.slug}`;

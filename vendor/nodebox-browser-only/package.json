@@ -1,0 +1,9 @@
+{
+  "name": "@codesandbox/nodebox",
+  "version": "0.1.8-devui-browser-only",
+  "description": "Original adapter excluding the unused Node.js runtime from DevUI Bits browser-only sandboxes",
+  "type": "module",
+  "exports": "./index.js",
+  "license": "MIT",
+  "private": true
+}

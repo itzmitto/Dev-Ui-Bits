@@ -1,0 +1,54 @@
+{
+  "@open-draft/deferred-promise": {
+    "file": "open-draft--deferred-promise.txt",
+    "source": "https://github.com/open-draft/deferred-promise/blob/main/LICENSE.md",
+    "sha": "824de2b52fc95955b35a7bdbe41242f18c739c9e",
+    "note": "Upstream license retrieved for a package that omits its license text. Package SPDX metadata checked; historical version text may differ."
+  },
+  "@rolldown/binding-linux-x64-gnu": {
+    "file": "rolldown--binding-linux-x64-gnu.txt",
+    "source": "https://github.com/rolldown/rolldown/blob/main/LICENSE",
+    "sha": "afc0cdbabfb99ed4030bf9be2b852977f1ed72a0",
+    "note": "Upstream license retrieved for a package that omits its license text. Package SPDX metadata checked; historical version text may differ."
+  },
+  "@stitches/core": {
+    "file": "stitches--core.txt",
+    "source": "https://github.com/stitchesjs/stitches/blob/canary/LICENSE.md",
+    "sha": "a18858fb7b014098cba85703e66609be66a26ef5",
+    "note": "Upstream license retrieved for a package that omits its license text. Package SPDX metadata checked; historical version text may differ."
+  },
+  "@tailwindcss/oxide-wasm32-wasi": {
+    "file": "tailwindcss--oxide-wasm32-wasi.txt",
+    "source": "https://github.com/tailwindlabs/tailwindcss/blob/main/LICENSE",
+    "sha": "d6a82290738a9f78946cbcb4594535d6984086dd",
+    "note": "Upstream license retrieved for a package that omits its license text. Package SPDX metadata checked; historical version text may differ."
+  },
+  "@napi-rs/wasm-runtime": {
+    "file": "napi-rs--wasm-runtime.txt",
+    "source": "https://github.com/napi-rs/napi-rs/blob/main/LICENSE",
+    "sha": "7fe7e35eff46457f65a4e30a717fada632de9e03",
+    "note": "Upstream license retrieved for a package that omits its license text. Package SPDX metadata checked; historical version text may differ."
+  },
+  "@tybys/wasm-util": {
+    "file": "tybys--wasm-util.txt",
+    "source": "https://github.com/toyobayashi/wasm-util/blob/main/LICENSE",
+    "sha": "772a335c052c7df8835f91bf47bb1e2845ba201e",
+    "note": "Upstream license retrieved for a package that omits its license text. Package SPDX metadata checked; historical version text may differ."
+  },
+  "react-devtools-inline": {
+    "file": "react-devtools-inline.txt",
+    "source": "https://github.com/react/react/blob/main/LICENSE",
+    "sha": "b93be90515ccd0b9daedaa589e42bf5929693f1f",
+    "note": "Upstream license retrieved for a package that omits its license text. Package SPDX metadata checked; historical version text may differ."
+  },
+  "intersection-observer": {
+    "file": "intersection-observer.txt",
+    "source": "https://raw.githubusercontent.com/spdx/license-list-data/main/text/W3C-20150513.txt",
+    "note": "SPDX standard W3C-20150513 text matching the package declaration and source header."
+  },
+  "static-browser-server": {
+    "file": "static-browser-server.txt",
+    "source": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+    "note": "Canonical Apache-2.0 text matching npm package metadata. The package ships no separate license/NOTICE and its declared upstream repository license endpoint returned 404. This historical attribution uncertainty remains documented."
+  }
+}

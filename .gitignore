@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+playwright-report/
+test-results/
+.openai/
+.vercel/
+.env
+.env.*
+!.env.example
+artifacts/
+screenshots/
+*.log
+.DS_Store
