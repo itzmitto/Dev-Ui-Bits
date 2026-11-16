@@ -10,25 +10,26 @@ export function Field(p: EffectProps) {
     if (!el) return;
     const ctx = el.getContext('2d');
     if (!ctx) return;
-    let w = 1, h = 1, frame = 0;
+    let w = 1, h = 1, frame = 0, visible = true;
     const pointer = {x: -1000, y: -1000};
-    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
     const resize = new ResizeObserver(([entry]) => {
       w = entry.contentRect.width; h = entry.contentRect.height;
       const dpr = Math.min(devicePixelRatio || 1, 2);
       el.width = w * dpr; el.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      refresh();
     });
     resize.observe(el);
-    const move = (e: PointerEvent) => { const r = el.getBoundingClientRect(); pointer.x = e.clientX-r.left; pointer.y=e.clientY-r.top; };
-    const leave = () => { pointer.x = -1000; pointer.y = -1000; };
+    const move = (e: PointerEvent) => { const r = el.getBoundingClientRect(); pointer.x = e.clientX-r.left; pointer.y=e.clientY-r.top; if (motionPreference.matches || p.paused) refresh(); };
+    const leave = () => { pointer.x = -1000; pointer.y = -1000; if (motionPreference.matches || p.paused) refresh(); };
     el.addEventListener('pointermove', move); el.addEventListener('pointerleave', leave);
     const primary = str(p,'color','#a855f7'), secondary = str(p,'secondary','#ffffff');
     const rgb=(hex:string)=>[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16));
     const base=rgb(primary),glint=rgb(secondary);
     const start = performance.now();
     const draw = (now: number) => {
-      const t = reduced || p.paused ? 0 : (now-start)*.001*num(p,'speed',.6);
+      const t = motionPreference.matches || p.paused ? 0 : (now-start)*.001*num(p,'speed',.6);
       ctx.globalAlpha = 1; ctx.fillStyle = str(p,'background','#120f17'); ctx.fillRect(0,0,w,h);
       const scale = num(p,'scale',1.5), opacity=num(p,'opacity',1);
       if (mode === 'slats' || mode === 'grid') {
@@ -69,10 +70,15 @@ export function Field(p: EffectProps) {
           g.addColorStop(0,(i%2?secondary:primary)+'aa');g.addColorStop(1,(i%2?secondary:primary)+'00');ctx.fillStyle=g;ctx.globalAlpha=opacity;ctx.fillRect(0,0,w,h);
         }
       }
-      frame=requestAnimationFrame(draw);
+      frame = 0;
+      if (visible && !document.hidden && !motionPreference.matches && !p.paused) frame = requestAnimationFrame(draw);
     };
-    frame=requestAnimationFrame(draw);
-    return()=>{cancelAnimationFrame(frame);resize.disconnect();el.removeEventListener('pointermove',move);el.removeEventListener('pointerleave',leave);};
+    function refresh() { cancelAnimationFrame(frame); frame = 0; if (visible && !document.hidden) draw(performance.now()); }
+    const visibility = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; refresh(); });
+    visibility.observe(el);
+    document.addEventListener('visibilitychange', refresh); motionPreference.addEventListener('change', refresh);
+    refresh();
+    return()=>{cancelAnimationFrame(frame);resize.disconnect();visibility.disconnect();document.removeEventListener('visibilitychange',refresh);motionPreference.removeEventListener('change',refresh);el.removeEventListener('pointermove',move);el.removeEventListener('pointerleave',leave);};
   }, [p, mode]);
   return <canvas ref={canvas} className="field-canvas" aria-label={`${mode} animated background`} style={{filter:`blur(${num(p,'blur',0)}px)`}} />;
 }

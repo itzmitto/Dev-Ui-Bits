@@ -31,7 +31,6 @@ import {
   Menu,
   Monitor,
   MousePointer2,
-  Plus,
   RotateCcw,
   Settings2,
   Smartphone,
