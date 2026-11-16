@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview, useSandpack, SandpackConsole } from '@codesandbox/sandpack-react';
 import { Copy, Download, Plus, RotateCcw, Save } from 'lucide-react';
 import { exportProject } from './export';
+import { useTheme } from './theme';
 import type { EffectProps, FileMap } from './types';
 
-const theme={colors:{surface1:'#15111c',surface2:'#211b29',surface3:'#32283f',clickable:'#9f94ad',base:'#dcd6e5',disabled:'#62596e',hover:'#ffffff',accent:'#c391ff',error:'#fb7185',errorSurface:'#381f2e'},syntax:{plain:'#ddd5e6',comment:'#72657f',keyword:'#c084fc',tag:'#d8b4fe',punctuation:'#a89cb6',definition:'#93c5fd',property:'#c4b5fd',static:'#86efac',string:'#a5d6a7'},font:{body:'Geist, sans-serif',mono:'ui-monospace, SFMono-Regular, monospace',size:'12px',lineHeight:'1.8'}};
+const darkTheme={colors:{surface1:'#15111c',surface2:'#211b29',surface3:'#32283f',clickable:'#9f94ad',base:'#dcd6e5',disabled:'#62596e',hover:'#ffffff',accent:'#c391ff',error:'#fb7185',errorSurface:'#381f2e'},syntax:{plain:'#ddd5e6',comment:'#72657f',keyword:'#c084fc',tag:'#d8b4fe',punctuation:'#a89cb6',definition:'#93c5fd',property:'#c4b5fd',static:'#86efac',string:'#a5d6a7'},font:{body:'Geist, sans-serif',mono:'ui-monospace, SFMono-Regular, monospace',size:'12px',lineHeight:'1.8'}};
+const lightTheme={...darkTheme,colors:{surface1:'#ffffff',surface2:'#f4f1f7',surface3:'#e7e1ed',clickable:'#695f75',base:'#292133',disabled:'#95899f',hover:'#120f17',accent:'#7e22ce',error:'#be123c',errorSurface:'#fff1f2'},syntax:{plain:'#292133',comment:'#82758e',keyword:'#7e22ce',tag:'#6d28d9',punctuation:'#6f607d',definition:'#1d4ed8',property:'#6d28d9',static:'#047857',string:'#15803d'}};
 type EditorProps={files:FileMap;name:string;dependencies?:Record<string,string>;tailwind?:boolean;readOnly?:boolean;previewOnly?:boolean;onSave?:(files:FileMap)=>Promise<void>;notify?:(s:string)=>void};
 function Diagnostics({dependencies}:Pick<EditorProps,'dependencies'>){
  const {sandpack}=useSandpack();
@@ -20,9 +22,11 @@ function Toolbar({files:initialFiles,name,dependencies,tailwind,onSave,notify}:E
  <button className="console-toggle text-button" onClick={()=>setConsoleOpen(!consoleOpen)}>{consoleOpen?'Hide':'Show'} compiler console</button>{consoleOpen&&<SandpackConsole showHeader style={{height:180}}/>}</>;
 }
 export default function Editor(props:EditorProps){
+ const { theme } = useTheme();
+ const editorTheme = theme === 'dark' ? darkTheme : lightTheme;
  const appPath=props.files['/App.jsx']?'/App.jsx':'/App.tsx';
  const entry=`import React from 'react';\nimport { createRoot } from 'react-dom/client';\nimport App from '.${appPath}';\ncreateRoot(document.getElementById('root')!).render(<App />);`;
- return <div className="code-workspace"><SandpackProvider theme={theme} template="react-ts" files={{...props.files,'/index.tsx':{code:entry,hidden:true}}} customSetup={{dependencies:{react:'^19.0.0','react-dom':'^19.0.0',...props.dependencies}}} options={{activeFile:props.readOnly?Object.keys(props.files).find(k=>(k.startsWith('/effects/')&&k.endsWith('.tsx'))||k.startsWith('/Component.')):'/Component.tsx' in props.files?'/Component.tsx':'/Component.jsx' in props.files?'/Component.jsx':'/App.tsx',visibleFiles:Object.keys(props.files),externalResources:props.tailwind?['https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4']:[],recompileMode:'delayed',recompileDelay:500}}>
+ return <div className="code-workspace"><SandpackProvider theme={editorTheme} template="react-ts" files={{...props.files,'/index.tsx':{code:entry,hidden:true}}} customSetup={{dependencies:{react:'^19.0.0','react-dom':'^19.0.0',...props.dependencies}}} options={{activeFile:props.readOnly?Object.keys(props.files).find(k=>(k.startsWith('/effects/')&&k.endsWith('.tsx'))||k.startsWith('/Component.')):'/Component.tsx' in props.files?'/Component.tsx':'/Component.jsx' in props.files?'/Component.jsx':'/App.tsx',visibleFiles:Object.keys(props.files),externalResources:props.tailwind?['https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4']:[],recompileMode:'delayed',recompileDelay:500}}>
  {props.previewOnly?<SandpackPreview showOpenInCodeSandbox={false} showRefreshButton style={{height:440}}/>:props.readOnly?<SandpackCodeEditor showLineNumbers showTabs readOnly style={{height:430}}/>:<Toolbar {...props}/>}</SandpackProvider>{!props.readOnly&&<p className="editor-footnote">Runs in an isolated Sandpack iframe. The editor needs an internet connection to compile packages.</p>}</div>;
 }
 export function customPreviewFiles(files:FileMap,language:'tsx'|'jsx',values:EffectProps):FileMap{

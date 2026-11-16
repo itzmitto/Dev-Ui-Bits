@@ -8,10 +8,11 @@ import "./styles.css";
 import "./effects/effects.css";
 import "./effects/advanced.css";
 import App from "./App";
+import { ThemeProvider } from "./theme";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <ThemeProvider><App /></ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>,
 );

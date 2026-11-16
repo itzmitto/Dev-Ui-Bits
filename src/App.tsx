@@ -10,7 +10,6 @@ import {
 import {
   Link,
   NavLink,
-  Navigate,
   Route,
   Routes,
   useLocation,
@@ -34,7 +33,6 @@ import {
   MousePointer2,
   Plus,
   RotateCcw,
-  Search,
   Settings2,
   Smartphone,
   Sparkles,
@@ -68,9 +66,11 @@ import { download, exportJSON, exportProject } from "./export";
 import { Controls } from "./Controls";
 import { Field } from "./effects/Field";
 import { starterFiles } from "./templates";
+import HomePage, { CategoriesPage } from "./HomePage";
+import { HeaderActions, SiteFooter } from "./SiteChrome";
 const Editor = lazy(() => import("./Editor"));
 const icons = [Type, Sparkles, Layers, Grid2X2, MousePointer2];
-const initial = "/backgrounds/micro-slats";
+
 type Notify = (message: string) => void;
 class ErrorBoundary extends Component<
   { children: ReactNode },
@@ -93,246 +93,46 @@ class ErrorBoundary extends Component<
   }
 }
 export default function App() {
-  const { custom, load, storageError } = useLibrary(),
-    [query, setQuery] = useState(""),
-    [mobileOpen, setMobileOpen] = useState(false),
-    [toast, setToast] = useState("");
-  const search = useRef<HTMLInputElement>(null),
-    location = useLocation();
+  const { custom, load, storageError } = useLibrary();
+  const [mobileOpen, setMobileOpen] = useState(false), [toast, setToast] = useState("");
+  const location = useLocation(), menuButton = useRef<HTMLButtonElement>(null);
+  const home = location.pathname === "/", all = [...registry, ...custom];
+  useEffect(() => { void load(); }, [load]);
+  useEffect(() => { setMobileOpen(false); window.scrollTo(0, 0); }, [location.pathname]);
+  useEffect(() => { if (!toast) return; const timer = setTimeout(() => setToast(""), 3300); return () => clearTimeout(timer); }, [toast]);
   useEffect(() => {
-    void load();
-  }, [load]);
-  useEffect(() => {
-    setMobileOpen(false);
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
-  useEffect(() => {
-    if (!toast) return;
-    const timer = setTimeout(() => setToast(""), 3300);
-    return () => clearTimeout(timer);
-  }, [toast]);
-  useEffect(() => {
-    const key = (e: KeyboardEvent) => {
-      if (
-        e.key === "/" &&
-        !/INPUT|TEXTAREA/.test((e.target as HTMLElement).tagName) &&
-        !(e.target as HTMLElement).isContentEditable
-      ) {
-        e.preventDefault();
-        setMobileOpen(true);
-        search.current?.focus();
-      }
-      if (e.key === "Escape") setMobileOpen(false);
-    };
+    if (!mobileOpen) return;
+    const key = (event: KeyboardEvent) => { if (event.key === "Escape") { setMobileOpen(false); menuButton.current?.focus(); } };
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
-  }, []);
-  const notify: Notify = (m) => setToast(m);
-  const all = [...registry, ...custom];
-  return (
-    <ErrorBoundary>
-      <a className="skip-link" href="#main">
-        Skip to content
-      </a>
-      <header className="topbar">
-        <button
-          className="mobile-menu icon-button"
-          aria-label="Open navigation"
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
-          <Menu size={19} />
-        </button>
-        <Link className="brand" to={initial}>
-          <span className="brand-mark">
-            <Code2 size={23} />
-          </span>
-          DevUI <span className="brand-light">Bits</span>
-        </Link>
-        <span className="header-divider">/</span>
-        <nav className="header-nav">
-          <NavLink to="/browse">Components</NavLink>
-          <NavLink to="/guide">Installation</NavLink>
-          <Link to="/create">
-            Playground <span className="tiny-badge">NEW</span>
-          </Link>
-        </nav>
-        <div className="header-right">
-          <button
-            className="header-search"
-            onClick={() => {
-              setMobileOpen(true);
-              search.current?.focus();
-            }}
-          >
-            <Search size={14} />
-            <span>Search components...</span>
-            <kbd>/</kbd>
-          </button>
-          <Link className="create-header" to="/create">
-            <Plus size={14} /> Create Component
-          </Link>
-        </div>
-      </header>
-      {mobileOpen && (
-        <button
-          className="sidebar-scrim"
-          aria-label="Close navigation"
-          onClick={() => setMobileOpen(false)}
-        />
-      )}
-      <aside
-        className={`sidebar ${mobileOpen ? "is-open" : ""}`}
-        aria-label="Component navigation"
-      >
-        <div className="sidebar-tools">
-          <NavLink className="browse-button" to="/browse">
-            <Grid2X2 size={14} /> Browse all components{" "}
-            <span>{all.length}</span>
-          </NavLink>
-          <div className="category-icons">
-            {categories.map((c, i) => {
-              const Icon = icons[i];
-              return (
-                <NavLink
-                  key={c}
-                  to={`/${categorySlug(c)}`}
-                  title={c}
-                  aria-label={c}
-                >
-                  <Icon size={16} />
-                </NavLink>
-              );
-            })}
-          </div>
-          <div className="sidebar-search">
-            <Search size={13} />
-            <input
-              ref={search}
-              aria-label="Filter components"
-              placeholder={`Filter ${all.length} components...`}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            {query && (
-              <button aria-label="Clear search" onClick={() => setQuery("")}>
-                <X size={12} />
-              </button>
-            )}
-          </div>
-        </div>
-        <nav className="component-list">
-          {query && (
-            <span className="search-caption">
-              {
-                all.filter((c) =>
-                  `${c.name} ${c.category}`
-                    .toLowerCase()
-                    .includes(query.toLowerCase()),
-                ).length
-              }{" "}
-              results
-            </span>
-          )}
-          {categories.map((category, i) => {
-            const items = all.filter(
-              (c) =>
-                c.category === category &&
-                `${c.name} ${c.category}`
-                  .toLowerCase()
-                  .includes(query.toLowerCase()),
-            );
-            const Icon = icons[i];
-            return (
-              items.length > 0 && (
-                <section key={category}>
-                  <Link
-                    className="category-label"
-                    to={`/${categorySlug(category)}`}
-                  >
-                    <Icon size={12} />
-                    {category}
-                    <ChevronDown size={11} />
-                  </Link>
-                  {items.map((item) => (
-                    <NavLink
-                      className="component-link"
-                      title={item.name}
-                      key={item.id}
-                      to={componentPath(item)}
-                    >
-                      <span>{item.name}</span>
-                      {"isNew" in item && item.isNew ? (
-                        <span className="new-badge">NEW</span>
-                      ) : "files" in item ? (
-                        <span className="local-dot" title="Locally saved" />
-                      ) : null}
-                    </NavLink>
-                  ))}
-                </section>
-              )
-            );
-          })}
-          {!all.some((c) =>
-            `${c.name} ${c.category}`
-              .toLowerCase()
-              .includes(query.toLowerCase()),
-          ) && (
-            <p className="no-results">
-              No components found.
-              <button onClick={() => setQuery("")}>Clear search</button>
-            </p>
-          )}
-        </nav>
-        <div className="sidebar-footer">
-          <Link to="/create">
-            <Plus size={14} /> Create your own <ArrowUpRight size={13} />
-          </Link>
-          <span>
-            <i /> Open source spirit. Your own code.
-          </span>
-        </div>
-      </aside>
-      <main className="main-content" id="main">
-        {storageError && (
-          <div role="alert" className="notice">
-            {storageError}
-          </div>
-        )}
-        <Routes>
-          <Route path="/" element={<Navigate to={initial} replace />} />
-          <Route path="/browse" element={<Browse />} />
-          <Route path="/guide" element={<Guide notify={notify} />} />
-          <Route path="/create" element={<Workshop notify={notify} />} />
-          <Route path="/edit/:id" element={<WorkshopRoute notify={notify} />} />
-          <Route
-            path="/:category/:slug"
-            element={<ComponentRoute notify={notify} />}
-          />
-          <Route path="/:category" element={<Browse />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <footer className="page-footer">
-          <Link className="brand" to={initial}>
-            <Code2 size={16} /> DevUI Bits
-          </Link>
-          <span>Small details. Remarkable interfaces.</span>
-          <span>
-            Made to be made yours. ·{" "}
-            <a href="/third-party-notices.txt" target="_blank" rel="noreferrer">
-              Licenses
-            </a>
-          </span>
-        </footer>
+  }, [mobileOpen]);
+  const notify: Notify = message => setToast(message);
+  const mainNav = <><NavLink to="/" end>Home</NavLink><NavLink to="/browse">Components</NavLink><NavLink to="/categories">Categories</NavLink></>;
+  return <ErrorBoundary>
+    <a className="skip-link" href="#main">Skip to content</a>
+    <header className="topbar">
+      <Link className="brand" to="/"><span className="brand-mark"><Code2 size={24}/></span>DevUI <span className="brand-light">Bits</span></Link>
+      <span className="header-divider">/</span><nav className="header-nav" aria-label="Main navigation">{mainNav}</nav><HeaderActions/>
+      <button ref={menuButton} className="mobile-menu icon-button" aria-label={mobileOpen ? "Close navigation menu" : "Open navigation"} aria-expanded={mobileOpen} aria-controls={home ? "mobile-navigation" : "component-navigation"} onClick={() => setMobileOpen(!mobileOpen)}>{mobileOpen ? <X size={20}/> : <Menu size={20}/>}</button>
+    </header>
+    {mobileOpen && <button className="sidebar-scrim" aria-label="Close navigation" onClick={() => { setMobileOpen(false); menuButton.current?.focus(); }}/>}
+    {home && mobileOpen && <nav className="mobile-home-nav" id="mobile-navigation" aria-label="Mobile navigation">{mainNav}</nav>}
+    <div className={home ? "home-layout" : "library-layout"}>
+      {!home && <aside id="component-navigation" className={`sidebar ${mobileOpen ? "is-open" : ""}`} aria-label="Component navigation">
+        <nav className="mobile-library-links" aria-label="Mobile navigation">{mainNav}</nav>
+        <div className="sidebar-tools"><NavLink className="browse-button" to="/browse"><Grid2X2 size={15}/> Browse all components <span>{all.length}</span></NavLink><div className="category-icons">{categories.map((category, index) => { const Icon = icons[index]; return <NavLink key={category} to={`/${categorySlug(category)}`} title={category} aria-label={category}><Icon size={17}/></NavLink>; })}</div></div>
+        <nav className="component-list">{categories.map((category, index) => { const Icon = icons[index]; return <section key={category}><Link className="category-label" to={`/${categorySlug(category)}`}><Icon size={13}/>{category}<ChevronDown size={12}/></Link>{all.filter(item => item.category === category).map(item => <NavLink className="component-link" title={item.name} key={item.id} to={componentPath(item)}><span>{item.name}</span>{"isNew" in item && item.isNew ? <span className="new-badge">NEW</span> : "files" in item ? <span className="local-dot" title="Locally saved"/> : null}</NavLink>)}</section>; })}</nav>
+        <div className="sidebar-footer"><Link to="/guide"><Terminal size={15}/> Installation guide <ArrowUpRight size={14}/></Link><span><i/> Original code. Open possibilities.</span></div>
+      </aside>}
+      <main className={home ? "home-main" : "main-content"} id="main">
+        {storageError && <div role="alert" className="notice">{storageError}</div>}
+        <Routes><Route path="/" element={<HomePage/>}/><Route path="/categories" element={<CategoriesPage/>}/><Route path="/browse" element={<Browse/>}/><Route path="/guide" element={<Guide notify={notify}/>}/><Route path="/create" element={<Workshop notify={notify}/>}/><Route path="/edit/:id" element={<WorkshopRoute notify={notify}/>}/><Route path="/:category/:slug" element={<ComponentRoute notify={notify}/>}/><Route path="/:category" element={<Browse/>}/><Route path="*" element={<NotFound/>}/></Routes>
+        <SiteFooter/>
       </main>
-      <RightRail />
-      {toast && (
-        <div className="toast" role="status">
-          <Check size={15} />
-          {toast}
-        </div>
-      )}
-    </ErrorBoundary>
-  );
+      {!home && <RightRail/>}
+    </div>
+    {toast && <div className="toast" role="status"><Check size={15}/>{toast}</div>}
+  </ErrorBoundary>;
 }
 function RightRail() {
   const { pathname } = useLocation();
@@ -404,8 +204,8 @@ function RightRail() {
         <p>
           Take the code. Change the colors. Break a few rules. Make it yours.
         </p>
-        <Link to="/create">
-          Build your own component <ArrowRight size={13} />
+        <Link to="/guide">
+          Installation guide <ArrowRight size={13} />
         </Link>
       </div>
       <div className="rail-foot">
@@ -905,14 +705,12 @@ function ComponentPage({
 }
 function Browse() {
   const { category } = useParams(),
-    { custom } = useLibrary(),
-    [filter, setFilter] = useState("");
+    { custom } = useLibrary();
   const selected = categories.find((c) => categorySlug(c) === category);
   if (category && !selected) return <NotFound />;
   const items = [...registry, ...custom].filter(
     (c) =>
-      (!selected || c.category === selected) &&
-      c.name.toLowerCase().includes(filter.toLowerCase()),
+      (!selected || c.category === selected),
   );
   return (
     <>
@@ -945,15 +743,7 @@ function Browse() {
             );
           })}
         </div>
-        <div className="sidebar-search">
-          <Search size={14} />
-          <input
-            aria-label="Search collection"
-            placeholder="Find your next idea..."
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          />
-        </div>
+
       </div>
       <p className="collection-count">
         {items.length} components to make your own
@@ -988,7 +778,7 @@ function Browse() {
         ))}
       </div>
       {items.length === 0 && (
-        <div className="empty-state">No components match this search.</div>
+        <div className="empty-state">No components in this category yet.</div>
       )}
     </>
   );
@@ -1018,8 +808,8 @@ function Guide({ notify }: { notify: Notify }) {
             text: "Open the Code tab to inspect the actual component source and CSS. Download the ZIP, run npm install, then npm run dev. Motion components list their dependency on the component page.",
           },
           {
-            title: "Make something new",
-            text: "Create Component opens an isolated, multi-file React workspace. Choose JSX or TSX, use CSS or Tailwind, and define customizable properties. Save to add it to your sidebar.",
+            title: "Build on the registry",
+            text: "Develop your own effects in VS Code. Add their metadata, properties and controls to src/registry.ts; the navigation and component pages follow automatically.",
           },
           {
             title: "Keep your work",

@@ -7,6 +7,13 @@
     <meta name="theme-color" content="#120f17" />
     <meta name="description"
         content="DevUI Bits — independent animated React components. Explore, customize, and make them your own." />
+    <script>
+      (() => { let theme; try { theme = localStorage.getItem("devui-theme"); } catch {}
+        if (theme !== "dark" && theme !== "light") theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.dataset.theme = theme; document.documentElement.style.colorScheme = theme;
+        document.querySelector('meta[name="theme-color"]').content = theme === "dark" ? "#120f17" : "#faf9fc";
+      })();
+    </script>
     <title>DevUI Bits — Animated React components</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 </head>
