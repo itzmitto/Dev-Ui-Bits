@@ -97,13 +97,26 @@ export default function App() {
   const location = useLocation(), menuButton = useRef<HTMLButtonElement>(null);
   const home = location.pathname === "/", all = [...registry, ...custom];
   useEffect(() => { void load(); }, [load]);
-  useEffect(() => { setMobileOpen(false); window.scrollTo(0, 0); }, [location.pathname]);
+  useEffect(() => { setMobileOpen(false); window.scrollTo(0, 0); if (mobileOpen) menuButton.current?.focus(); }, [location.pathname]);
   useEffect(() => { if (!toast) return; const timer = setTimeout(() => setToast(""), 3300); return () => clearTimeout(timer); }, [toast]);
   useEffect(() => {
     if (!mobileOpen) return;
-    const key = (event: KeyboardEvent) => { if (event.key === "Escape") { setMobileOpen(false); menuButton.current?.focus(); } };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const key = (event: KeyboardEvent) => {
+      if (event.key === "Escape") { setMobileOpen(false); menuButton.current?.focus(); }
+      if (event.key === "Tab") {
+        const elements = [...document.querySelectorAll<HTMLElement>(".topbar a, .topbar button, .sidebar a, .mobile-home-nav a")].filter(element => element.getClientRects().length && getComputedStyle(element).visibility !== "hidden");
+        const first = elements[0], last = elements[elements.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }
+    };
+    const desktop = matchMedia("(min-width: 840px)");
+    const resize = () => { if (desktop.matches) setMobileOpen(false); };
+    desktop.addEventListener("change", resize);
     window.addEventListener("keydown", key);
-    return () => window.removeEventListener("keydown", key);
+    return () => { document.body.style.overflow = previousOverflow; desktop.removeEventListener("change", resize); window.removeEventListener("keydown", key); };
   }, [mobileOpen]);
   const notify: Notify = message => setToast(message);
   const mainNav = <><NavLink to="/" end>Home</NavLink><NavLink to="/browse">Components</NavLink><NavLink to="/categories">Categories</NavLink></>;

@@ -10,13 +10,13 @@ const descriptions = ['Give every word a little personality.', 'Motion that make
 const featuredSlugs = ['micro-slats', 'blur-text', '3d-interactive-card', 'animated-tabs', 'morphing-button', 'spotlight-card'];
 const featured = featuredSlugs.map(slug => registry.find(item => item.slug === slug)!);
 function useVisible<T extends HTMLElement>() {
-  const ref = useRef<T>(null), [visible, setVisible] = useState(false);
+  const ref = useRef<T>(null), [visible, setVisible] = useState(false), [visited, setVisited] = useState(false);
   useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { threshold: .05 });
+    const observer = new IntersectionObserver(([entry]) => { setVisible(entry.isIntersecting); if (entry.isIntersecting) setVisited(true); }, { threshold: .05 });
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
-  return { ref, visible };
+  return { ref, visible, visited };
 }
 const HeroBackground = memo(function HeroBackground() {
   const { theme } = useTheme();
@@ -29,14 +29,14 @@ export function CategoryCards() {
   })}</div>;
 }
 const FeaturedCard = memo(function FeaturedCard({ item, index }: { item: Definition; index: number }) {
-  const { ref, visible } = useVisible<HTMLDivElement>();
+  const { ref, visible, visited } = useVisible<HTMLDivElement>();
   const [playing, setPlaying] = useState(false);
-  // Mount only the visible previews. Animate the hovered/focused card, and the first
-  // visible feature by default; the remaining previews respect reduced motion.
+  // Mount on first intersection and retain interaction state. Canvas loops and CSS
+  // animations pause outside the viewport; only the active feature runs continuously.
   const animate = visible && (playing || index === 0);
   return <article className="home-feature" onMouseEnter={() => setPlaying(true)} onMouseLeave={() => setPlaying(false)} onFocus={() => setPlaying(true)} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setPlaying(false); }}>
     <div className="feature-preview" ref={ref} data-active={animate}>
-      {visible && <div className="feature-demo" key={String(animate)} data-motion={animate ? 'play' : 'still'}><item.preview {...item.defaults} paused={!animate}/></div>}
+      {visited && <div className="feature-demo" data-motion={animate ? 'play' : 'still'}><item.preview {...item.defaults} paused={!animate}/></div>}
     </div>
     <Link className="feature-link" to={componentPath(item)}><div><h3>{item.name}</h3><p>{item.category}</p></div><span className="feature-arrow"><ArrowUpRight size={17}/></span></Link>
   </article>;

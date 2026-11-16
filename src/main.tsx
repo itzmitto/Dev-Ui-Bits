@@ -9,10 +9,11 @@ import "./effects/effects.css";
 import "./effects/advanced.css";
 import App from "./App";
 import { ThemeProvider } from "./theme";
+import { MotionConfig } from "motion/react";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <ThemeProvider><App /></ThemeProvider>
+      <ThemeProvider><MotionConfig reducedMotion="user"><App /></MotionConfig></ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>,
 );

@@ -75,7 +75,7 @@ test('home previews are real, visible only, and canvas respects reduced motion',
   await page.emulateMedia({ reducedMotion: 'reduce' }); await page.waitForTimeout(100);
   const still = await preview.evaluate((canvas: HTMLCanvasElement) => canvas.toDataURL());
   await page.waitForTimeout(120); expect(await preview.evaluate((canvas: HTMLCanvasElement) => canvas.toDataURL())).toBe(still);
-  await page.getByRole('heading', { level: 1 }).scrollIntoViewIfNeeded(); await expect(page.locator('.feature-demo')).toHaveCount(0);
+  await page.getByRole('heading', { level: 1 }).scrollIntoViewIfNeeded(); await expect(page.locator('.feature-preview[data-active=true]')).toHaveCount(0);
 });
 
 const viewports = [[375,812],[430,932],[768,1024],[1024,768],[1280,800],[1366,768],[1440,900],[1920,1080],[2560,1440],[3440,1440],[3840,2160]];
@@ -91,6 +91,10 @@ for (const [width,height] of viewports) {
       for (const selector of ['.hero-content h1','.hero-primary','.header-right']) {
         const box = await page.locator(selector).boundingBox(); expect(box!.x).toBeGreaterThanOrEqual(0); expect(box!.x + box!.width).toBeLessThanOrEqual(width + 1);
       }
+      if (width === 375 || width === 1920) {
+        for (const feature of await page.locator('.home-feature').all()) await feature.scrollIntoViewIfNeeded();
+        await page.getByRole('heading', { level: 1 }).scrollIntoViewIfNeeded(); await page.evaluate(() => window.scrollTo(0,0));
+      }
       await page.screenshot({ path:`screenshots/phase3-home-${width}-${theme}.png`,fullPage: width === 375 || width === 1920 });
       await page.goto('/backgrounds/micro-slats');
       await expect(page.getByLabel('Slat width', { exact: true })).toBeAttached();
@@ -100,6 +104,7 @@ for (const [width,height] of viewports) {
       }
       const preview = await page.getByTestId('preview-device').boundingBox(); expect(preview!.width).toBeGreaterThan(width >= 1920 ? width * .5 : 280);
       await page.getByLabel('Slat width', { exact: true }).fill('19'); await expect(page.getByLabel('Slat width', { exact: true })).toHaveValue('19');
+      await page.getByRole('heading', { level: 1 }).click(); await page.evaluate(() => window.scrollTo(0,0));
       await page.screenshot({ path:`screenshots/phase3-detail-${width}-${theme}.png`,fullPage: width === 375 || width === 1920 });
       await page.reload(); await expect(page.getByRole('heading', { level: 1 })).toHaveText('Micro Slats');
       expect(errors).toEqual([]);
