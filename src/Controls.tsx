@@ -10,7 +10,7 @@ type Props = {
 export function Controls({
   schema,
   values,
-  onChange,
+  onChange,    
   onReset,
   presets,
 }: Props) {
