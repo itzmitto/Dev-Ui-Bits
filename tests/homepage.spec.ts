@@ -89,18 +89,21 @@ for (const [width,height] of viewports) {
       await page.evaluate(() => document.fonts.ready);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       for (const selector of ['.hero-content h1','.hero-primary','.header-right']) {
-        const box = await page.locator(selector).boundingBox(); expect(box!.x).toBeGreaterThanOrEqual(0); expect(box!.x + box!.width).toBeLessThanOrEqual(width + 1);
+        await expect(page.locator(selector)).toBeVisible(); const box = await page.locator(selector).boundingBox(); expect(box!.x).toBeGreaterThanOrEqual(0); expect(box!.x + box!.width).toBeLessThanOrEqual(width + 1);
       }
       if (width === 375 || width === 1920) {
         for (const feature of await page.locator('.home-feature').all()) await feature.scrollIntoViewIfNeeded();
+        await expect(page.locator('.feature-demo')).toHaveCount(6);
+        await expect(page.locator('.home-feature .effect-heading span').last()).toHaveCSS('opacity','1');
         await page.getByRole('heading', { level: 1 }).scrollIntoViewIfNeeded(); await page.evaluate(() => window.scrollTo(0,0));
       }
       await page.screenshot({ path:`screenshots/phase3-home-${width}-${theme}.png`,fullPage: width === 375 || width === 1920 });
       await page.goto('/backgrounds/micro-slats');
       await expect(page.getByLabel('Slat width', { exact: true })).toBeAttached();
+      if (width >= 840) await expect(page.locator('.component-link.active')).toBeInViewport();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       for (const label of ['Mobile viewport','Copy component code']) {
-        const box = await page.getByRole('button', { name: label, exact: true }).boundingBox(); expect(box!.x).toBeGreaterThanOrEqual(0); expect(box!.x + box!.width).toBeLessThanOrEqual(width + 1);
+        const button = page.getByRole('button', { name: label, exact: true }); await expect(button).toBeVisible(); const box = await button.boundingBox(); expect(box!.x).toBeGreaterThanOrEqual(0); expect(box!.x + box!.width).toBeLessThanOrEqual(width + 1);
       }
       const preview = await page.getByTestId('preview-device').boundingBox(); expect(preview!.width).toBeGreaterThan(width >= 1920 ? width * .5 : 280);
       await page.getByLabel('Slat width', { exact: true }).fill('19'); await expect(page.getByLabel('Slat width', { exact: true })).toHaveValue('19');
@@ -111,3 +114,55 @@ for (const [width,height] of viewports) {
     });
   }
 }
+
+
+test('featured components remain interactive and header stays visible when scrolling', async ({ page }) => {
+  await page.goto('/');
+  const card = page.getByRole('button', { name: 'Flip interactive card' });
+  await page.locator('.home-feature').nth(2).scrollIntoViewIfNeeded(); await expect(card).toBeVisible();
+  await card.click(); await expect(card).toHaveAttribute('aria-pressed','true');
+  await page.locator('.home-feature').nth(3).scrollIntoViewIfNeeded();
+  await page.getByRole('tablist', { name: 'Demo animated tabs' }).getByRole('tab', { name: 'Insights' }).click();
+  await expect(page.getByRole('heading', { name: 'See the bigger picture.' })).toBeVisible();
+  await page.locator('.home-feature').nth(4).scrollIntoViewIfNeeded();
+  await page.getByRole('button', { name:'Launch something', exact:true }).click();
+  await expect(page.getByRole('button', { name:'Launch again', exact:true })).toBeEnabled();
+  await expect.poll(() => page.locator('.topbar').evaluate(element => Math.round(element.getBoundingClientRect().top))).toBe(0);
+  await page.screenshot({ path:'screenshots/phase3-live-features.png' });
+  await page.locator('.hero-content').scrollIntoViewIfNeeded();
+  await page.locator('.home-feature').nth(2).scrollIntoViewIfNeeded();
+  await expect(card).toHaveAttribute('aria-pressed','true');
+});
+
+test('live editor retains authored code when changing the complete site theme', async ({ page }) => {
+  await page.goto('/text-animations/blur-text');
+  await page.getByRole('tab', { name:'Editor', exact:true }).click();
+  const frame = page.frameLocator('iframe[title="Sandpack Preview"]');
+  await expect(frame.getByText('Ideas', { exact:false })).toBeVisible({ timeout:45000 });
+  const editor = page.locator('.cm-content[contenteditable="true"]').first();
+  await editor.click(); await page.keyboard.press('ControlOrMeta+a');
+  await page.keyboard.insertText("export default function App(){return <h1>My theme-safe preview</h1>}");
+  await expect(frame.getByRole('heading', { name:'My theme-safe preview' })).toBeVisible();
+  await page.getByRole('button', { name:'Copy', exact:true }).click();
+  await expect(page.locator('.sp-code-editor')).toContainText('My theme-safe preview');
+  await page.getByRole('button', { name:'File', exact:true }).click();
+  await page.getByLabel('New file name').fill('theme-helper.ts'); await page.getByRole('button', { name:'Add file', exact:true }).click();
+  await page.getByRole('button', { name:'Switch to light theme' }).click();
+  await expect(page.getByRole('button', { name:'theme-helper.ts', exact:true })).toBeVisible();
+  await page.getByRole('button', { name:'App.tsx', exact:true }).click();
+  await expect(page.locator('.sp-code-editor')).toContainText('My theme-safe preview');
+  await expect(frame.getByRole('heading', { name:'My theme-safe preview' })).toBeVisible();
+  await expect(page.locator('.sp-code-editor')).toHaveCSS('background-color','rgb(255, 255, 255)');
+  await page.screenshot({ path:'screenshots/phase3-light-editor.png',fullPage:true });
+});
+
+test('gallery dialogs follow light theme and preserve accessible controls', async ({ page }) => {
+  await page.goto('/components/advanced-image-gallery');
+  await page.getByRole('button', { name:'Switch to light theme' }).click();
+  await page.getByRole('button', { name:'Open Beyond the dunes' }).click();
+  const dialog = page.getByRole('dialog'); await expect(dialog).toHaveCSS('background-color','rgb(255, 255, 255)');
+  await expect(dialog).toHaveCSS('color','rgb(33, 25, 44)');
+  await page.screenshot({ path:'screenshots/phase3-light-dialog.png' });
+  await page.keyboard.press('Escape'); await expect(dialog).toHaveCount(0);
+  await expect(page.getByRole('button', { name:'Open Beyond the dunes' })).toBeFocused();
+});

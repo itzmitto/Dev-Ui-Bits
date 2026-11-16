@@ -41,7 +41,7 @@ body { min-width: 320px; }
 
 
 /* Shared chrome and fluid documentation layout. */
-.topbar{position:sticky;top:0;inset:auto;z-index:60;height:var(--header-height);padding:0 clamp(20px,3vw,80px);gap:28px;background:color-mix(in srgb,var(--bg) 92%,transparent);border-bottom:1px solid var(--border)}
+.topbar{position:sticky;inset:auto;top:0;z-index:60;height:var(--header-height);padding:0 clamp(20px,3vw,80px);gap:28px;background:color-mix(in srgb,var(--bg) 92%,transparent);border-bottom:1px solid var(--border)}
 .brand{font-size:20px;letter-spacing:-.7px;gap:5px}.brand-mark{color:var(--text)}.brand-light{color:var(--muted-strong)}
 .header-divider{margin:0;color:var(--border)}.header-nav{gap:28px;font-size:13px;font-weight:500;color:var(--muted-strong)}.header-nav>a{padding:12px 0}.header-nav>a.active,.header-nav>a:hover{color:var(--text)}
 .header-right{gap:10px}.header-right .icon-button,.mobile-menu{width:38px;height:38px;background:transparent;border-color:transparent;color:var(--muted-strong);border-radius:9px}.header-right .icon-button:hover,.mobile-menu:hover{color:var(--text);background:var(--surface-hover);border-color:var(--border)}.action-divider{width:1px;height:20px;background:var(--border)}

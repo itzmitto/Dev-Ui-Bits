@@ -98,6 +98,14 @@ export default function App() {
   const home = location.pathname === "/", all = [...registry, ...custom];
   useEffect(() => { void load(); }, [load]);
   useEffect(() => { setMobileOpen(false); window.scrollTo(0, 0); if (mobileOpen) menuButton.current?.focus(); }, [location.pathname]);
+  useEffect(() => {
+    const list = document.querySelector<HTMLElement>(".component-list");
+    const active = list?.querySelector<HTMLElement>(".component-link.active");
+    if (!list || !active) return;
+    const bounds = list.getBoundingClientRect(), item = active.getBoundingClientRect();
+    if (item.top < bounds.top) list.scrollTop -= bounds.top - item.top + 8;
+    else if (item.bottom > bounds.bottom) list.scrollTop += item.bottom - bounds.bottom + 8;
+  }, [location.pathname, custom.length, mobileOpen]);
   useEffect(() => { if (!toast) return; const timer = setTimeout(() => setToast(""), 3300); return () => clearTimeout(timer); }, [toast]);
   useEffect(() => {
     if (!mobileOpen) return;

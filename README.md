@@ -13,7 +13,7 @@ npm ci
 npm run dev
 ```
 
-Open de door Vite afgedrukte URL. `/` opent `/backgrounds/micro-slats`. Geen ChatGPT-login, API-key, accountkoppeling of backend nodig. Gebruik de meegeleverde `.npmrc` en `vendor/`-map; deze horen bij de overdraagbare dependencyconfiguratie.
+Open de door Vite afgedrukte URL. `/` opent de nieuwe homepage. `/browse` toont alle componenten; `/categories` toont de vijf categorieën. Alle bestaande component-URLs blijven direct bereikbaar, inclusief `/backgrounds/micro-slats`. Geen ChatGPT-login, API-key, accountkoppeling of backend nodig. Gebruik de meegeleverde `.npmrc` en `vendor/`-map; deze horen bij de overdraagbare dependencyconfiguratie.
 
 ```sh
 npm run typecheck
@@ -30,6 +30,16 @@ npm run test:e2e
 ```
 
 Op Linux eventueel `npx playwright install --with-deps chromium`. De testconfiguratie gebruikt standaard Playwright's Chromium, zonder een lokaal absoluut browserpad. Optioneel kan `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` naar een eigen Chromium-installatie wijzen. `PLAYWRIGHT_BASE_URL` laat dezelfde tests op een al draaiende production preview draaien; de standaardtests starten anders zelf Vite op poort 5173.
+
+## Homepage, thema en responsive layout
+
+De homepage bevat een interactieve particle-hero, vijf registrycategorieën en zes echte kleine live previews. De navbar bevat Home, Components, Categories, de [GitHub-repository](https://github.com/itzmitto/Dev-Ui-Bits) en een sun/moon-knop. De zoekvelden, de `/`-sneltoets en publieke Create-links zijn verwijderd.
+
+Dark/light werkt op de volledige applicatie, inclusief navigatie, Customize, broncode, Sandpack, formulieren, footer en gallerydialogen. `src/theme.tsx` volgt de systeemvoorkeur tot je handmatig kiest. De keuze wordt opgeslagen als `devui-theme` in localStorage; de kleine bootstrapscript in `index.html` past het thema vóór het eerste scherm toe. Het kiezen van een thema verandert geen componentinstellingen of IndexedDB-data. Effectpreviews houden hun eigen instelbare kleuren.
+
+Centrale CSS-variabelen in `src/styles.css` definiëren achtergrond, tekst, surfaces, hover, borders, muted text, accent, sidebar, toolbar, inputs, radius, shadow en spacing. Tailwind v4 verwijst naar dezelfde tokens. De bibliotheek gebruikt een flexibel grid: de rechterrail verdwijnt onder 1440 px en de sidebar wordt onder 840 px een uitschuifbaar menu met Escape, focusherstel en scroll-lock. Boven 1920 px krijgen preview en controls meer ruimte; ook ultrawide en 4K hebben expliciete afwerking.
+
+Homepagepreviews worden pas bij het eerste verschijnen gemount en behouden daarna hun interactiestatus. Canvas-loops en CSS-animaties pauzeren buiten beeld; de hero gebruikt het bestaande particle-effect met visibility- en reduced-motion-ondersteuning. De Sandpack-editor wordt als aparte chunk geladen. De registry importeert de 29 ingebouwde effectmodules en hun broncode nog gezamenlijk; opsplitsing per component is een toekomstige optimalisatie voor honderden effecten, geen bestaande laadlimiet.
 
 ## Componenten
 
@@ -53,7 +63,10 @@ Alle aanvullingen gebruiken de bestaande registry en paginatemplate. Reduced mot
 - `src/registry.ts`: metadata, defaults, controls, dependencies en bronbestandskoppelingen. De registry bouwt automatisch sidebar, categorieën, routes, Customize en codebestanden.
 - `src/types.ts`: `Definition`, `CustomComponent`, categorieën en controls.
 - `src/effects/`: eigen React-, Motion-, CSS- en Canvas-effecten. CSS-3D heeft geen Three.js nodig; er zijn geen GSAP- of Three.js-dependencies toegevoegd.
-- `src/App.tsx`: bestaande shell en gedeelde componentpagina, workshop en collecties.
+- `src/App.tsx`: gedeelde bibliotheekshell, componentpagina, collecties en behouden workshoproutes.
+- `src/HomePage.tsx`: homepage, categorieoverzicht en previews die pas bij zichtbaarheid laden.
+- `src/SiteChrome.tsx`: GitHub-knop, themaknop en gedeelde footer.
+- `src/theme.tsx` + `index.html`: centraal themasysteem en instelling vóór de eerste render.
 - `src/Controls.tsx`: tekst, kleur, nummer, range, select en toggle uit het schema.
 - `src/Editor.tsx`: lazy-loaded Sandpack met multi-file editor, dependency-overzicht, foutmelding, console, copy, reset en export. Code draait in een geïsoleerde iframe.
 - `src/storage.ts`: idb/IndexedDB, Zustand en gevalideerde versie-1 JSON-imports. Importeren maakt nieuwe IDs; bestaande componenten worden niet overschreven.
@@ -75,7 +88,9 @@ De code-tab gebruikt de echte implementatie via Vite `?raw`. Built-ins bieden TS
 
 ## Eigen componenten bewaren
 
-Open **Create Component**, kies naam, categorie, taal en styling en open de workspace. `/Component.tsx` of `/Component.jsx` exporteert standaard `Component`. De automatisch gegenereerde App geeft de ingestelde properties door.
+De publieke website heeft geen Create Component-knop of link. Voeg nieuwe gedeelde componenten bij voorkeur via VS Code en `src/registry.ts` toe, zoals hierboven beschreven.
+
+De bestaande lokale workshop is voor compatibiliteit nog rechtstreeks bereikbaar via `/create`; bestaande `/edit/:id`-routes blijven werken. Deze route is niet afgeschermd met authenticatie, alleen uit de publieke navigatie gehaald. Bestaande IndexedDB-records en import/export zijn behouden, zonder datamigratie. Kies in deze behouden workshop naam, categorie, taal en styling en open de workspace. `/Component.tsx` of `/Component.jsx` exporteert standaard `Component`. De automatisch gegenereerde App geeft de ingestelde properties door.
 
 Voorbeelddefaults:
 
@@ -103,11 +118,13 @@ IndexedDB is browser- en originlokaal. Je localhost-bibliotheek verschijnt dus n
 
 Het project is een gewone Vite-SPA. `vercel.json` stelt Vite, `npm ci`, `npm run build`, `dist` en een SPA-rewrite in. Daardoor werken directe links zoals `/components/tilt-card` en refreshes op die routes. De assets worden lokaal meegebundeld. Hostingmetadata van de eerdere omgeving is verwijderd.
 
-Er is bij deze oplevering geen nieuwe GitHub-repository aangemaakt of naar een publiek account gepusht en geen Vercel-account geconfigureerd. Je kiest zelf de repository, accountinstellingen en publieke toegang met de stappen in SETUP-GITHUB-VERCEL.md. De lokale production preview is daadwerkelijk getest; een nog niet bestaande Vercel-deployment kan hier niet als getest worden gepresenteerd.
+De bestaande Git-remote verwijst naar jouw repository https://github.com/itzmitto/Dev-Ui-Bits. In fase 3 is uitsluitend lokaal gewerkt: geen Git-mutatiecommando’s, remote-wijzigingen of Vercel-deployment uitgevoerd. Je bepaalt zelf wanneer je commit, pusht en publiceert. De handleiding SETUP-GITHUB-VERCEL.md blijft beschikbaar; de lokale production preview is daadwerkelijk getest, een publieke Vercel-deployment is in deze ronde niet getest.
 
 De SPA-configuratie volgt de [officiële Vercel-documentatie](https://vercel.com/docs/frameworks/frontend/vite#using-vite-to-make-spas).
 
 ## Volledige bron-ZIP
+
+Voor fase 3 is op verzoek **geen nieuwe bron-ZIP gemaakt**. Een eerder archief uit fase 2 bevat deze lokale wijzigingen niet. Onderstaand bestaand script blijft beschikbaar voor wanneer je zelf wilt exporteren.
 
 ```sh
 npm run source:zip
@@ -115,7 +132,7 @@ npm run source:zip
 
 Resultaat: `artifacts/DevUI-Bits-Source.zip`, met structuur `DevUI-Bits/package.json`, `DevUI-Bits/src/`, enzovoort. Inclusief lockfile, public assets, configuraties, tests, vendor-adapter, handleidingen en licentieteksten. Zonder node_modules, dist, Git-geschiedenis, secrets, hostingmetadata, caches of testresultaten. Een SHA-256-bestand staat ernaast.
 
-De scripts gebruiken alleen Node's ingebouwde modules. Python of een systeemspecifiek ZIP-commando is niet nodig om een nieuwe bron-ZIP te maken. Bij deze oplevering is de ZIP ook buiten de oorspronkelijke projectmap uitgepakt en schoon gecontroleerd; zie PROGRESS.md voor de exacte uitgevoerde controles.
+De scripts gebruiken alleen Node's ingebouwde modules. Python of een systeemspecifiek ZIP-commando is niet nodig om een nieuwe bron-ZIP te maken. Bij de oplevering van fase 2 is de ZIP ook buiten de oorspronkelijke projectmap uitgepakt en schoon gecontroleerd; zie PROGRESS.md voor de exacte uitgevoerde controles.
 
 ## Licenties en externe services
 
@@ -124,3 +141,9 @@ Eigen projectcode: MIT. Geist: OFL-1.1. Lucide: ISC. Sandpack: Apache-2.0. Alle 
 De galleryillustraties zijn lokaal opgebouwde originele SVG's; er zijn geen stockfoto's of externe beeldassets. De ongebruikte Nodebox-dependency met Sustainable Use License is vervangen door een eigen MIT browseradapter; alle gevraagde React-editorfuncties blijven beschikbaar. Server-/Node.js-sandboxtemplates worden niet aangeboden.
 
 Sandpack heeft internettoegang tot zijn openbare bundler nodig. Tailwind-workshoppreviews gebruiken de Tailwind-browsercompiler via jsDelivr; de hoofdwebsite gebruikt de normale productiebundel. Er zijn geen API-keys nodig. Dependencylicenties en servicevoorwaarden zijn verschillende zaken; het project is niet volledig offline en de licentiecontrole geeft geen juridische garantie. Bekende onzekerheden over ontbrekende historische upstreamnotices staan expliciet in LICENSE_REVIEW.md.
+
+## Lokale oplevering fase 3
+
+De daadwerkelijke projectroot is de bestaande `DevUI-Bits/`-submap van de gevonden projectmap. Voer de npm-commando’s uit in die map. De Git-remote is uitsluitend gelezen; er zijn door de ontwikkelagent geen Git-mutaties, pushes of deployments uitgevoerd. Committen, pushen en publiceren doe je zelf. De bestaande Vercel-configuratie is behouden.
+
+De Playwright-suite bevat de bestaande component-, Customize-, Sandpack-, IndexedDB- en exportflows plus homepage-, thema-, navigatie- en responsive regressietests. Screenshots staan lokaal in `screenshots/` en worden door Git genegeerd. De elf geteste viewportmaten zijn 375×812, 430×932, 768×1024, 1024×768, 1280×800, 1366×768, 1440×900, 1920×1080, 2560×1440, 3440×1440 en 3840×2160, steeds in dark en light. De concrete resultaten en grenzen staan in PROGRESS.md.

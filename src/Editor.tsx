@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview, useSandpack, SandpackConsole } from '@codesandbox/sandpack-react';
 import { Copy, Download, Plus, RotateCcw, Save } from 'lucide-react';
 import { exportProject } from './export';
@@ -24,9 +24,27 @@ function Toolbar({files:initialFiles,name,dependencies,tailwind,onSave,notify}:E
 export default function Editor(props:EditorProps){
  const { theme } = useTheme();
  const editorTheme = theme === 'dark' ? darkTheme : lightTheme;
- const appPath=props.files['/App.jsx']?'/App.jsx':'/App.tsx';
- const entry=`import React from 'react';\nimport { createRoot } from 'react-dom/client';\nimport App from '.${appPath}';\ncreateRoot(document.getElementById('root')!).render(<App />);`;
- return <div className="code-workspace"><SandpackProvider theme={editorTheme} template="react-ts" files={{...props.files,'/index.tsx':{code:entry,hidden:true}}} customSetup={{dependencies:{react:'^19.0.0','react-dom':'^19.0.0',...props.dependencies}}} options={{activeFile:props.readOnly?Object.keys(props.files).find(k=>(k.startsWith('/effects/')&&k.endsWith('.tsx'))||k.startsWith('/Component.')):'/Component.tsx' in props.files?'/Component.tsx':'/Component.jsx' in props.files?'/Component.jsx':'/App.tsx',visibleFiles:Object.keys(props.files),externalResources:props.tailwind?['https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4']:[],recompileMode:'delayed',recompileDelay:500}}>
+ // Sandpack resets its draft when files/customSetup receive new identities.
+ // Compare the input contents so theme switches and notification renders never
+ // overwrite edits or files added inside the sandbox.
+ const fileKey = JSON.stringify(props.files), dependencyKey = JSON.stringify(props.dependencies ?? {});
+ const sandboxFiles = useMemo(() => {
+   const source = JSON.parse(fileKey) as FileMap;
+   const appPath = source['/App.jsx'] ? '/App.jsx' : '/App.tsx';
+   const entry = `import React from 'react';\nimport { createRoot } from 'react-dom/client';\nimport App from '.${appPath}';\ncreateRoot(document.getElementById('root')!).render(<App />);`;
+   return { ...source, '/index.tsx': { code: entry, hidden: true } };
+ }, [fileKey]);
+ const customSetup = useMemo(() => ({ dependencies: { react:'^19.0.0', 'react-dom':'^19.0.0', ...JSON.parse(dependencyKey) as Record<string,string> } }), [dependencyKey]);
+ const options = useMemo(() => {
+   const files = JSON.parse(fileKey) as FileMap;
+   return {
+     activeFile: props.readOnly ? Object.keys(files).find(path => (path.startsWith('/effects/') && path.endsWith('.tsx')) || path.startsWith('/Component.')) : '/Component.tsx' in files ? '/Component.tsx' : '/Component.jsx' in files ? '/Component.jsx' : '/App.tsx',
+     visibleFiles: Object.keys(files),
+     externalResources: props.tailwind ? ['https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4'] : [],
+     recompileMode: 'delayed' as const, recompileDelay: 500,
+   };
+ }, [fileKey, props.readOnly, props.tailwind]);
+ return <div className="code-workspace"><SandpackProvider theme={editorTheme} template="react-ts" files={sandboxFiles} customSetup={customSetup} options={options}>
  {props.previewOnly?<SandpackPreview showOpenInCodeSandbox={false} showRefreshButton style={{height:440}}/>:props.readOnly?<SandpackCodeEditor showLineNumbers showTabs readOnly style={{height:430}}/>:<Toolbar {...props}/>}</SandpackProvider>{!props.readOnly&&<p className="editor-footnote">Runs in an isolated Sandpack iframe. The editor needs an internet connection to compile packages.</p>}</div>;
 }
 export function customPreviewFiles(files:FileMap,language:'tsx'|'jsx',values:EffectProps):FileMap{

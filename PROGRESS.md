@@ -2,6 +2,49 @@
 
 Bijgewerkt: 16 november 2026. Versie 1.1.0.
 
+## Fase 3 — homepage, responsive layout en thema
+
+Status: implementatie en volledige productietestronde geslaagd. De volgende secties over fase 1 en 2 zijn de behouden historie.
+
+### Project en grenzen
+
+- Het letterlijk opgegeven `/Home/Personal-Projects/Project-Dev-Ui-Bits` bestaat niet. De bestaande app is gevonden in `/home/andre/Personal-Projects/Project-Dev-Ui-Bits/DevUI-Bits`. Alleen deze bestaande projectmap is aangepast; geen nieuw project aangemaakt.
+- README, PROGRESS, package.json, configuraties, app, registry, effects, editor, CSS en tests gelezen. Aan het begin was de Git-werkmap schoon. De bestaande remote is uitsluitend gelezen en verwijst naar jouw GitHub-repository.
+- Door de agent zijn alleen read-only Git-opdrachten gebruikt. Geen git add/commit/push, remote-mutatie, PR, release of deployment uitgevoerd. Tijdens het werk veranderde de lokale HEAD ook buiten de uitgevoerde Git-opdrachten; die commits zijn niet teruggedraaid.
+- Geen nieuwe bron-ZIP gemaakt. Bestaande browser-exportfuncties zijn wel behouden en getest; hun testdownload is geen nieuw volledig bronarchief.
+- Geen dependencies toegevoegd of versies gewijzigd. Alle 29 registry-items, hun broncode, vijf categorieën, componentroutes en Vercel-configuratie zijn behouden. Geen IndexedDB-migratie of verwijdering uitgevoerd.
+
+### Gerealiseerd
+
+1. `/` is een echte homepage met de gevraagde titel en beschrijving, twee CTA’s, eigen particle-hero, vijf categoriekaarten, zes werkelijke interactieve registry-previews en gedeelde footer. `/categories` is een apart werkend overzicht.
+2. Navbar met Home, Components, Categories, officiële GitHub-silhouetlink naar de opgegeven repository en Lucide Sun/Moon-toggle. De GitHub-link heeft target blank, noopener/noreferrer, aria-label, hover en keyboardfocus. Lucide levert geen brandicons; het silhouet is inline SVG, zonder extra dependency.
+3. Publieke zoekvelden, zoekbuttons, `/`-sneltoets en alle publieke Create-links verwijderd. De registry blijft de ontwikkelroute via VS Code. De oude `/create` en `/edit/:id` blijven direct beschikbaar voor compatibiliteit, inclusief import/export en bestaande data. Deze routes zijn niet met authenticatie afgeschermd.
+4. Centraal dark/light-thema met CSS-variabelen en Tailwind v4-koppeling. Systeemvoorkeur zolang geen handmatige keuze bestaat, localStorage-persistentie, systeemwijzigingen en synchronisatie via storage-events. De inline bootstrapscript past het thema vóór de eerste render toe.
+5. Thema toegepast op homepage, sidebar, rail, Customize, tabs, code, Sandpack, formulieren, knoppen, footer, meldingen en gallerydialogen. Effectpreviews houden hun eigen instelbare kleuren. Themawissels veranderen geen componentinstellingen.
+6. Vaste paginamarges vervangen door een flexibel CSS-grid met minmax/clamp. De rechterrail verdwijnt onder 1440 px; de sidebar wordt onder 840 px een mobiel menu. Grote schermen krijgen brede previews en drie/vier controlkolommen. Mobiele toolbar, grids, editor, formulieren en footer passen binnen het scherm.
+7. Mobiele navigatie met Escape, focusherstel, focusbegrenzing, scroll-lock en automatisch sluiten bij navigatie of desktopbreedte. De sidebar scrollt binnen de eigen lijst naar het actieve component, zonder de pagina te verplaatsen.
+8. Homepagepreviews mounten bij eerste zichtbaarheid en bewaren hun interactiestatus. Canvas-loops en CSS-animaties pauzeren buiten beeld; hero-particles en Field respecteren reduced motion en documentzichtbaarheid. MotionConfig volgt de systeemvoorkeur. Alle listeners, observers en RAFs hebben cleanup.
+9. Sandpack blijft lazy geladen. Een nieuwe regressietest vond dat themawissels of kopieermeldingen conceptcode konden resetten door nieuwe files/customSetup-objecten. De provider krijgt nu inhoudelijk gememoïseerde bestanden, dependencies en opties. Bewerkte code en toegevoegde bestanden blijven behouden bij themawissels en meldingen.
+
+### Visuele vergelijking en checks
+
+- De actuele gratis React Bits-homepage en Micro Slats-referentie bekeken. Via browserinspectie zijn onder andere de donkere achtergrond rgb(18,15,23), Geist en medium headings bevestigd. Eigen branding en zelfgeschreven effecten behouden; geen Pro-assets gebruikt.
+- Meerdere screenshotrondes op desktop, mobiel, light en dark. Na inspectie zijn onder andere contrast in de rail, verborgen skiplink, actieve navigatie, previewstatus en sticky navbar gecorrigeerd. Volledige screenshots worden aan de bovenkant van de pagina genomen; features worden eerst werkelijk geladen, zodat lazy content ook op de vergelijking staat.
+- TypeScript: geslaagd. Vitest: 6/6 geslaagd. Productiebuild: geslaagd, zonder chunkwaarschuwingen.
+- Eerste selectie: 8/8 Playwright-checks geslaagd. Eerste volledige ontwikkelronde: 43/44, met één directe boundingBox-meting tijdens een UI-update. Hersteld met een zichtbaarheidverwachting; de getroffen tabletcontrole slaagt in de productiepreview en in een gerichte ontwikkeltest.
+- Eerste uitgebreide productieronde: 46/47. De extra test ontdekte het echte Sandpack-resetprobleem; dat is opgelost. Gerichte ontwikkelcontrole daarna: 4/4, inclusief tablet, desktop, mobiel menu en code/bestandsbehoud na themawissel.
+- Laatste volledige productiecontrole: **47/47 geslaagd** (Playwright rapporteert 47 passed in 1,8 minuten, expliciete procesexit 0; test-results/.last-run.json meldt passed en geen failedTests). Inclusief de herstelde editorflow: conceptcode en toegevoegd bestand blijven behouden na kopiëren en themawissel. Alle bestaande routes, Customize, code/CSS, editorcompilatie, compilerfouten/reset, JSX/Tailwind, opslaan/refresh/bewerken en JSON-import/export zijn opnieuw getest. Geen vastgestelde React-runtimefouten in de gecontroleerde flows.
+- Alle gevraagde npm-scripts zijn daadwerkelijk uitgevoerd, met Node 24.22.2 en npm 11.19.1. De browserrun gebruikte de optionele Chromium-locatie via environment, niet via een hardcoded projectpad. De productiepreview draaide lokaal op poort 4173, de ontwikkelserver op 5173.
+
+Gecontroleerde viewportmatrix, in beide thema’s: 375×812, 430×932, 768×1024, 1024×768, 1280×800, 1366×768, 1440×900, 1920×1080, 2560×1440, 3440×1440 en 3840×2160. Assertions controleren pagina-overflow, heading/CTA/toolbarpositie, beschikbare previewbreedte, controls en directe refresh. Screenshots staan lokaal onder screenshots/phase3-*.png en zijn genegeerd door Git.
+
+### Grenzen van deze ronde
+
+- Browserchecks gebruiken Chromium. Er is geen afzonderlijke Safari-, Firefox- of echte-apparaattest uitgevoerd en geen publieke Vercel-deployment getest.
+- De registry laadt de ingebouwde effectmodules en raw broncode nog gezamenlijk; de editor heeft een aparte chunk. De huidige entry is circa 589 kB / 188 kB gzip, editor circa 624 kB / 211 kB gzip en CSS circa 102 kB / 19 kB gzip. Voor honderden zware effecten kan bron-/previewcode per component verder worden opgesplitst. De homepage start niet 29 animatieloops.
+- Sandpack-compilatie en Tailwind-workshop blijven afhankelijk van hun openbare externe compilers. De hoofdwebsite, thema-instelling en IndexedDB vereisen geen account, API-key of ChatGPT-hosting.
+- Er is geen nieuwe ZIP gemaakt; een ouder fase-2-archief bevat deze lokale wijzigingen niet. Committen, pushen, exporteren en publiceren blijven jouw keuze.
+
 ## Fase 1 behouden
 
 Het bestaande Vite/React-project is uitgebreid, niet opnieuw opgebouwd. De oorspronkelijke 21 effectimplementaties, vijf categorieën, registry, routing, zoekfunctie, paginatemplate, live previews, Customize-controls, Sandpack, IndexedDB en JSON/code-export zijn behouden. De bestaande visuele tokens, Geist-typografie en compacte donkere layout blijven de basis.
