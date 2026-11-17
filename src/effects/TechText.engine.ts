@@ -133,7 +133,7 @@ export class TechTextEngine {
     const bounds=this.canvas.getBoundingClientRect();
     this.pointer.x=(event.clientX-bounds.left)*this.width/bounds.width;
     this.pointer.y=(event.clientY-bounds.top)*this.height/bounds.height;
-    this.pointer.inside=true;this.keyboard=-1;
+    this.pointer.inside=this.pointer.x>=0&&this.pointer.x<=this.width&&this.pointer.y>=0&&this.pointer.y<=this.height;this.keyboard=-1;
   }
   private move=(event:PointerEvent)=>{
     this.position(event);
@@ -193,8 +193,10 @@ export class TechTextEngine {
   private selection(index:number,dt:number,opacity:number) {
     const g=this.glyphs[index],p=this.options,c=this.ctx,b=this.frameBox;
     const factor=this.reduced.matches?1:1-Math.exp(-22*dt);
+    let frameMoving=false;
     if(g){
       const s=g.sprite,target={x:this.left+g.x+g.dx+s.left,y:this.baseline+g.dy+s.top,w:s.width,h:s.height};
+      frameMoving=Math.abs(b.x-target.x)+Math.abs(b.y-target.y)+Math.abs(b.w-target.w)+Math.abs(b.h-target.h)>.05;
       if(b.opacity<.01)Object.assign(b,target);else{b.x+=(target.x-b.x)*factor;b.y+=(target.y-b.y)*factor;b.w+=(target.w-b.w)*factor;b.h+=(target.h-b.h)*factor;}
     }
     b.opacity+=(opacity-b.opacity)*factor;
@@ -217,11 +219,12 @@ export class TechTextEngine {
         c.globalAlpha=b.opacity*(.15+.4*(.5+.5*Math.sin(phase)));c.fillRect(x,y,i%5===0?2:1,i%5===0?2:1);
       }
     }
-    c.restore();return Math.abs(b.opacity-opacity)>.005||!!g&&(p.specks>0&&p.speed>0);
+    c.restore();return frameMoving||Math.abs(b.opacity-opacity)>.005||!!g&&(p.specks>0&&p.speed>0);
   }
   private drawArea(g:Glyph,gx:number,gy:number,opacity:number) {
     const c=this.ctx,b=this.areaCanvas.getContext('2d')!,s=g.sprite,p=this.options;
-    const gradient=b.createRadialGradient(this.areaX-gx,this.areaY-gy,p.reach*(1-p.softness),this.areaX-gx,this.areaY-gy,p.reach);
+    b.setTransform(spriteScale,0,0,spriteScale,0,0);
+    const gradient=b.createRadialGradient(this.areaX-gx,this.areaY-gy,Math.min(p.reach-.001,p.reach*(1-p.softness)),this.areaX-gx,this.areaY-gy,p.reach);
     gradient.addColorStop(0,`rgba(0,0,0,${this.areaOpacity})`);gradient.addColorStop(1,'rgba(0,0,0,0)');
     b.setTransform(spriteScale,0,0,spriteScale,0,0);b.clearRect(0,0,this.areaCanvas.width/spriteScale,this.areaCanvas.height/spriteScale);
     b.globalCompositeOperation='source-over';b.drawImage(s.fill,0,0,s.width,s.height);
