@@ -1,0 +1,58 @@
+import type { Category } from './types';
+
+// Ordered catalogue requested for phase 4. Names are metadata, never effect implementations.
+export const catalogNames = [
+  { category: 'Text Animations', names: [
+    'Tech Text', 'Text Loop', 'Masked Heading', 'Particle Text', 'Split Flap Text',
+    'Warp Text', 'Stroke Text', 'Depth Text', 'Fold Text', 'Echo Text', 'Split Text',
+    'Blur Text', 'Circular Text', 'Text Type', 'Shuffle', 'Shiny Text', 'Text Pressure',
+    'Curved Loop', 'Fuzzy Text', 'Gradient Text', 'Falling Text', 'Text Cursor',
+    'Decrypted Text', 'True Focus', 'Scroll Float', 'Scroll Reveal', 'ASCII Text',
+    'Scrambled Text', 'Rotating Text', 'Glitch Text', 'Scroll Velocity',
+    'Variable Proximity', 'Count Up',
+  ] },
+  { category: 'Animations', names: [
+    'Crystalized Ball', 'Electric Logo', 'Dither Veil', 'Glow Cursor', 'Scroll Expand',
+    'Ripple Distortion', 'Elastic Mesh', 'Swarm Cursor', 'Halftone Reveal', 'Pixel Swap',
+    'Cursor Grid', 'Animated Content', 'Fade Content', 'Electric Border', 'Orbit Images',
+    'Pixel Transition', 'Glare Hover', 'Logo Loop', 'Target Cursor', 'Laser Flow',
+    'Ghost Cursor', 'Gradual Blur', 'Click Spark', 'Magnet', 'Strands', 'Sticker Peel',
+    'Pixel Trail', 'Cubes', 'Metallic Paint', 'Noise', 'Shape Blur', 'Crosshair',
+    'Image Trail', 'Ribbons', 'Splash Cursor', 'Meta Balls', 'Blob Cursor', 'Star Border',
+  ] },
+  { category: 'Components', names: [
+    'Holo Card', 'Circular Carousel', 'Flex Carousel', 'Infinite Spiral', 'Depth Carousel',
+    'Morph Slider', 'Drift Wall', 'Accordion Gallery', 'Specular Button', 'Option Wheel',
+    'Curved Input', 'Line Sidebar', 'Animated List', 'Scroll Stack', 'Bubble Menu',
+    'Magic Bento', 'Circular Gallery', 'Reflective Card', 'Card Nav', 'Stack', 'Fluid Glass',
+    'Pill Nav', 'Tilted Card', 'Masonry', 'Glass Surface', 'Dome Gallery', 'Chroma Grid',
+    'Folder', 'Staggered Menu', 'Model Viewer', 'Lanyard', 'Profile Card', 'Dock',
+    'Gooey Nav', 'Pixel Card', 'Carousel', 'Spotlight Card', 'Border Glow', 'Flying Posters',
+    'Card Swap', 'Glass Icons', 'Decay Card', 'Flowing Menu', 'Elastic Slider', 'Counter',
+    'Infinite Menu', 'Stepper', 'Bounce Cards',
+  ] },
+  { category: 'Micro Interactions', names: [
+    'Shredder', 'Paper Crumple', 'Tear Ticket', 'Flip Card', 'Branched Menu', 'Folder Float',
+    'Refine Frame', 'Thought Line', 'Voice Pill', 'Slosh Gauge', 'Prompt Bar', 'Swipe Toast',
+    'Sling Button', 'Bell Toggle', 'Call Chip', 'Status Mark', 'Glide Select', 'Swipe Row',
+    'Jelly Radio', 'Comet Dial', 'Wake Slider', 'Code Slots', 'Dodge Field', 'Lattice Loader',
+    'Scrub Field', 'Fuse Button', 'Warm Tooltip', 'Slide Commit', 'Rubber Segment',
+    'Pulse Heart', 'Spring Check', 'Peek Rating', 'Hold Button', 'Squish Switch',
+  ] },
+  { category: 'Backgrounds', names: [
+    'Holo Mosaic', 'Gradient ASCII', 'Flux Lines', 'Pattern Waves', 'Micro Slats',
+    'Shape Waves', 'Aero Shards', 'Ghost Fibers', 'CRT Warp', 'Molten Metal',
+    'Gradient Waves', 'Web Threads', 'Topography', 'Light Tunnel', 'Sliced Waves',
+    'Acid Squares', 'Scanner', 'Ferrofluid', 'Lightfall', 'Liquid Ether', 'Prism',
+    'Dark Veil', 'Light Pillar', 'Antigravity', 'Silk', 'Floating Lines', 'Side Rays',
+    'Light Rays', 'Pixel Blast', 'Color Bends', 'Line Waves', 'Radar', 'Soft Aurora',
+    'Magic Rings', 'Aurora', 'Plasma', 'Plasma Wave', 'Particles', 'Gradient Blinds',
+    'Grainient', 'Grid Scan', 'Beams', 'Pixel Snow', 'Lightning', 'Prismatic Burst',
+    'Galaxy', 'Dither', 'Faulty Terminal', 'Ripple Grid', 'Dot Field', 'Dot Grid',
+    'Threads', 'Hyperspeed', 'Iridescence', 'Waves', 'Magnet Lines', 'Grid Distortion',
+    'Ballpit', 'Orb', 'Letter Glitch', 'Grid Motion', 'Shape Grid', 'Liquid Chrome', 'Balatro',
+  ] },
+] satisfies { category: Category; names: string[] }[];
+
+export const catalogCategories = catalogNames.map(group => group.category);
+export const plannedDescription = 'This component will be implemented in a future update.';

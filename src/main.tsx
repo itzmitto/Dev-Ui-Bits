@@ -7,6 +7,7 @@ import "@fontsource/geist/latin-600.css";
 import "./styles.css";
 import "./effects/effects.css";
 import "./effects/advanced.css";
+import "./catalog.css";
 import App from "./App";
 import { ThemeProvider } from "./theme";
 import { MotionConfig } from "motion/react";

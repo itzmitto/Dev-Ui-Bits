@@ -1,17 +1,48 @@
+import { lazy, type ComponentType } from 'react';
 import { Field } from './effects/Field';
-import * as Text from './effects/TextEffects';
-import * as Animation from './effects/AnimationEffects';
-import * as Card from './effects/CardEffects';
-import * as Micro from './effects/MicroEffects';
-import { AdvancedMegaMenu } from './effects/AdvancedMegaMenu';
-import { InteractiveCard3D } from './effects/InteractiveCard3D';
-import { MorphingButton } from './effects/MorphingButton';
-import { AnimatedTabs } from './effects/AnimatedTabs';
-import { MagneticNavigation } from './effects/MagneticNavigation';
 import { InteractiveParticleBackground } from './effects/InteractiveParticleBackground';
-import { ScrollStorytellingSection } from './effects/ScrollStorytellingSection';
-import { AdvancedImageGallery } from './effects/AdvancedImageGallery';
-import type { Control, Definition, EffectProps } from './types';
+import { catalogNames, plannedDescription } from './catalogNames';
+import { componentPath, type CatalogEntry, type Control, type Definition, type EffectProps } from './types';
+
+const effectModules = import.meta.glob<Record<string, ComponentType<EffectProps>>>(['./effects/*.tsx', '!./effects/Field.tsx', '!./effects/InteractiveParticleBackground.tsx']);
+function lazyPreview(source: string, exportName: string) {
+  return lazy(async () => {
+    const module = await effectModules[`./effects/${source}.tsx`]();
+    return { default: module[exportName] };
+  });
+}
+const Text = {
+  BlurText: lazyPreview('TextEffects', 'BlurText'),
+  SplitText: lazyPreview('TextEffects', 'SplitText'),
+  GlitchText: lazyPreview('TextEffects', 'GlitchText'),
+  TypewriterText: lazyPreview('TextEffects', 'TypewriterText'),
+};
+const Animation = {
+  FadeIn: lazyPreview('AnimationEffects', 'FadeIn'),
+  ScrollReveal: lazyPreview('AnimationEffects', 'ScrollReveal'),
+  MagnetEffect: lazyPreview('AnimationEffects', 'MagnetEffect'),
+  AnimatedList: lazyPreview('AnimationEffects', 'AnimatedList'),
+};
+const Card = {
+  TiltCard: lazyPreview('CardEffects', 'TiltCard'),
+  SpotlightCard: lazyPreview('CardEffects', 'SpotlightCard'),
+  AnimatedCarousel: lazyPreview('CardEffects', 'AnimatedCarousel'),
+  MagneticButton: lazyPreview('CardEffects', 'MagneticButton'),
+};
+const Micro = {
+  AnimatedToggle: lazyPreview('MicroEffects', 'AnimatedToggle'),
+  HoverButton: lazyPreview('MicroEffects', 'HoverButton'),
+  RippleEffect: lazyPreview('MicroEffects', 'RippleEffect'),
+  InteractiveCursor: lazyPreview('MicroEffects', 'InteractiveCursor'),
+};
+const AdvancedMegaMenu = lazyPreview('AdvancedMegaMenu', 'AdvancedMegaMenu');
+const InteractiveCard3D = lazyPreview('InteractiveCard3D', 'InteractiveCard3D');
+const MorphingButton = lazyPreview('MorphingButton', 'MorphingButton');
+const AnimatedTabs = lazyPreview('AnimatedTabs', 'AnimatedTabs');
+const MagneticNavigation = lazyPreview('MagneticNavigation', 'MagneticNavigation');
+const ScrollStorytellingSection = lazyPreview('ScrollStorytellingSection', 'ScrollStorytellingSection');
+const AdvancedImageGallery = lazyPreview('AdvancedImageGallery', 'AdvancedImageGallery');
+
 const color:Control={key:'color',label:'Primary color',type:'color'};
 const text:Control={key:'text',label:'Text',type:'text'};
 const range=(key:string,label:string,min:number,max:number,step=1):Control=>({key,label,type:'range',min,max,step});
@@ -21,11 +52,11 @@ const strength=range('strength','Mouse strength',.05,1,.05);
 const toggle=(key:string,label:string):Control=>({key,label,type:'toggle'});
 function def(name:string,category:Definition['category'],description:string,preview:Definition['preview'],source:string,defaults:EffectProps,schema:Control[]):Definition {
   const slug=name.toLowerCase().replaceAll(' ','-');
-  return {id:slug,name,slug,category,description,preview,source,exportName:name.replaceAll(' ',''),defaults,schema,dependencies:source==='Field'?{}:{motion:'^14.14.0'}};
+  return {id:slug,status:'ready',name,slug,category,description,preview,source,exportName:name.replaceAll(' ',''),defaults,schema,dependencies:source==='Field'?{}:{motion:'^14.14.0'}};
 }
 const backgroundControls=[color,{key:'secondary',label:'Glint color',type:'color'} as Control,{key:'background',label:'Background',type:'color'} as Control,range('speed','Speed',0,3,.05),range('scale','Scale',.5,4,.1),range('opacity','Opacity',.1,1,.05),toggle('interactive','Interactive'),strength];
 const fieldDefaults={color:'#a855f7',secondary:'#ffffff',background:'#120f17',speed:.6,scale:1.5,opacity:1,interactive:true,strength:.7,blur:0};
-export const registry:Definition[]=[
+const implementations:Definition[]=[
  {...def('Micro Slats','Backgrounds','A field of light. A rhythm of motion. Tiny slats, endless possibilities.',Field,'Field',{...fieldDefaults,mode:'slats',width:10,height:25,gap:3,roundness:.75,direction:250,paused:false},[...backgroundControls.slice(0,3),range('width','Slat width',3,30),range('height','Slat height',8,60),range('gap','Gap',1,15),range('roundness','Roundness',0,1,.05),...backgroundControls.slice(3,6),range('direction','Direction',0,360),range('blur','Blur',0,8,.5),...backgroundControls.slice(6),toggle('paused','Paused')]),isNew:true,exportName:'Field',presets:{Swell:{color:'#a855f7',secondary:'#ffffff',speed:.6,scale:1.5,direction:250},Tide:{color:'#38bdf8',secondary:'#c6f6ff',speed:.3,scale:2.5,direction:290},Ember:{color:'#fb7185',secondary:'#ffdeb0',speed:.9,scale:1.2,direction:190},Signal:{color:'#a3e635',secondary:'#ffffff',speed:1.5,scale:.6,direction:90}}},
  def('Blur Text','Text Animations','Let your words come into focus, one thought at a time.',Text.BlurText,'TextEffects',{text:'Ideas come to life.',color:'#ffffff',duration:.8,delay:.15,blur:12},[text,color,duration,delay,range('blur','Initial blur',0,30)]),
  def('Split Text','Text Animations','Give every character an entrance of its own.',Text.SplitText,'TextEffects',{text:'Make it move.',color:'#ffffff',duration:.8,delay:.06,distance:65},[text,color,duration,delay,range('distance','Distance',0,150)]),
@@ -57,7 +88,39 @@ export const registry:Definition[]=[
  {...def('Advanced Image Gallery','Components','Filter an original art collection, explore its lightbox, zoom, and navigate with your keyboard.',AdvancedImageGallery,'AdvancedImageGallery',{text:'Look a little closer.',color:'#a855f7',columns:3,gap:12,roundness:10,layout:'masonry'},[text,color,{key:'columns',label:'Columns',type:'number',min:2,max:4,step:1},range('gap','Image gap',4,24),range('roundness','Image roundness',0,24),{key:'layout',label:'Layout',type:'select',options:['grid','masonry']}]),isNew:true,styles:['advanced.css'],supportingFiles:['galleryArt.ts']},
 
 ];
-export const findComponent=(category:string,slug:string)=>registry.find(c=>c.category.toLowerCase().replaceAll(' ','-')===category&&c.slug===slug);
+// One final registry drives every public catalogue surface. Exact names reuse the
+// existing implementation; category moves keep their original URL as an alias.
+function buildRegistry(): CatalogEntry[] {
+  const byName = new Map(implementations.map(item => [item.name, item]));
+  const listed = new Set(catalogNames.flatMap(group => group.names));
+  return catalogNames.flatMap(({ category, names }) => [
+    ...names.map((name): CatalogEntry => {
+      const ready = byName.get(name);
+      if (ready) {
+        return {
+          ...ready, category,
+          aliases: ready.category === category ? ready.aliases : [...ready.aliases ?? [], componentPath(ready)],
+        };
+      }
+      const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      return { id: slug, name, slug, category, status: 'planned', description: plannedDescription };
+    }),
+    ...implementations.filter(item => item.category === category && !listed.has(item.name)),
+  ]);
+}
+export const registry: CatalogEntry[] = buildRegistry();
+export const readyComponents = registry.filter((entry): entry is Definition => entry.status === 'ready');
+const routes = new Map<string, CatalogEntry>();
+const ids = new Set<string>();
+for (const entry of registry) {
+  if (ids.has(entry.id)) throw new Error(`Duplicate component ID: ${entry.id}`);
+  ids.add(entry.id);
+  for (const route of [componentPath(entry), ...entry.aliases ?? []]) {
+    if (routes.has(route)) throw new Error(`Duplicate component route: ${route}`);
+    routes.set(route, entry);
+  }
+}
+export const findComponent = (category: string, slug: string) => routes.get(`/${category}/${slug}`);
 const rawSources=import.meta.glob('./effects/*.{tsx,ts,css}',{query:'?raw',import:'default',eager:true}) as Record<string,string>;
 export function builtinFiles(component:Definition,props:EffectProps):Record<string,string>{
  const extraFiles=Object.fromEntries([...(component.styles??[]),...(component.supportingFiles??[])].map(file=>[`/effects/${file}`,rawSources[`./effects/${file}`]]));

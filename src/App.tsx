@@ -66,6 +66,11 @@ import { Controls } from "./Controls";
 import { Field } from "./effects/Field";
 import { starterFiles } from "./templates";
 import HomePage, { CategoriesPage } from "./HomePage";
+import CatalogPage from "./CatalogPage";
+import { Sidebar } from "./Sidebar";
+import { PlannedComponentPage } from "./PlannedComponentPreview";
+import { FavoriteButton, StatusBadge } from "./CatalogUI";
+import { ExploreSection, LibraryInfo } from "./LibraryInfo";
 import { HeaderActions, SiteFooter } from "./SiteChrome";
 const Editor = lazy(() => import("./Editor"));
 const icons = [Type, Sparkles, Layers, Grid2X2, MousePointer2];
@@ -95,17 +100,10 @@ export default function App() {
   const { custom, load, storageError } = useLibrary();
   const [mobileOpen, setMobileOpen] = useState(false), [toast, setToast] = useState("");
   const location = useLocation(), menuButton = useRef<HTMLButtonElement>(null);
-  const home = location.pathname === "/", all = [...registry, ...custom];
+  const home = location.pathname === "/";
+  const detail = !!findComponent(...location.pathname.slice(1).split("/") as [string, string]) || custom.some(item => componentPath(item) === location.pathname);
   useEffect(() => { void load(); }, [load]);
   useEffect(() => { setMobileOpen(false); window.scrollTo(0, 0); if (mobileOpen) menuButton.current?.focus(); }, [location.pathname]);
-  useEffect(() => {
-    const list = document.querySelector<HTMLElement>(".component-list");
-    const active = list?.querySelector<HTMLElement>(".component-link.active");
-    if (!list || !active) return;
-    const bounds = list.getBoundingClientRect(), item = active.getBoundingClientRect();
-    if (item.top < bounds.top) list.scrollTop -= bounds.top - item.top + 8;
-    else if (item.bottom > bounds.bottom) list.scrollTop += item.bottom - bounds.bottom + 8;
-  }, [location.pathname, custom.length, mobileOpen]);
   useEffect(() => { if (!toast) return; const timer = setTimeout(() => setToast(""), 3300); return () => clearTimeout(timer); }, [toast]);
   useEffect(() => {
     if (!mobileOpen) return;
@@ -114,7 +112,7 @@ export default function App() {
     const key = (event: KeyboardEvent) => {
       if (event.key === "Escape") { setMobileOpen(false); menuButton.current?.focus(); }
       if (event.key === "Tab") {
-        const elements = [...document.querySelectorAll<HTMLElement>(".topbar a, .topbar button, .sidebar a, .mobile-home-nav a")].filter(element => element.getClientRects().length && getComputedStyle(element).visibility !== "hidden");
+        const elements = [...document.querySelectorAll<HTMLElement>(".topbar a, .topbar button, .sidebar a, .sidebar button, .mobile-home-nav a")].filter(element => element.getClientRects().length && getComputedStyle(element).visibility !== "hidden");
         const first = elements[0], last = elements[elements.length - 1];
         if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
         else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
@@ -137,19 +135,14 @@ export default function App() {
     </header>
     {mobileOpen && <button className="sidebar-scrim" aria-label="Close navigation" onClick={() => { setMobileOpen(false); menuButton.current?.focus(); }}/>}
     {home && mobileOpen && <nav className="mobile-home-nav" id="mobile-navigation" aria-label="Mobile navigation">{mainNav}</nav>}
-    <div className={home ? "home-layout" : "library-layout"}>
-      {!home && <aside id="component-navigation" className={`sidebar ${mobileOpen ? "is-open" : ""}`} aria-label="Component navigation">
-        <nav className="mobile-library-links" aria-label="Mobile navigation">{mainNav}</nav>
-        <div className="sidebar-tools"><NavLink className="browse-button" to="/browse"><Grid2X2 size={15}/> Browse all components <span>{all.length}</span></NavLink><div className="category-icons">{categories.map((category, index) => { const Icon = icons[index]; return <NavLink key={category} to={`/${categorySlug(category)}`} title={category} aria-label={category}><Icon size={17}/></NavLink>; })}</div></div>
-        <nav className="component-list">{categories.map((category, index) => { const Icon = icons[index]; return <section key={category}><Link className="category-label" to={`/${categorySlug(category)}`}><Icon size={13}/>{category}<ChevronDown size={12}/></Link>{all.filter(item => item.category === category).map(item => <NavLink className="component-link" title={item.name} key={item.id} to={componentPath(item)}><span>{item.name}</span>{"isNew" in item && item.isNew ? <span className="new-badge">NEW</span> : "files" in item ? <span className="local-dot" title="Locally saved"/> : null}</NavLink>)}</section>; })}</nav>
-        <div className="sidebar-footer"><Link to="/guide"><Terminal size={15}/> Installation guide <ArrowUpRight size={14}/></Link><span><i/> Original code. Open possibilities.</span></div>
-      </aside>}
+    <div className={home ? "home-layout" : `library-layout ${detail ? "" : "catalog-layout"}`}>
+      {!home && <Sidebar open={mobileOpen} custom={custom} mobileNav={mainNav}/>}
       <main className={home ? "home-main" : "main-content"} id="main">
         {storageError && <div role="alert" className="notice">{storageError}</div>}
-        <Routes><Route path="/" element={<HomePage/>}/><Route path="/categories" element={<CategoriesPage/>}/><Route path="/browse" element={<Browse/>}/><Route path="/guide" element={<Guide notify={notify}/>}/><Route path="/create" element={<Workshop notify={notify}/>}/><Route path="/edit/:id" element={<WorkshopRoute notify={notify}/>}/><Route path="/:category/:slug" element={<ComponentRoute notify={notify}/>}/><Route path="/:category" element={<Browse/>}/><Route path="*" element={<NotFound/>}/></Routes>
+        <Routes><Route path="/" element={<HomePage/>}/><Route path="/categories" element={<CategoriesPage/>}/><Route path="/browse" element={<CatalogPage/>}/><Route path="/get-started/index" element={<CatalogPage/>}/><Route path="/get-started/introduction" element={<LibraryInfo page="introduction"/>}/><Route path="/get-started/installation" element={<Guide notify={notify}/>}/><Route path="/get-started/mcp" element={<LibraryInfo page="mcp"/>}/><Route path="/get-started/changelog" element={<LibraryInfo page="changelog"/>}/><Route path="/favorites" element={<CatalogPage favoritesOnly/>}/><Route path="/explore/blocks" element={<ExploreSection section="blocks"/>}/><Route path="/explore/app-ui" element={<ExploreSection section="app-ui"/>}/><Route path="/explore/templates" element={<ExploreSection section="templates"/>}/><Route path="/explore/skills" element={<ExploreSection section="skills"/>}/><Route path="/guide" element={<Guide notify={notify}/>}/><Route path="/create" element={<Workshop notify={notify}/>}/><Route path="/edit/:id" element={<WorkshopRoute notify={notify}/>}/><Route path="/:category/:slug" element={<ComponentRoute notify={notify}/>}/><Route path="/:category" element={<Browse/>}/><Route path="*" element={<NotFound/>}/></Routes>
         <SiteFooter/>
       </main>
-      {!home && <RightRail/>}
+      {!home && detail && <RightRail/>}
     </div>
     {toast && <div className="toast" role="status"><Check size={15}/>{toast}</div>}
   </ErrorBoundary>;
@@ -164,7 +157,7 @@ function RightRail() {
   return (
     <aside className="right-rail">
       <span className="rail-eyebrow">A LITTLE INSPIRATION</span>
-      <Link className="featured-card" to="/backgrounds/animated-gradient">
+      {current.status === "ready" && <Link className="featured-card" to="/backgrounds/animated-gradient">
         <div className="featured-art">
           <Field
             mode="gradient"
@@ -187,7 +180,7 @@ function RightRail() {
           </span>
           <ArrowUpRight size={14} />
         </div>
-      </Link>
+      </Link>}
       <div className="rail-section">
         <h3>
           Related components <span>{relatives.length}</span>
@@ -254,7 +247,7 @@ function ComponentRoute({ notify }: { notify: Notify }) {
     (c) => categorySlug(c.category) === category && c.slug === slug,
   );
   if (builtin)
-    return <ComponentPage key={builtin.id} item={builtin} notify={notify} />;
+    return builtin.status === "planned" ? <PlannedComponentPage key={builtin.id} item={builtin}/> : <ComponentPage key={builtin.id} item={builtin} notify={notify} />;
   if (own)
     return (
       <ComponentPage key={own.id + own.updatedAt} item={own} notify={notify} />
@@ -332,7 +325,8 @@ function ComponentPage({
         </Link>
         <div className="title-line">
           <h1>{item.name}</h1>
-          {!own && item.isNew && <span className="title-badge">NEW</span>}
+          {!own && <StatusBadge status={item.status}/>}
+          <FavoriteButton item={item}/>
           {own && <span className="title-badge">YOUR COMPONENT</span>}
         </div>
         <p>{item.description}</p>
@@ -470,13 +464,13 @@ function ComponentPage({
                     />
                   </Suspense>
                 ) : (
-                  <item.preview
+                  <Suspense fallback={<div className="loading-state">Loading preview…</div>}><item.preview
                     key={revision}
                     {...values}
                     background={
                       "background" in values ? values.background : previewBg
                     }
-                  />
+                  /></Suspense>
                 )}{" "}
                 {showContent && (
                   <div className="sample-content">
@@ -724,84 +718,9 @@ function ComponentPage({
   );
 }
 function Browse() {
-  const { category } = useParams(),
-    { custom } = useLibrary();
-  const selected = categories.find((c) => categorySlug(c) === category);
-  if (category && !selected) return <NotFound />;
-  const items = [...registry, ...custom].filter(
-    (c) =>
-      (!selected || c.category === selected),
-  );
-  return (
-    <>
-      <div className="component-heading">
-        <span className="eyebrow">THE COLLECTION</span>
-        <h1>{selected || "Small bits. Big possibilities."}</h1>
-        <p>
-          {selected
-            ? `Explore ${selected.toLowerCase()} that make your next interface feel alive.`
-            : "Original React components. Ready to explore, customize, and make your own."}
-        </p>
-      </div>
-      <div className="browse-filters">
-        <div className="tabs">
-          <Link className={!selected ? "active" : ""} to="/browse">
-            All
-          </Link>
-          {categories.map((c, i) => {
-            const Icon = icons[i];
-            return (
-              <Link
-                className={selected === c ? "active" : ""}
-                key={c}
-                to={`/${categorySlug(c)}`}
-                title={c}
-              >
-                <Icon size={15} />
-                <span>{c}</span>
-              </Link>
-            );
-          })}
-        </div>
-
-      </div>
-      <p className="collection-count">
-        {items.length} components to make your own
-      </p>
-      <div className="collection-grid">
-        {items.map((c, i) => (
-          <Link className="collection-card" key={c.id} to={componentPath(c)}>
-            <div className={`collection-art art-${i % 4}`}>
-              <span>
-                {c.category === "Text Animations" ? (
-                  c.name === "Glitch Text" ? (
-                    "G̷L̷I̷T̷C̷H̷"
-                  ) : (
-                    "Make it move."
-                  )
-                ) : c.category === "Backgrounds" ? (
-                  <div className="mini-slats" />
-                ) : c.category === "Micro Interactions" ? (
-                  <div className="mini-toggle" />
-                ) : (
-                  <span className="collection-symbol">✳</span>
-                )}
-              </span>
-              <ArrowUpRight size={16} />
-            </div>
-            <h3>
-              {c.name}
-              <span>{"files" in c ? "LOCAL" : c.category}</span>
-            </h3>
-            <p>{c.description}</p>
-          </Link>
-        ))}
-      </div>
-      {items.length === 0 && (
-        <div className="empty-state">No components in this category yet.</div>
-      )}
-    </>
-  );
+  const { category } = useParams();
+  const selected = categories.find(item => categorySlug(item) === category);
+  return selected ? <CatalogPage category={selected}/> : <NotFound/>;
 }
 function Guide({ notify }: { notify: Notify }) {
   return (
