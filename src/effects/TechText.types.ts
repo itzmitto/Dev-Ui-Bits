@@ -37,7 +37,7 @@ export const techTextDefaults: TechTextOptions = {
   color: 'currentColor', align: 'center', draggable: true, sweep: true,
 };
 export function normalizeTechText(props: TechTextProps): TechTextOptions {
-  const options = { ...techTextDefaults, ...props };
+  const options = { ...techTextDefaults, ...Object.fromEntries(Object.entries(props).filter(([,value]) => value !== undefined)) } as TechTextOptions;
   const bounds: Partial<Record<keyof TechTextOptions, [number, number]>> = {
     fontSize: [8, 400], fontWeight: [100, 900], letterSpacing: [-.1, .3],
     dashLength: [.5, 24], dashGap: [.5, 20], strokeWidth: [.2, 6],

@@ -2,6 +2,20 @@
 
 Bijgewerkt: 17 november 2026. Versie 1.1.0.
 
+## Fase 5 — uitsluitend Tech Text
+
+Status: implementatie en gerichte browsercontrole geslaagd; laatste volledige productieregressie volgt. De bestaande Tech Text-entry blijft op dezelfde id, positie en route. Het totaal is 239, met 30 ready en 209 planned; alle oorspronkelijke 29 implementaties zijn behouden.
+
+- Screenshot en zichtbare officiële preview/props bestudeerd. Het genoemde tekstbestand was niet beschikbaar; geen effectbron van upstream gekopieerd. Actuele licentie en beperkingen in LICENSE_REVIEW.md vastgelegd. Zelfstandige implementatie, geen nieuwe dependencies, Git-mutatiecommando’s, publicatie, deployment of bron-ZIP.
+- Eén lifecycle-owned Canvas-engine met getypeerde props, grapheme-/kerningmetingen, ink-bound-centrering, auto-fit, DPR maximaal 2, alpha-sprites en eigen marching-squares-contouren inclusief counters. Buffers en paden worden bij typographywijzigingen vernieuwd, niet tijdens pointerbewegingen.
+- Letter-/area-/off-reveal; area gebruikt een herbruikbaar canvas met echt radiaal compositingmasker. Dash/solid, stroke, smooth frame, anchors, labels, specks, vier typografische guides en kleurinstellingen reageren direct.
+- Pointer capture, individuele dragging, substepped spring return, click kick met nabuurimpuls en toetsenbordselectie/kick. None/type/assemble/metrics-intro’s, Restart en idle sweep. Offscreen/hidden pauzering, reduced motion, volledige listener/observer/RAF-cleanup.
+- Bestaande schema-renderer gebruikt voor 26 controls in zes groepen; alleen optionele groepslabels en expliciete currentColor-ondersteuning toegevoegd. Vier complete presets, correcte presetweergave na Reset. De bestaande broncode- en Sandpack-export bevat TSX, CSS en alle drie helpers.
+- Eerste browsertests corrigeerden verouderde pointercoördinaten nadat de controls de pagina hadden gescrold en assertions midden in bestaande reveal-/viewporttransities. De tests scrollen nu werkelijk naar de canvas en wachten op de gemeten eindtoestand. Dragging, physics, intro’s en echte Sandpackcompilatie slagen.
+- Gerichte ontwikkelronde: 18/18 Playwright geslaagd. Vier nieuwe unitchecks maken 14/14 geslaagd. Eerste performanceproef meet circa 59,8 canvasframes/s in lokale Chromium headless bij 1536×1024; 0 tekenframes in de gecontroleerde offscreen- en rustintervallen. Dit is één lokale proef, geen algemene FPS-garantie.
+- Screenshots op 375, 768, 1440, 1920 en 2560px in dark en light gemaakt. Desktop 1920-dark en mobiel 375-light visueel vergeleken met de screenshot: witte 600-weight woordmarkering, nauwe spacing, dunne gestippelde silhouette, vierkante ankers en kleine maatlabels. Daarna centrering nog op de echte ink-bounds gecorrigeerd.
+- Laatste typecheck, unit-, build- en volledige productiecheck volgen hieronder. Browserscope: Chromium; geen Firefox/Safari, echte-apparaat- of publieke deploymenttest. De broneditor gebruikt nog de bestaande openbare Sandpack-service.
+
 ## Fase 4 — complete catalogus en sidebar
 
 Status: catalogus, navigatie, visuele controle en volledige productieregressie afgerond. De eerdere aanvraag voor een echt Crystalized Ball-effect is vervangen door de laatste opdracht: uitsluitend catalogus en placeholders. Crystalized Ball blijft planned.

@@ -4,7 +4,7 @@ Controle uitgevoerd op 16 november 2026 voor de vastgelegde dependencies in pack
 
 ## Eigen projectcode — MIT
 
-De 29 effectimplementaties, applicatiecode, naam, favicon en gallery-artwork zijn in dit project geschreven. De oorspronkelijke 21 componenten zijn behouden en uitgebreid met acht eigen implementaties. React Bits is alleen een visuele en functionele referentie; geen officiële logo's, bronbestanden, foto's of Pro-assets zijn opgenomen. De eigen code staat onder MIT in LICENSE.
+De 30 effectimplementaties, applicatiecode, naam, favicon en gallery-artwork zijn in dit project geschreven. De oorspronkelijke 21 componenten zijn behouden en uitgebreid met acht eigen implementaties. React Bits is alleen een visuele en functionele referentie; geen officiële logo's, bronbestanden, foto's of Pro-assets zijn opgenomen. De eigen code staat onder MIT in LICENSE.
 
 De gallery gebruikt zes SVG-illustraties die door `src/effects/galleryArt.ts` worden opgebouwd. Er zijn geen externe foto-URLs of stockafbeeldingen. De browser rendert de illustraties lokaal als data-URL; er zijn geen beeld-CDN-accounts of tokens nodig.
 
@@ -39,3 +39,11 @@ Externe services hebben eigen gebruiksvoorwaarden: Sandpack gebruikt een openbar
 De bron-ZIP gebruikt een expliciete bestandsselectie. `.git`, `.openai`, `.vercel`, `.env*`, node_modules, dist, caches, testresultaten en tijdelijke bestanden zijn uitgesloten. De voormalige hostingmanifest is verwijderd; applicatieroutes en IndexedDB zijn volledig client-side. De Playwright-configuratie bevat geen vast lokaal browserpad. De lockfile gebruikt npm-register-URLs en de eigen relatieve vendor-map, geen interne package registry.
 
 Er zijn geen API-keys, vereiste secrets of persoonlijke accountgegevens in de applicatie opgenomen. Custom componenten uit jouw browser worden niet stilzwijgend aan de bron-ZIP toegevoegd. Controleer eigen wijzigingen en geïmporteerde code opnieuw voordat je die openbaar publiceert; dit document dekt geen later toegevoegde assets of componenten.
+
+## Tech Text — bron- en licentiecontrole op 17 november 2026
+
+Referenties: de door de gebruiker aangeleverde screenshot en [zichtbare Tech Text-demo](https://reactbits.dev/text-animations/tech-text). Het genoemde `Geplakte tekst.txt` was niet beschikbaar in de bijlagen of de onderzochte lokale bestanden en is dus niet gelezen of gebruikt. De effectbron van React Bits is niet gedownload of gekopieerd.
+
+De [actuele upstream LICENSE.md](https://raw.githubusercontent.com/DavidHDev/react-bits/main/LICENSE.md) vermeldt MIT + Commons Clause en een afzonderlijke beperking op het verkopen, sublicentiëren of herdistribueren van de componenten zelf. Een publieke componentenbibliotheek is daarom geen reden om de upstreamcode onder de gewone MIT-projectlicentie over te nemen. Deze inventarisatie geeft geen juridische garantie; voorwaarden kunnen veranderen en moeten vóór latere publicatie of toevoeging van upstreamcode opnieuw worden beoordeeld.
+
+De nieuwe Tech Text-engine, contourtracing, physics, React-wrapper, controls en tests zijn zelfstandig voor DevUI Bits geschreven vanuit het zichtbare gedrag en de gebruikersspecificatie. Er zijn geen upstreambestanden, logo’s, eigen fontassets of Pro-assets in opgenomen en geen nieuwe dependencies toegevoegd. De eigen implementatie blijft onder de projectlicentie MIT; daarmee wordt geen herlicentiëring van React Bits-code geclaimd. Het visuele/functionele referentiegebruik vormt geen juridische beoordeling van alle mogelijke rechten. Er is in deze fase niets door de agent gepubliceerd of gedeployd.

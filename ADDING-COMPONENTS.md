@@ -42,7 +42,7 @@ Bijvoorbeeld: **Crystalized Ball** staat al op `/animations/crystalized-ball` me
 
 `defaults` en `controls` staan hier voor de echte, uitgewerkte waarden. Neem geen niet-werkende controls op. De helper `def` maakt een `ready`-definitie; de builder vervangt daardoor het bestaande geplande record op naam. Het id en de route blijven `crystalized-ball` en `/animations/crystalized-ball`. Laat de naam in catalogNames staan, zodat de volgorde behouden blijft.
 
-6. Iedere control heeft een unieke key, een label en een ondersteund type. Die key moet in defaults voorkomen. Types zijn `range`, `number`, `color`, `text`, `select` en `toggle`. Numerieke controls hebben min/max en een positieve step; kleuren gebruiken `#rrggbb`. Select-opties moeten de default bevatten. Presets moeten echte, werkende propertycombinaties zijn.
+6. Iedere control heeft een unieke key, een label en een ondersteund type. Die key moet in defaults voorkomen. Types zijn `range`, `number`, `color`, `text`, `select` en `toggle`. Numerieke controls hebben min/max en een positieve step; kleuren gebruiken `#rrggbb`; `inherit: true` staat daarnaast expliciet `currentColor` toe. Optionele `group`-labels tonen sectiekoppen binnen hetzelfde controlschema. Select-opties moeten de default bevatten. Presets moeten echte, werkende propertycombinaties zijn.
 7. Het previewveld gebruikt React.lazy voor het echte effectmodule. Bestanden direct in `src/effects/` worden door de module-glob gevonden. De gedeelde detailpagina toont de echte renderer onder Suspense; de catalogus start alleen een preview na een klik. Er draait maximaal één cataloguspreview tegelijk.
 8. `source` is de bestandsnaam zonder `.tsx`; `exportName` moet exact overeenkomen met de named export. De Code-tab leest de werkelijke bron via Vite `?raw`. Geef eigen CSS op in `styles` en benodigde helpers in `supportingFiles`, relatief aan `src/effects/`. Deze worden ook aan Sandpack en de browserexport toegevoegd. Importeer eventuele nieuwe CSS tevens voor de websitepreview, volgens het bestaande patroon in `src/main.tsx` of vanuit het effectmodule.
 9. Dependencies in de definitie moeten overeenkomen met de imports. Sandpack voert broncode geïsoleerd uit en heeft internet nodig. Controleer echte compilatie, compilerfouten, reset, copy en export. Bied geen nepconversie van TSX naar JSX of CSS naar Tailwind aan.
@@ -85,3 +85,18 @@ Voor visuele controle: mobiel, tablet, desktop en een groot scherm; beide thema�
 De bestaande componentworkshop en eigen componentroutes blijven compatibel met IndexedDB versie 1. Wijzig of wis deze data niet bij het toevoegen van built-ins. Favorieten gebruiken alleen ids onder `devui-favorites-v1` in localStorage. Het behouden van een id houdt bestaande favorieten bruikbaar wanneer een planned item ready wordt.
 
 GET STARTED / MCP is een informatiepagina: er is geen MCP-server geconfigureerd. Blocks, App UI, Templates en Skills zijn expliciet geplande collecties zonder verzonnen inhoud. Bouw ook deze pas uit na een afzonderlijke opdracht.
+
+## Uitgewerkt voorbeeld: Tech Text (fase 5)
+
+Tech Text is nu de eerste planned → ready-uitbreiding na de catalogusfase. Het record behoudt id `tech-text`, positie en route `/text-animations/tech-text`. Alle overige planned records blijven ongewijzigd. De catalogus telt 30 ready en 209 planned.
+
+- `effects/TechText.tsx`: kleine React-wrapper; één engine per mount, updates via refs en volledige cleanup.
+- `TechText.engine.ts`: layout, canvasbuffers, alpha-hitdetectie, reveal-maskers, selectie, pointer capture, toetsenbord, intros en springs.
+- `TechText.geometry.ts`: eigen marching-squares-contourtracing en geteste wiskunde.
+- `TechText.types.ts`: publieke props, exacte defaults en veilige numerieke grenzen.
+- `TechText.config.ts`: de 26 bestaande schema-controls en vier complete presets. Dit bestand hoort bij de websiteconfiguratie en hoeft niet mee in het losse componentexport.
+- `TechText.css`: eigen effectstijl. De registry vermeldt CSS en alle drie engine-/geometry-/typehelpers, zodat Sandpack en exports compleet zijn.
+
+De bestaande Controls-renderer ondersteunt nu optionele `group`-koppen en `inherit: true` voor kleuren. Dat laatste bewaart daadwerkelijk `currentColor`; de color input toont een geldige hex-swatch en een aparte terugknop voor overerving. Bestaande hex-kleurcontrols blijven gelijk. De presetselectie wordt afgeleid uit de actuele waarden, zodat Reset geen oude presetnaam laat staan.
+
+De tests meten echte canvaspixels voor reveal, kleur, dragging, spring return en kick. Ze controleren ook broncompilatie en geïsoleerd bewerken in Sandpack, alle intro’s en presets, DPR/touch, reduced motion, pauzering en vijf schermmaten in beide thema’s. Gebruik deze gerichte controles als patroon voor de volgende zelfstandige implementatie; neem het effect of de bron van een referentiesite niet letterlijk over. Zie LICENSE_REVIEW.md voor de gecontroleerde upstreambeperkingen en herkomst.

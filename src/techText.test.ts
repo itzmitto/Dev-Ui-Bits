@@ -25,6 +25,7 @@ describe('original Tech Text geometry and integration',()=>{
   });
   it('uses exact requested defaults, validates controls and complete deterministic presets',()=>{
     expect(normalizeTechText({})).toEqual(techTextDefaults);
+    expect(normalizeTechText({intro:undefined,sweep:undefined})).toEqual(techTextDefaults);
     expect(techTextDefaults).toMatchObject({text:'DevUI Bits',fontSize:150,fontWeight:600,letterSpacing:-.05,color:'currentColor',accentColor:'currentColor',intro:'none'});
     expect(normalizeTechText({fontSize:NaN,speed:-2,specks:200})).toMatchObject({fontSize:150,speed:0,specks:60});
     expect(()=>validateSchema(techTextControls,{...techTextDefaults})).not.toThrow();

@@ -117,6 +117,7 @@ test('real TypeScript, CSS and helpers compile in Sandpack and edits stay isolat
  await expect(page.getByText('Dependencies',{exact:true})).toBeVisible();
  await page.getByRole('button',{name:'TechText.tsx',exact:true}).click();const editor=page.locator('.cm-content[contenteditable=true]').first();await editor.click();await page.keyboard.press('ControlOrMeta+a');await page.keyboard.insertText('export function TechText(){return <h1>Isolated edit</h1>}');
  await expect(frame.getByRole('heading',{name:'Isolated edit'})).toBeVisible({timeout:20000});
+ await editor.click();await page.keyboard.press('ControlOrMeta+a');await page.keyboard.insertText('export function TechText( {');await expect(page.locator('.sp-error-message').first()).toBeVisible({timeout:20000});
  await page.getByRole('button',{name:'Reset',exact:true}).click();await expect(frame.locator('.tech-text canvas')).toHaveAttribute('aria-label','DevUI Bits',{timeout:20000});
  await page.getByRole('tab',{name:'Preview',exact:true}).click();await expect(canvas(page)).toHaveAttribute('aria-label','DevUI Bits');await page.reload();await expect(canvas(page)).toHaveAttribute('aria-label','DevUI Bits');
 });
@@ -134,3 +135,14 @@ for(const [width,height] of [[375,812],[768,1024],[1440,900],[1920,1080],[2560,1
   await page.getByRole('button',{name:`Switch to ${theme==='dark'?'light':'dark'} theme`}).click();await expect(c).toHaveAttribute('aria-label','DevUI Bits');await page.reload();await expect(c).toHaveAttribute('aria-label','DevUI Bits');expect(errors).toEqual([]);
  });
 }
+
+
+test.describe('HiDPI touch preview',()=>{
+ test.use({viewport:{width:375,height:812},deviceScaleFactor:3,isMobile:true,hasTouch:true});
+ test('caps DPR and responds to a real touch tap',async({page})=>{
+  await open(page);await still(page);await page.getByLabel('Reveal Mode',{exact:true}).selectOption('off');await page.getByRole('switch',{name:'Selection',exact:true}).uncheck();await page.getByRole('switch',{name:'Labels',exact:true}).uncheck();
+  const c=canvas(page),point=await inkPoint(c),initial=await ink(c);
+  const ratio=await c.evaluate((el:HTMLCanvasElement)=>el.width/el.getBoundingClientRect().width);expect(ratio).toBeCloseTo(2,1);
+  await page.touchscreen.tap(point.x,point.y);await expect.poll(()=>ink(c)).toBeLessThan(initial*.95);await expect(c).toHaveAttribute('data-dragging','false');
+ });
+});

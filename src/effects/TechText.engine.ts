@@ -115,6 +115,12 @@ export class TechTextEngine {
         }
       });
     }
+    if(this.glyphs.length){
+      const inkLeft=Math.min(...this.glyphs.map(g=>g.x+g.sprite.left+3));
+      const inkRight=Math.max(...this.glyphs.map(g=>g.x+g.sprite.left+g.sprite.width-3));
+      this.wordWidth=inkRight-inkLeft;
+      this.left=p.align==='left'?32-inkLeft:p.align==='right'?this.width-32-inkRight:(this.width-this.wordWidth)/2-inkLeft;
+    }
     // Read-only layout diagnostics also make precise canvas interactions testable.
     this.canvas.dataset.fontSize=this.fontSize.toFixed(3);
     this.canvas.dataset.glyphs=JSON.stringify(this.glyphs.map(g=>({char:g.char,x:this.left+g.x+g.sprite.left+3,y:this.baseline+g.sprite.top+3,width:g.sprite.width-6,height:g.sprite.height-6})));
@@ -244,7 +250,7 @@ export class TechTextEngine {
     const intro=reduced||p.intro==='none'?1:clamp01(this.introElapsed/p.introDuration);
     const inIntro=intro<1,typing=p.intro==='type'&&inIntro;
     let x=this.pointer.x,y=this.pointer.y;
-    const sweeping=!this.pointer.inside&&this.keyboard<0&&p.sweep&&p.speed>0&&!reduced&&!inIntro&&p.reveal!=='off';
+    const sweeping=this.glyphs.length>0&&!this.pointer.inside&&this.keyboard<0&&p.sweep&&p.speed>0&&!reduced&&!inIntro&&p.reveal!=='off';
     if(sweeping){const phase=(this.elapsed*p.speed*.14)%1;x=this.left-60+phase*(this.wordWidth+120);y=this.baseline-this.cap*.4;}
     this.active=this.drag?.index??(this.keyboard>=0?this.keyboard:(this.pointer.inside||sweeping?this.hit(x,y):-1));
     if(typing)this.active=Math.min(this.glyphs.length-1,Math.floor(intro*this.glyphs.length));

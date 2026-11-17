@@ -1,6 +1,6 @@
 # DevUI Bits
 
-Een zelfstandige bibliotheek met **239 catalogusitems: 29 werkende React-componenten en 210 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Gebouwd op het bestaande DevUI Bits-project: alle 29 bestaande effecten en functies zijn behouden.
+Een zelfstandige bibliotheek met **239 catalogusitems: 30 werkende React-componenten en 209 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Gebouwd op het bestaande DevUI Bits-project: alle 29 bestaande effecten en functies zijn behouden.
 
 **Start hier:** [SETUP-GITHUB-VERCEL.md](SETUP-GITHUB-VERCEL.md) beschrijft ZIP → VS Code → GitHub → publieke Vercel-site, met exacte commando's en controles vóór Git-initialisatie of remote-wijzigingen.
 
@@ -33,11 +33,11 @@ Op Linux eventueel `npx playwright install --with-deps chromium`. De testconfigu
 
 ## Complete componentcatalogus
 
-`/browse` en `/get-started/index` openen dezelfde volledige catalogus. Deze bevat alle 217 aangeleverde namen in de gevraagde volgorde plus 22 bestaande namen die nog niet in die lijst stonden: **239 unieke records**, waarvan **29 Ready** en **210 Planned**. Er zijn in deze fase geen nieuwe effecten gebouwd. Crystalized Ball blijft gepland.
+`/browse` en `/get-started/index` openen dezelfde volledige catalogus. Deze bevat alle 217 aangeleverde namen in de gevraagde volgorde plus 22 bestaande namen die nog niet in die lijst stonden: **239 unieke records**, waarvan **30 Ready** en **209 Planned**. In fase 4 zijn uitsluitend catalogus en placeholders gebouwd. Fase 5 voegt alleen Tech Text toe; Crystalized Ball en alle andere geplande effecten blijven gepland.
 
 | Categorie | Totaal | Ready | Planned |
 | --- | ---: | ---: | ---: |
-| Text Animations | 34 | 5 | 29 |
+| Text Animations | 34 | 6 | 28 |
 | Animations | 41 | 3 | 38 |
 | Components | 56 | 10 | 46 |
 | Micro Interactions | 39 | 5 | 34 |
@@ -52,6 +52,16 @@ Alle bestaande component-URLs blijven werken. Scroll Reveal staat nu bij Text An
 Geplande detailpagina’s hebben uitsluitend metadata, status, een eenvoudige previewcontainer en een teruglink. Code, Editor en Customize ontbreken tot er echte broncode is. GET STARTED bevat eigen introductie, installatie, changelog, favorieten en een eerlijke MCP-informatiepagina: er is geen MCP-server geconfigureerd. Blocks, App UI, Templates en Skills zijn duidelijk geplande collecties.
 
 **Verder ontwikkelen:** [ADDING-COMPONENTS.md](ADDING-COMPONENTS.md) beschrijft hoe één planned component met behoud van id en route ready wordt, inclusief renderer, defaults, controls, CSS, dependencies, Sandpack en tests.
+
+## Tech Text — fase 5
+
+`/text-animations/tech-text` gebruikt nu een eigen Canvas 2D-engine. Alle 29 eerdere implementaties blijven bestaan; alleen dit bestaande planned record is uitgebreid. De defaults zijn DevUI Bits, font-weight 600, maximaal 150px en -0,05em spacing. De tekst krimpt op smalle previews en centreert op de echte ink-bounds.
+
+De 26 schema-controls en vier volledige presets regelen typography, geërfde of gekozen kleuren, dashed/solid contouren, letter/area/off-reveal, selection, labels, specks, guides, dragging, click kick, bounce, sweep en none/type/assemble/metrics-intro’s. De bestaande Restart-, Reset-, viewport- en fullscreenknoppen werken. Gebruik links/rechts en Enter/Spatie voor toetsenbordinteractie.
+
+De engine meet graphemes en kerning, bewaart alpha-sprites en Path2D-contouren, gebruikt een herbruikbaar radiaal masker voor area reveal en substeps voor stabiele springs. DPR is begrensd op 2. De RAF-loop stopt buiten beeld, in een verborgen document en bij rust; reduced motion schakelt automatische beweging uit. Fontwijzigingen veroorzaken een nieuwe layout, pointerbewegingen geen React-renders. Een eigen Font Family moet al via CSS op de pagina geladen of op het apparaat beschikbaar zijn.
+
+Code en Editor leveren de echte TSX, CSS en drie helperbestanden, zonder extra npm-dependencies. Sandpackbewerkingen blijven geïsoleerd. De herkomst en actuele upstreamlicentiecontrole staan in [LICENSE_REVIEW.md](LICENSE_REVIEW.md); neem React Bits-broncode niet zonder eigen beoordeling over. Uitgevoerde checks en beperkingen staan in PROGRESS.md.
 
 ## Homepage, thema en responsive layout
 
