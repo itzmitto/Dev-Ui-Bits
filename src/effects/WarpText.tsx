@@ -4,6 +4,7 @@ import { bound,fontOf,useTextAnimation } from './textRuntime';
 import { rasterText,sizeCanvas } from './textCanvas';
 import { createWarpRenderer } from './WarpText.renderer';
 import './WarpText.css';
+import './textDisplay.css';
 export function WarpText(p:EffectProps){
  const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),latest=useRef(p);latest.current=p;const [fallback,setFallback]=useState(false);
  const uploadRef=useRef(()=>{});

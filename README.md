@@ -1,6 +1,6 @@
 # DevUI Bits
 
-Een zelfstandige bibliotheek met **239 catalogusitems: 35 werkende React-componenten en 204 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Gebouwd op het bestaande DevUI Bits-project: alle 29 bestaande effecten en functies zijn behouden.
+Een zelfstandige bibliotheek met **239 catalogusitems: 40 werkende React-componenten en 199 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Gebouwd op het bestaande DevUI Bits-project: alle 29 bestaande effecten en functies zijn behouden.
 
 **Start hier:** [SETUP-GITHUB-VERCEL.md](SETUP-GITHUB-VERCEL.md) beschrijft ZIP → VS Code → GitHub → publieke Vercel-site, met exacte commando's en controles vóór Git-initialisatie of remote-wijzigingen.
 
@@ -33,11 +33,11 @@ Op Linux eventueel `npx playwright install --with-deps chromium`. De testconfigu
 
 ## Complete componentcatalogus
 
-`/browse` en `/get-started/index` openen dezelfde volledige catalogus. Deze bevat alle 217 aangeleverde namen in de gevraagde volgorde plus 22 bestaande namen die nog niet in die lijst stonden: **239 unieke records**, waarvan **35 Ready** en **204 Planned**. In fase 4 zijn uitsluitend catalogus en placeholders gebouwd. Fase 5 voegt Tech Text toe. Fase 6 wordt in gecontroleerde batches uitgevoerd; Crystalized Ball blijft gepland.
+`/browse` en `/get-started/index` openen dezelfde volledige catalogus. Deze bevat alle 217 aangeleverde namen in de gevraagde volgorde plus 22 bestaande namen die nog niet in die lijst stonden: **239 unieke records**, waarvan **40 Ready** en **199 Planned**. In fase 4 zijn uitsluitend catalogus en placeholders gebouwd. Fase 5 voegt Tech Text toe. Fase 6 wordt in gecontroleerde batches uitgevoerd; Crystalized Ball blijft gepland.
 
 | Categorie | Totaal | Ready | Planned |
 | --- | ---: | ---: | ---: |
-| Text Animations | 34 | 11 | 23 |
+| Text Animations | 34 | 16 | 18 |
 | Animations | 41 | 3 | 38 |
 | Components | 56 | 10 | 46 |
 | Micro Interactions | 39 | 5 | 34 |
@@ -188,8 +188,22 @@ De Playwright-suite bevat de bestaande component-, Customize-, Sandpack-, Indexe
 
 ## Text Animations — fase 6, batch 1
 
-Text Loop, Masked Heading, Particle Text, Split Flap Text en Warp Text hebben eigen modules, complete presets, echte TSX/CSS-bronbestanden en geïsoleerde Sandpack-voorbeelden. Technieken: SVG textPath met momentum; Canvas-media clipping; glyph-particles met springs; mechanische halve flip-panelen; een zelfstandig geschreven WebGL-lensshader. Geen nieuwe npm-dependencies. Alle 30 eerdere Ready-implementaties blijven behouden.
+Text Loop, Masked Heading, Particle Text, Split Flap Text en Warp Text hebben eigen modules, complete presets, echte TSX/CSS-bronbestanden en geïsoleerde Sandpack-voorbeelden. Technieken: SVG textPath met momentum; Canvas-media clipping; glyph-particles met springs; mechanische halve flip-panelen; een zelfstandig geschreven WebGL-lensshader. Geen nieuwe npm-packages geïnstalleerd. Vier voorbeelden uit deze batch gebruiken de bestaande Geist-fontdependency; Split Flap gebruikt systeemmonospace. Alle 30 eerdere Ready-implementaties blijven behouden.
 
 Masked Heading gebruikt standaard een eigen gegenereerde kleurmesh, geen gekopieerde referentievideo. Via Media URL kan eigen CORS-geschikte media worden gebruikt. Font Family verwacht een lokaal of via CSS geladen font. Split Flap gebruikt voor de schema-editor een met `|` gescheiden phrasestring. Warp Text toont een expliciete statische fallback als WebGL ontbreekt. De controls en presetnamen volgen de zichtbare demo; eigen parameterafstemming is geen claim van identieke upstreambron of pixelperfecte reproductie.
 
-De resterende 23 aangevraagde Text Animations blijven Planned tot hun eigen implementatie en controles zijn afgerond. Zie PROGRESS.md voor actuele testresultaten en voortgang.
+De resterende 18 aangevraagde Text Animations blijven Planned tot hun eigen implementatie en controles zijn afgerond. Zie PROGRESS.md voor actuele testresultaten en voortgang.
+
+## Text Animations — fase 6, batch 2
+
+Stroke Text, Depth Text, Fold Text, Echo Text en Circular Text zijn gekoppeld aan hun bestaande records en routes. Elke module heeft eigen TSX/CSS, schema-controls, vier complete presets, bronexports en een geïsoleerd compileerbaar Sandpack-voorbeeld. Stroke Text maakt echte SVG-contouren uit eigen glyphmetingen; Depth Text gebruikt een 3D-stack met springcompressie; Fold Text echte scharnierpanelen; Echo Text vertraagde kopieën met pointer/scroll/auto-trails; Circular Text gemeten ringtypografie met angular dragging en momentum.
+
+Negen nieuwe voorbeelden gebruiken bestaande Geist-fontassets via de eigen alias `DevUI Display`, zodat 100–900 echt beschikbaar zijn zonder de fontselectie van bestaande pagina’s te wijzigen. Het project had `@fontsource/geist` al geïnstalleerd; de geïsoleerde voorbeelden vermelden die dependency nu ook. Fontlicentie: OFL-1.1. Er is geen extra animatie-, shader- of physicsbibliotheek geïnstalleerd.
+
+De publieke presetnamen en relevante properties zijn onderzocht; presetwaarden en algoritmen zijn zelfstandig afgestemd. Dit is geen claim van pixelperfecte reproductie. Stroke Text tekent uit gerasterde fonts afgeleide vectorcontouren, niet de oorspronkelijke font-Béziercurves. Circular Text biedt in de primitive schema-editor enkele eigen center-opties in plaats van willekeurige React children. Een custom Font Family moet al op de gebruiker zijn apparaat of via CSS beschikbaar zijn.
+
+Sandpack laat package-relatieve font-URL’s in CSS onveranderd. Alleen het bewerkbare geïsoleerde draft zet daarom de bekende Geist-assetpaden om naar de vastgezette openbare jsDelivr-packageversie 5.3.0. Code-tab en normale Vite-projectexport behouden de originele npm-relatieve CSS en lokaal gebundelde fonts. Een export vanuit de live editor bevat de op dat moment zichtbare draft-URL’s. De editor had al internet nodig; de hoofdwebsite blijft voor deze fonts zelfstandig.
+
+Optionele lokale renderproef na `npm run preview`: `PLAYWRIGHT_BASE_URL=http://localhost:4173 node scripts/profile-text-effects.mjs`. Installeer eerst Playwright Chromium zoals hierboven. Deze proef telt echte canvas-/WebGL-draws of DOM/SVG-mutaties en controleert offscreenstilstand. Het is geen algemene FPS- of geheugenlekgarantie.
+
+Laatste verificatie op de definitieve build: **strict TypeScript, 25/25 Vitest, productiebuild en 128/128 Playwright-tests geslaagd**. Getest zijn onder meer de behouden componenten/routes/editor/IndexedDB-flows, alle tien nieuwe bronnen in Sandpack, daadwerkelijke fontassetlading, controls/presets, responsive themes, pointer/touch, glyphmetingen, video-lifecycle en observer-/RAF-cleanup. De eerdere proef en reparaties staan in PROGRESS.md. Fase 6 is nog niet geheel afgerond: batch 3 tot en met 6 blijven Planned.

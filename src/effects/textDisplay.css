@@ -1,0 +1,11 @@
+/* Scoped font alias: existing pages retain their original font selection. */
+@font-face{font-family:'DevUI Display';font-style:normal;font-weight:400;font-display:swap;src:url('@fontsource/geist/files/geist-latin-400-normal.woff2') format('woff2')}
+@font-face{font-family:'DevUI Display';font-style:normal;font-weight:600;font-display:swap;src:url('@fontsource/geist/files/geist-latin-600-normal.woff2') format('woff2')}
+@font-face{font-family:'DevUI Display';font-style:normal;font-weight:800;font-display:swap;src:url('@fontsource/geist/files/geist-latin-800-normal.woff2') format('woff2')}
+@font-face{font-family:'DevUI Display';font-style:normal;font-weight:900;font-display:swap;src:url('@fontsource/geist/files/geist-latin-900-normal.woff2') format('woff2')}
+.text-loop,.masked-heading,.particle-text,.warp-text,.stroke-text{font-family:'DevUI Display',system-ui,sans-serif}
+@font-face{font-family:'DevUI Display';font-style:normal;font-weight:100;font-display:swap;src:url('@fontsource/geist/files/geist-latin-100-normal.woff2') format('woff2')}
+@font-face{font-family:'DevUI Display';font-style:normal;font-weight:200;font-display:swap;src:url('@fontsource/geist/files/geist-latin-200-normal.woff2') format('woff2')}
+@font-face{font-family:'DevUI Display';font-style:normal;font-weight:300;font-display:swap;src:url('@fontsource/geist/files/geist-latin-300-normal.woff2') format('woff2')}
+@font-face{font-family:'DevUI Display';font-style:normal;font-weight:500;font-display:swap;src:url('@fontsource/geist/files/geist-latin-500-normal.woff2') format('woff2')}
+@font-face{font-family:'DevUI Display';font-style:normal;font-weight:700;font-display:swap;src:url('@fontsource/geist/files/geist-latin-700-normal.woff2') format('woff2')}

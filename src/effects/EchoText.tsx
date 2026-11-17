@@ -3,6 +3,7 @@ import { num,str,type EffectProps } from './types';
 import { bound,useTextAnimation } from './textRuntime';
 import { textEase,useFittedText } from './textLayout';
 import './EchoText.css';
+import './textDisplay.css';
 export function mixEchoColor(a:string,b:string,t:number){const rgb=(hex:string)=>[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)||0);const x=rgb(a),y=rgb(b);return `rgb(${x.map((v,i)=>Math.round(v+(y[i]-v)*t)).join(',')})`;}
 export function EchoText(p:EffectProps){
  const host=useRef<HTMLDivElement>(null),mark=useRef<HTMLDivElement>(null),latest=useRef(p);latest.current=p;const state=useRef({age:0,hover:false,px:0,py:0,scroll:0,burst:10,burstX:0,burstY:0,points:Array.from({length:25},()=>({x:0,y:0}))});
@@ -17,7 +18,7 @@ export function EchoText(p:EffectProps){
  });
  useEffect(()=>{const s=state.current;s.age=0;s.points=Array.from({length:25},()=>({x:0,y:0}));wake();},[p.text,p.mode,p.direction]);
  useEffect(()=>{if(p.trail!=='scroll')return;let last=scrollY,lastTime=performance.now();const onScroll=()=>{const now=performance.now(),s=state.current;s.scroll=Math.max(-160,Math.min(160,(scrollY-last)/Math.max(16,now-lastTime)*100));last=scrollY;lastTime=now;wake();};addEventListener('scroll',onScroll,{passive:true});return()=>removeEventListener('scroll',onScroll);},[p.trail]);
- const color=str(p,'color','#ffffff');return <div ref={host} className="echo-text" role="img" aria-label={text} style={{fontSize:size,fontWeight:num(p,'fontWeight',800),fontFamily:str(p,'fontFamily','')||'inherit'}} onPointerMove={e=>{const b=e.currentTarget.getBoundingClientRect();state.current.px=e.clientX-b.x-b.width/2;state.current.py=e.clientY-b.y-b.height/2;state.current.hover=Math.hypot(state.current.px,state.current.py)<num(p,'cursorRadius',320);wake();}} onPointerLeave={()=>{state.current.hover=false;wake();}} onClick={()=>{if(p.clickBurst){state.current.burst=0;state.current.burstX=state.current.px;state.current.burstY=state.current.py;wake();}}}>
+ const color=str(p,'color','#ffffff');return <div ref={host} className="echo-text" role="img" aria-label={text} style={{fontSize:size,fontWeight:num(p,'fontWeight',800),fontFamily:str(p,'fontFamily','')||'DevUI Display, system-ui, sans-serif'}} onPointerMove={e=>{const b=e.currentTarget.getBoundingClientRect();state.current.px=e.clientX-b.x-b.width/2;state.current.py=e.clientY-b.y-b.height/2;state.current.hover=Math.hypot(state.current.px,state.current.py)<num(p,'cursorRadius',320);wake();}} onPointerLeave={()=>{state.current.hover=false;wake();}} onClick={e=>{if(p.clickBurst){const b=e.currentTarget.getBoundingClientRect();state.current.burst=0;state.current.burstX=e.clientX-b.x-b.width/2;state.current.burstY=e.clientY-b.y-b.height/2;wake();}}}>
  <div ref={mark} className="echo-wordmark" aria-hidden="true">{Array.from({length:count+1},(_,i)=>i).reverse().map(i=><span key={i} data-echo={i} style={{color:i?mixEchoColor(p.gradient?str(p,'nearColor','#7dd3fc'):color,str(p,'tint','#7dd3fc'),i/count):color,filter:i?`blur(${num(p,'blur',3)*i/count}px)`:undefined,WebkitTextStroke:i&&p.echoStyle==='outline'?'1px currentColor':undefined,WebkitTextFillColor:i&&p.echoStyle==='outline'?'transparent':undefined}}>{text}</span>)}</div>
  </div>;
 }

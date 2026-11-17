@@ -7,7 +7,7 @@ const context=await browser.newContext({viewport:{width:1440,height:1000},colorS
 try{for(const slug of process.argv.slice(2)){
  const page=await context.newPage();
  await page.goto(`https://reactbits.dev/text-animations/${slug}`);await page.locator('table').waitFor({timeout:30000});await page.evaluate(()=>document.fonts.ready);
- await page.waitForTimeout(3200);const announcement=page.getByRole('button',{name:'Close announcement',exact:true});if(await announcement.isVisible())await announcement.press('Enter');
+ await page.waitForTimeout(3200);const announcement=page.getByRole('button',{name:'Close announcement',exact:true});if(await announcement.isVisible()){await announcement.press('Enter');await page.locator('.announcement-modal-backdrop').waitFor({state:'hidden',timeout:4000}).catch(()=>{});}
  const data=await page.evaluate(()=>({title:document.querySelector('h1')?.textContent,props:Array.from(document.querySelectorAll('table tr')).map(row=>Array.from(row.querySelectorAll('td')).map(cell=>cell.textContent)),sliders:Array.from(document.querySelectorAll('[role=slider]')).map(e=>({label:e.getAttribute('aria-label'),value:e.getAttribute('aria-valuenow')})),inputs:Array.from(document.querySelectorAll('input[aria-label]')).map(e=>({label:e.getAttribute('aria-label'),value:e.value}))}));
  await page.screenshot({path:`screenshots/reference-${slug}-1440.png`});
  const preset=page.getByRole('button',{name:'Preset',exact:true});

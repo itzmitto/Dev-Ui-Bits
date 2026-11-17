@@ -3,6 +3,7 @@ import { SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview, 
 import { Copy, Download, Plus, RotateCcw, Save } from 'lucide-react';
 import { exportProject } from './export';
 import { useTheme } from './theme';
+import { sandboxAssetFiles } from './sandboxAssets';
 import type { EffectProps, FileMap } from './types';
 
 const darkTheme={colors:{surface1:'#15111c',surface2:'#211b29',surface3:'#32283f',clickable:'#9f94ad',base:'#dcd6e5',disabled:'#62596e',hover:'#ffffff',accent:'#c391ff',error:'#fb7185',errorSurface:'#381f2e'},syntax:{plain:'#ddd5e6',comment:'#72657f',keyword:'#c084fc',tag:'#d8b4fe',punctuation:'#a89cb6',definition:'#93c5fd',property:'#c4b5fd',static:'#86efac',string:'#a5d6a7'},font:{body:'Geist, sans-serif',mono:'ui-monospace, SFMono-Regular, monospace',size:'12px',lineHeight:'1.8'}};
@@ -29,11 +30,12 @@ export default function Editor(props:EditorProps){
  // overwrite edits or files added inside the sandbox.
  const fileKey = JSON.stringify(props.files), dependencyKey = JSON.stringify(props.dependencies ?? {});
  const sandboxFiles = useMemo(() => {
-   const source = JSON.parse(fileKey) as FileMap;
+   const originals = JSON.parse(fileKey) as FileMap;
+   const source = props.readOnly ? originals : sandboxAssetFiles(originals);
    const appPath = source['/App.jsx'] ? '/App.jsx' : '/App.tsx';
    const entry = `import React from 'react';\nimport { createRoot } from 'react-dom/client';\nimport App from '.${appPath}';\ncreateRoot(document.getElementById('root')!).render(<App />);`;
    return { ...source, '/index.tsx': { code: entry, hidden: true } };
- }, [fileKey]);
+ }, [fileKey, props.readOnly]);
  const customSetup = useMemo(() => ({ dependencies: { react:'^19.0.0', 'react-dom':'^19.0.0', ...JSON.parse(dependencyKey) as Record<string,string> } }), [dependencyKey]);
  const options = useMemo(() => {
    const files = JSON.parse(fileKey) as FileMap;

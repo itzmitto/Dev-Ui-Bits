@@ -2,6 +2,7 @@ import { useEffect,useId,useMemo,useRef, type PointerEvent } from 'react';
 import { num,str,type EffectProps } from './types';
 import { bound,useTextAnimation } from './textRuntime';
 import './TextLoop.css';
+import './textDisplay.css';
 
 export function loopPath(shape:string,curve:number){
  if(shape==='circle'){const r=Math.min(215,110+curve);return `M ${600-r} 260 a ${r} ${r} 0 1 1 ${r*2} 0 a ${r} ${r} 0 1 1 ${-r*2} 0`;}
@@ -19,10 +20,12 @@ export function TextLoop(p:EffectProps){
  const phrase=`${str(p,'text','DevUI ✦ Bits')} ${str(p,'separator','✦')} `;
  const text=p.uppercase===false?phrase:phrase.toUpperCase();
  useEffect(()=>{
-  const path=route.current;if(!path)return;const sample=document.createElement('canvas').getContext('2d')!;
-  sample.font=`${num(p,'fontWeight',800)} ${fontSize}px ${getComputedStyle(host.current!).fontFamily}`;
-  const width=sample.measureText(text).width+Array.from(text).length*num(p,'letterSpacing',2);
-  const length=path.getTotalLength();motion.current.period=['circle','infinity'].includes(shape)?length/Math.max(1,Math.round(length/width)):Math.max(20,width);
+  const path=route.current;if(!path)return;let live=true;
+  const measure=()=>{if(!live)return;const nodes=paths.current.filter((node):node is SVGTextPathElement=>!!node);for(const node of nodes){node.removeAttribute('textLength');node.removeAttribute('lengthAdjust');}
+   const width=Math.max(1,(nodes[0]?.getComputedTextLength()??1000)/50);let length=width;try{length=path.getTotalLength();}catch{/* A malformed custom path must not crash the library. */}
+   const closed=['circle','infinity'].includes(shape),period=closed?Math.max(20,length/Math.max(1,Math.round(length/width))):Math.max(20,width);motion.current.period=period;
+   if(closed)for(const node of nodes){node.setAttribute('textLength',String(period*50));node.setAttribute('lengthAdjust','spacingAndGlyphs');}wake();};
+  measure();document.fonts?.addEventListener('loadingdone',measure);void document.fonts?.ready.then(measure);return()=>{live=false;document.fonts?.removeEventListener('loadingdone',measure);};
  },[text,fontSize,p.fontWeight,p.letterSpacing,d,shape]);
  const wake=useTextAnimation(host,(dt,_time,reduced)=>{
   const state=motion.current,desired=(p.paused||state.hover&&p.pauseOnHover!==false?0:num(p,'speed',90))*(p.direction==='reverse'?-1:1);

@@ -3,6 +3,7 @@ import { num,str,type EffectProps } from './types';
 import { bound,easeOut,fontOf,seeded,useTextAnimation } from './textRuntime';
 import { rasterText,sizeCanvas } from './textCanvas';
 import './ParticleText.css';
+import './textDisplay.css';
 import { particleTargets } from './particleTargets';
 type Particle={homeX:number;homeY:number;x:number;y:number;vx:number;vy:number;startX:number;startY:number;delay:number;seed:number};
 export function ParticleText(p:EffectProps){
