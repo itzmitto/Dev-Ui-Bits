@@ -3,6 +3,7 @@ import { num,str,type EffectProps } from './types';
 import { bound,easeOut,fontOf,seeded,useTextAnimation } from './textRuntime';
 import { rasterText,sizeCanvas } from './textCanvas';
 import './ParticleText.css';
+import { particleTargets } from './particleTargets';
 type Particle={homeX:number;homeY:number;x:number;y:number;vx:number;vy:number;startX:number;startY:number;delay:number;seed:number};
 export function ParticleText(p:EffectProps){
  const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),latest=useRef(p);latest.current=p;
@@ -43,8 +44,7 @@ export function ParticleText(p:EffectProps){
   const resize=()=>{const q=latest.current,rect=root.getBoundingClientRect();s.w=rect.width;s.h=rect.height;s.dpr=sizeCanvas(el,s.w,s.h);
    const {ctx}=rasterText(mask,str(q,'text','Future Interfaces'),s.w,s.h,bound(q.fontSize,128,24,300),num(q,'fontWeight',800),fontOf(root,str(q,'fontFamily','')));
    const pixels=ctx.getImageData(0,0,mask.width,mask.height).data,step=Math.max(2,Math.round(num(q,'density',4))),random=seeded(231);s.particles=[];
-   const targets:{x:number;y:number}[]=[];for(let y=0;y<mask.height;y+=step)for(let x=0;x<mask.width;x+=step)if(pixels[(y*mask.width+x)*4+3]>128)targets.push({x,y});
-   for(let i=0;i<targets.length;i+=Math.max(1,targets.length/7000)){const {x,y}=targets[Math.floor(i)];s.particles.push({homeX:x,homeY:y,x,y,vx:0,vy:0,startX:x,startY:y,delay:random(),seed:random()*Math.PI*2});}
+   for(const {x,y} of particleTargets(pixels,mask.width,mask.height,step))s.particles.push({homeX:x,homeY:y,x,y,vx:0,vy:0,startX:x,startY:y,delay:random(),seed:random()*Math.PI*2});
    restart();wake();};
   resize();const observer=new ResizeObserver(resize);observer.observe(root);document.fonts?.addEventListener('loadingdone',resize);void document.fonts?.ready.then(()=>{if(root.isConnected)resize();});
   return()=>{observer.disconnect();document.fonts?.removeEventListener('loadingdone',resize);s.particles=[];};

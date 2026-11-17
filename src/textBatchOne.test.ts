@@ -1,0 +1,14 @@
+import { describe,it,expect } from 'vitest';
+import { loopPath } from './effects/TextLoop';
+import { flapOrder,flapPhrases } from './effects/SplitFlapText';
+import { particleTargets } from './effects/particleTargets';
+import { textBatchOne } from './effects/textBatchOne.config';
+import { builtinFiles,findComponent,registry } from './registry';
+import { validateSchema } from './storage';
+describe('batch 1 independent text engines',()=>{
+ it('creates distinct continuous SVG curves with finite coordinates',()=>{const paths=['wave','circle','infinity','arch','line'].map(shape=>loopPath(shape,90));expect(new Set(paths).size).toBe(5);for(const path of paths){expect(path.startsWith('M')).toBe(true);expect(path).not.toMatch(/NaN|Infinity|undefined/);}expect(loopPath('wave',0)).not.toBe(loopPath('wave',90));});
+ it('orders mechanical cascades deterministically and preserves phrase overrides',()=>{for(const order of ['left','right','center','random'])expect([...flapOrder(12,order)].sort((a,b)=>a-b)).toEqual(Array.from({length:12},(_,i)=>i));expect(flapOrder(5,'right')).toEqual([4,3,2,1,0]);expect(flapOrder(5,'center')[0]).toBe(2);expect(flapOrder(12,'random')).toEqual(flapOrder(12,'random'));expect(flapPhrases('Ready|Online','')).toEqual(['READY','ONLINE']);expect(flapPhrases('ignored','DevUI')).toEqual(['DEVUI']);});
+ it('samples actual glyph alpha and caps particles across the entire mask',()=>{const pixels=new Uint8ClampedArray(100*100*4);for(let i=3;i<pixels.length;i+=4)pixels[i]=255;const points=particleTargets(pixels,100,100,1,100);expect(points.length).toBeLessThanOrEqual(101);expect(points.at(-1)!.y).toBeGreaterThan(95);expect(particleTargets(new Uint8ClampedArray(400),10,10,2)).toEqual([]);expect(particleTargets(pixels,100,100,10)).toHaveLength(100);});
+ it('exports real standalone modules, CSS and every supporting dependency',()=>{for(const [name,entry] of Object.entries(textBatchOne)){const slug=name.replace(/([a-z])([A-Z])/g,'$1-$2').toLowerCase(),item=findComponent('text-animations',slug);expect(item?.status,slug).toBe('ready');if(item?.status!=='ready')throw new Error(slug);expect(registry.filter(c=>c.id===item.id)).toHaveLength(1);const files=builtinFiles(item,item.defaults);expect(files[`/effects/${name}.tsx`]).toContain(`export function ${name}`);for(const helper of entry.helpers)expect(files[`/effects/${helper}`]?.length).toBeGreaterThan(20);expect(item.dependencies).toEqual({});}});
+ it('validates every control and complete preset against its actual defaults',()=>{for(const entry of Object.values(textBatchOne)){expect(()=>validateSchema(entry.schema,entry.defaults)).not.toThrow();for(const preset of Object.values(entry.presets)){expect(Object.keys(preset).sort()).toEqual(Object.keys(entry.defaults).sort());expect(()=>validateSchema(entry.schema,preset)).not.toThrow();}}});
+});
