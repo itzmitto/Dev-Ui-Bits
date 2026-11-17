@@ -1,0 +1,1 @@
+.depth-text{width:100%;height:100%;min-height:280px;display:grid;place-items:center;overflow:hidden;line-height:1.1;letter-spacing:-.045em;touch-action:pan-y}.depth-stack{display:grid;transform-style:preserve-3d;white-space:pre;will-change:transform}.depth-stack>span{grid-area:1/1;backface-visibility:hidden;pointer-events:none}

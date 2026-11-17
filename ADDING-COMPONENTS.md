@@ -100,3 +100,11 @@ Tech Text is nu de eerste planned → ready-uitbreiding na de catalogusfase. Het
 De bestaande Controls-renderer ondersteunt nu optionele `group`-koppen en `inherit: true` voor kleuren. Dat laatste bewaart daadwerkelijk `currentColor`; de color input toont een geldige hex-swatch en een aparte terugknop voor overerving. Bestaande hex-kleurcontrols blijven gelijk. De presetselectie wordt afgeleid uit de actuele waarden, zodat Reset geen oude presetnaam laat staan.
 
 De tests meten echte canvaspixels voor reveal, kleur, dragging, spring return en kick. Ze controleren ook broncompilatie en geïsoleerd bewerken in Sandpack, alle intro’s en presets, DPR/touch, reduced motion, pauzering en vijf schermmaten in beide thema’s. Gebruik deze gerichte controles als patroon voor de volgende zelfstandige implementatie; neem het effect of de bron van een referentiesite niet letterlijk over. Zie LICENSE_REVIEW.md voor de gecontroleerde upstreambeperkingen en herkomst.
+
+## Native text-effectmodules (fase 6)
+
+Een module blijft onder `src/effects/Naam.tsx` met een named export `Naam`, eigen CSS en waar nodig eigen helpers. Dit sluit aan op de bestaande lazy glob en raw-source-export; maak geen tweede rendererarchitectuur. `textBatchOne.config.ts` groepeert uitsluitend metadata, defaults, controls en volledige presets. `registry.ts` voegt deze aan de bestaande implementations toe; catalogNames, ids en routes blijven gelijk.
+
+Neem alle lokale imports in supportingFiles op, ook transitieve helpers. `textRuntime.ts` biedt een visibility-/reduced-motion-aware klok; de daadwerkelijke animatielogica blijft in de eigen module. `textCanvas.ts` verzorgt canvasgrootte en texturen. Particle Text exporteert ook particleTargets; Warp Text exporteert de eigen shaderhelper. Gebruik dependencies `{}` wanneer React en browser-API’s volstaan. Test het werkelijke Sandpack-iframe: alleen zichtbaar broncode tonen bewijst geen compileerbaar voorbeeld.
+
+Controleer na iedere batch de eerdere Ready-telling, unieke records, defaults/presets, echte beweging/interactie, cleanup, responsive screenshots, geïsoleerde compilatie en de volledige productieregressie. Documenteer afwezige referentieassets en aantoonbare visuele verschillen; voeg geen upstreamvideo of broncode toe zonder afzonderlijke rechtenbeoordeling.

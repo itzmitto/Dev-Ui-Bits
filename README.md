@@ -1,6 +1,6 @@
 # DevUI Bits
 
-Een zelfstandige bibliotheek met **239 catalogusitems: 30 werkende React-componenten en 209 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Gebouwd op het bestaande DevUI Bits-project: alle 29 bestaande effecten en functies zijn behouden.
+Een zelfstandige bibliotheek met **239 catalogusitems: 35 werkende React-componenten en 204 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Gebouwd op het bestaande DevUI Bits-project: alle 29 bestaande effecten en functies zijn behouden.
 
 **Start hier:** [SETUP-GITHUB-VERCEL.md](SETUP-GITHUB-VERCEL.md) beschrijft ZIP → VS Code → GitHub → publieke Vercel-site, met exacte commando's en controles vóór Git-initialisatie of remote-wijzigingen.
 
@@ -33,11 +33,11 @@ Op Linux eventueel `npx playwright install --with-deps chromium`. De testconfigu
 
 ## Complete componentcatalogus
 
-`/browse` en `/get-started/index` openen dezelfde volledige catalogus. Deze bevat alle 217 aangeleverde namen in de gevraagde volgorde plus 22 bestaande namen die nog niet in die lijst stonden: **239 unieke records**, waarvan **30 Ready** en **209 Planned**. In fase 4 zijn uitsluitend catalogus en placeholders gebouwd. Fase 5 voegt alleen Tech Text toe; Crystalized Ball en alle andere geplande effecten blijven gepland.
+`/browse` en `/get-started/index` openen dezelfde volledige catalogus. Deze bevat alle 217 aangeleverde namen in de gevraagde volgorde plus 22 bestaande namen die nog niet in die lijst stonden: **239 unieke records**, waarvan **35 Ready** en **204 Planned**. In fase 4 zijn uitsluitend catalogus en placeholders gebouwd. Fase 5 voegt Tech Text toe. Fase 6 wordt in gecontroleerde batches uitgevoerd; Crystalized Ball blijft gepland.
 
 | Categorie | Totaal | Ready | Planned |
 | --- | ---: | ---: | ---: |
-| Text Animations | 34 | 6 | 28 |
+| Text Animations | 34 | 11 | 23 |
 | Animations | 41 | 3 | 38 |
 | Components | 56 | 10 | 46 |
 | Micro Interactions | 39 | 5 | 34 |
@@ -185,3 +185,11 @@ Sandpack heeft internettoegang tot zijn openbare bundler nodig. Tailwind-worksho
 De daadwerkelijke projectroot is de bestaande `DevUI-Bits/`-submap van de gevonden projectmap. Voer de npm-commando’s uit in die map. De Git-remote is uitsluitend gelezen; er zijn door de ontwikkelagent geen Git-mutaties, pushes of deployments uitgevoerd. Committen, pushen en publiceren doe je zelf. De bestaande Vercel-configuratie is behouden.
 
 De Playwright-suite bevat de bestaande component-, Customize-, Sandpack-, IndexedDB- en exportflows plus homepage-, thema-, navigatie- en responsive regressietests. Fase 4 voegt controles toe voor alle 239 catalogusroutes, namen, categorieën, filters, sortering, favorieten, placeholders en routealiases. Screenshots staan lokaal in `screenshots/` en worden door Git genegeerd. De elf geteste viewportmaten zijn 375×812, 430×932, 768×1024, 1024×768, 1280×800, 1366×768, 1440×900, 1920×1080, 2560×1440, 3440×1440 en 3840×2160, steeds in dark en light. Fase 5 slaagt: typecheck, 14 Vitest-tests, productiebuild en de volledige 92 Playwright-tests. Na de laatste controlmetadata-validatie zijn de vijf getroffen instellingen-, import- en editorflows ook gericht op de herbouwde productieversie geslaagd. De catalogus en planned-pagina’s zijn op de tien fase-4-breedtes in beide thema’s gecontroleerd; de behouden homepage/detailmatrix bevat ook 1280px. Browsercontrole is beperkt tot Chromium. De concrete resultaten, herstelde fouten en grenzen staan in PROGRESS.md.
+
+## Text Animations — fase 6, batch 1
+
+Text Loop, Masked Heading, Particle Text, Split Flap Text en Warp Text hebben eigen modules, complete presets, echte TSX/CSS-bronbestanden en geïsoleerde Sandpack-voorbeelden. Technieken: SVG textPath met momentum; Canvas-media clipping; glyph-particles met springs; mechanische halve flip-panelen; een zelfstandig geschreven WebGL-lensshader. Geen nieuwe npm-dependencies. Alle 30 eerdere Ready-implementaties blijven behouden.
+
+Masked Heading gebruikt standaard een eigen gegenereerde kleurmesh, geen gekopieerde referentievideo. Via Media URL kan eigen CORS-geschikte media worden gebruikt. Font Family verwacht een lokaal of via CSS geladen font. Split Flap gebruikt voor de schema-editor een met `|` gescheiden phrasestring. Warp Text toont een expliciete statische fallback als WebGL ontbreekt. De controls en presetnamen volgen de zichtbare demo; eigen parameterafstemming is geen claim van identieke upstreambron of pixelperfecte reproductie.
+
+De resterende 23 aangevraagde Text Animations blijven Planned tot hun eigen implementatie en controles zijn afgerond. Zie PROGRESS.md voor actuele testresultaten en voortgang.

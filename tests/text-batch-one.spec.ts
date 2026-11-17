@@ -30,3 +30,14 @@ test('batch one reduced motion remains readable and repeated unmounting stays cl
  for(let i=0;i<2;i++)for(const [slug] of entries){await page.goto(`/text-animations/${slug}`);await expect(page.getByTestId('preview-device').locator('[data-motion]').first()).toHaveAttribute('data-motion','reduced');}
  expect(errors).toEqual([]);
 });
+
+test('batch one pointer physics, drag and offscreen suspension',async({page})=>{
+ await page.goto('/text-animations/text-loop');await page.getByLabel('Draggable',{exact:true}).check();await page.getByLabel('Paused',{exact:true}).check();
+ const path=page.locator('.preview-device textPath').first(),svg=page.locator('.text-loop svg');await svg.scrollIntoViewIfNeeded();const box=(await svg.boundingBox())!;
+ const before=await path.getAttribute('startOffset');await page.mouse.move(box.x+box.width*.45,box.y+box.height*.5);await page.mouse.down();await page.mouse.move(box.x+box.width*.7,box.y+box.height*.5,{steps:8});await page.mouse.up();await expect.poll(()=>path.getAttribute('startOffset')).not.toBe(before);
+ await page.goto('/text-animations/particle-text');await page.waitForTimeout(3000);const canvas=page.locator('.particle-text canvas');
+ const settled=await canvas.evaluate((c:HTMLCanvasElement)=>c.toDataURL());await canvas.click();await expect.poll(()=>canvas.evaluate((c:HTMLCanvasElement)=>c.toDataURL())).not.toBe(settled);
+ await page.getByLabel('Preset',{exact:true}).scrollIntoViewIfNeeded();await page.getByRole('heading',{name:'Make it yours',exact:true}).scrollIntoViewIfNeeded();await expect(page.locator('.particle-text')).toHaveAttribute('data-motion','paused');
+ const offscreen=await canvas.evaluate((c:HTMLCanvasElement)=>c.toDataURL());await page.waitForTimeout(150);expect(await canvas.evaluate((c:HTMLCanvasElement)=>c.toDataURL())).toBe(offscreen);
+ await page.goto('/text-animations/masked-heading');await page.getByLabel('Preset',{exact:true}).selectOption('Spotlight');const mask=page.locator('.masked-heading canvas');await mask.hover({position:{x:70,y:100}});const left=await mask.evaluate((c:HTMLCanvasElement)=>c.toDataURL());const b=(await mask.boundingBox())!;await mask.hover({position:{x:b.width-70,y:100}});await expect.poll(()=>mask.evaluate((c:HTMLCanvasElement)=>c.toDataURL())).not.toBe(left);
+});
