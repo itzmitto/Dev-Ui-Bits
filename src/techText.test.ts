@@ -42,6 +42,6 @@ describe('original Tech Text geometry and integration',()=>{
     const files=builtinFiles(item,item.defaults);
     for(const path of ['/effects/TechText.tsx','/effects/TechText.engine.ts','/effects/TechText.geometry.ts','/effects/TechText.types.ts','/effects/TechText.css'])expect(files[path]?.length,path).toBeGreaterThan(100);
     expect(item.dependencies).toEqual({});
-    expect(findComponent('animations','crystalized-ball')?.status).toBe('planned');
+    expect(findComponent('animations','ripple-distortion')?.status).toBe('planned');
   });
 });

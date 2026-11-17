@@ -24,8 +24,8 @@ describe('phase 4 catalog and route compatibility', () => {
       for (const name of names) expect(registry.filter(item => item.name === name)).toHaveLength(1);
     }
     expect(registry).toHaveLength(239);
-    expect(readyComponents).toHaveLength(40);
-    expect(registry.filter(item => item.status === 'planned')).toHaveLength(199);
+    expect(readyComponents).toHaveLength(45);
+    expect(registry.filter(item => item.status === 'planned')).toHaveLength(194);
   });
   it('retains every original ready route, including moved-category aliases', () => {
     for (const route of originalRoutes) {
@@ -47,7 +47,7 @@ describe('phase 4 catalog and route compatibility', () => {
       expect(item.description).toBe(plannedDescription);
       for (const key of ['preview','schema','source','defaults','dependencies']) expect(item).not.toHaveProperty(key);
     }
-    expect(findComponent('animations','crystalized-ball')).toMatchObject({name:'Crystalized Ball',status:'planned'});
+    expect(findComponent('animations','ripple-distortion')).toMatchObject({name:'Ripple Distortion',status:'planned'});
     for (const slug of ['text-type','tilted-card','carousel','magnet','particles','waves']) expect(registry.find(item => item.slug === slug)?.status).toBe('planned');
   });
 });

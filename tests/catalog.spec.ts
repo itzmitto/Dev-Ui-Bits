@@ -9,8 +9,8 @@ test('catalog includes all entries, real statuses, category filters, sorting and
   await expect(page.getByRole('heading',{level:1})).toHaveText('Components');
   await expect(page.locator('.collection-card')).toHaveCount(239);
   await expect(page.getByTestId('catalog-count')).toHaveAttribute('data-total','239');
-  await expect(page.locator('.catalog-card[data-status=ready]')).toHaveCount(40);
-  await expect(page.locator('.catalog-card[data-status=planned]')).toHaveCount(199);
+  await expect(page.locator('.catalog-card[data-status=ready]')).toHaveCount(45);
+  await expect(page.locator('.catalog-card[data-status=planned]')).toHaveCount(194);
   await expect(page.locator('canvas')).toHaveCount(0);
   await expect(page.locator('input[placeholder*=Search], input[aria-label="Filter components"], a[href="/create"]')).toHaveCount(0);
   const allNames = await page.locator('.catalog-card h2').allTextContents();
@@ -24,8 +24,8 @@ test('catalog includes all entries, real statuses, category filters, sorting and
   await page.getByLabel('Filter category').selectOption('all');
   await expect(page.getByLabel('Filter category')).toHaveValue('all');
   await expect(page.locator('.collection-card')).toHaveCount(239);
-  await page.getByRole('button',{name:'Ready 40',exact:true}).click();
-  await expect(page.locator('.collection-card')).toHaveCount(40);
+  await page.getByRole('button',{name:'Ready 45',exact:true}).click();
+  await expect(page.locator('.collection-card')).toHaveCount(45);
   await expect(page.locator('.catalog-card[data-status=planned]')).toHaveCount(0);
   await page.getByLabel('Sort components').selectOption('name-asc');
   await expect.poll(async()=>{
@@ -123,7 +123,7 @@ test('only a requested ready preview mounts, switches and stops with no fake pla
   await expect(page.locator('.catalog-live-demo')).toContainText('Ideas come to life.');
   await page.getByRole('button',{name:'Stop live preview',exact:true}).click();
   await expect(page.locator('.catalog-live-host')).toHaveCount(0);
-  await page.goto('/animations/crystalized-ball'); await page.reload();
+  await page.goto('/animations/ripple-distortion'); await page.reload();
   await expect(page.locator('canvas, .customize, .code-workspace')).toHaveCount(0);
   await expect(page.getByRole('link',{name:'Back to Components'})).toHaveAttribute('href','/browse');
 });
@@ -141,10 +141,10 @@ for (const [width,height] of viewports) for (const theme of ['dark','light'] as 
     if (width<840) {
       await page.getByRole('button',{name:'Open navigation',exact:true}).click();
       await expect(page.locator('.sidebar')).toHaveClass(/is-open/);
-      const link=page.locator('.component-link[title="Crystalized Ball"]'); await link.click();
+      const link=page.locator('.component-link[title="Ripple Distortion"]'); await link.click();
       await expect(page.locator('.sidebar')).not.toHaveClass(/is-open/);
-    } else await page.goto('/animations/crystalized-ball');
-    await expect(page.getByRole('heading',{level:1})).toHaveText('Crystalized Ball');
+    } else await page.goto('/animations/ripple-distortion');
+    await expect(page.getByRole('heading',{level:1})).toHaveText('Ripple Distortion');
     await expect(page.getByTestId('planned-preview')).toBeVisible();
     expect(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     const initial = await page.locator('.planned-preview').evaluate(element=>getComputedStyle(element).backgroundColor);
@@ -152,7 +152,7 @@ for (const [width,height] of viewports) for (const theme of ['dark','light'] as 
     expect(await page.locator('.planned-preview').evaluate(element=>getComputedStyle(element).backgroundColor)).not.toBe(initial);
     await page.getByRole('button',{name:`Switch to ${theme} theme`}).click();
     await page.screenshot({path:`screenshots/phase4-planned-${width}-${theme}.png`});
-    await page.reload(); await expect(page.getByRole('heading',{level:1})).toHaveText('Crystalized Ball');
+    await page.reload(); await expect(page.getByRole('heading',{level:1})).toHaveText('Ripple Distortion');
     if (width>=840) await expect(page.locator('.component-link.active')).toBeInViewport();
   });
 }

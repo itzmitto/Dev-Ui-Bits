@@ -21,7 +21,7 @@ test('homepage, categories and public navigation use the existing registry', asy
   expect(paths).toEqual(categories.map(category => '/' + category));
   for (const path of paths) {
     await page.goto(path!); await expect(page.locator('.collection-card').first()).toBeVisible();
-    await expect(page.locator('.component-link[data-status=ready]')).toHaveCount(40);
+    await expect(page.locator('.component-link[data-status=ready]')).toHaveCount(45);
     await expect(page.locator('input[aria-label="Search collection"], a[href="/create"]')).toHaveCount(0);
   }
   await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Home', exact: true }).click();
