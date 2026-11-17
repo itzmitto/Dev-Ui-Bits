@@ -15,6 +15,8 @@ export function validateSchema(value:unknown,defaults:EffectProps):Control[]{
  const keys=new Set<string>();
  for(const item of value){
   if(!item||typeof item!=='object'||typeof item.key!=='string'||typeof item.label!=='string'||!['range','number','text','color','select','toggle'].includes(item.type)||!(item.key in defaults)||keys.has(item.key))throw new Error('Each control needs a unique property key, label, supported type, and default value.');
+  if(item.group!==undefined&&typeof item.group!=='string')throw new Error('Control groups must be text labels.');
+  if(item.inherit!==undefined&&typeof item.inherit!=='boolean')throw new Error('Color inheritance must be a boolean.');
   keys.add(item.key);
   if(item.type==='range'||item.type==='number'){if(typeof defaults[item.key]!=='number'||!Number.isFinite(item.min)||!Number.isFinite(item.max)||item.min>=item.max||!Number.isFinite(item.step)||item.step<=0)throw new Error('Numeric controls need numeric defaults and finite min, max, and positive step values.');}
   else if(item.type==='toggle'&&typeof defaults[item.key]!=='boolean')throw new Error('Toggle properties must be booleans.');

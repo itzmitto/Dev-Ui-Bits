@@ -4,7 +4,7 @@ Bijgewerkt: 17 november 2026. Versie 1.1.0.
 
 ## Fase 5 — uitsluitend Tech Text
 
-Status: implementatie en gerichte browsercontrole geslaagd; laatste volledige productieregressie volgt. De bestaande Tech Text-entry blijft op dezelfde id, positie en route. Het totaal is 239, met 30 ready en 209 planned; alle oorspronkelijke 29 implementaties zijn behouden.
+Status: implementatie, visuele vergelijking en volledige productieregressie geslaagd. De bestaande Tech Text-entry blijft op dezelfde id, positie en route. Het totaal is 239, met 30 ready en 209 planned; alle oorspronkelijke 29 implementaties zijn behouden.
 
 - Screenshot en zichtbare officiële preview/props bestudeerd. Het genoemde tekstbestand was niet beschikbaar; geen effectbron van upstream gekopieerd. Actuele licentie en beperkingen in LICENSE_REVIEW.md vastgelegd. Zelfstandige implementatie, geen nieuwe dependencies, Git-mutatiecommando’s, publicatie, deployment of bron-ZIP.
 - Eén lifecycle-owned Canvas-engine met getypeerde props, grapheme-/kerningmetingen, ink-bound-centrering, auto-fit, DPR maximaal 2, alpha-sprites en eigen marching-squares-contouren inclusief counters. Buffers en paden worden bij typographywijzigingen vernieuwd, niet tijdens pointerbewegingen.
@@ -14,7 +14,12 @@ Status: implementatie en gerichte browsercontrole geslaagd; laatste volledige pr
 - Eerste browsertests corrigeerden verouderde pointercoördinaten nadat de controls de pagina hadden gescrold en assertions midden in bestaande reveal-/viewporttransities. De tests scrollen nu werkelijk naar de canvas en wachten op de gemeten eindtoestand. Dragging, physics, intro’s en echte Sandpackcompilatie slagen.
 - Gerichte ontwikkelronde: 18/18 Playwright geslaagd. Vier nieuwe unitchecks maken 14/14 geslaagd. Eerste performanceproef meet circa 59,8 canvasframes/s in lokale Chromium headless bij 1536×1024; 0 tekenframes in de gecontroleerde offscreen- en rustintervallen. Dit is één lokale proef, geen algemene FPS-garantie.
 - Screenshots op 375, 768, 1440, 1920 en 2560px in dark en light gemaakt. Desktop 1920-dark en mobiel 375-light visueel vergeleken met de screenshot: witte 600-weight woordmarkering, nauwe spacing, dunne gestippelde silhouette, vierkante ankers en kleine maatlabels. Daarna centrering nog op de echte ink-bounds gecorrigeerd.
-- Laatste typecheck, unit-, build- en volledige productiecheck volgen hieronder. Browserscope: Chromium; geen Firefox/Safari, echte-apparaat- of publieke deploymenttest. De broneditor gebruikt nog de bestaande openbare Sandpack-service.
+- Laatste typecheck, Vitest 14/14 en productiebuild geslaagd. Tech Text laadt als eigen chunk van circa 18,2 kB (6,3 kB gzip), plus 1 kB CSS. De volledige productieronde slaagt: **92/92 Playwright-tests in 4,1 minuten**, procesexit 0, geen failedTests. Dit zijn de behouden 73 regressies plus 19 Tech Text-checks inclusief HiDPI-touch.
+- Na die volledige ronde is uitsluitend de validatie van optionele group/inherit-metadata aangescherpt. Laatste typecheck, 14/14 unit-tests en herbouw slagen; vervolgens **5/5 gerichte productiechecks in 17,6 seconden** geslaagd (exit 0): bestaande Sandpack/IndexedDB, JSON-import/export, Tech Text-defaults en kleuren, presets/reset, echte Tech Text-broncompilatie, geïsoleerd bewerken, compilerfouten en reset.
+- De volledige ronde controleerde ook alle 239 routes, alle 30 ready-previews, homepage, dark/light, Customize en de behouden editor/dataflows. Tech Text is op 375×812, 768×1024, 1440×900, 1920×1080 en 2560×1440 in beide thema’s getest, inclusief viewportknoppen, fullscreen en directe refresh. HiDPI op DPR 3 is daadwerkelijk begrensd tot 2; echte touch-tap getest.
+- Laatste performanceproef: circa 59,8 canvasframes/s bij de standaard sweep, en 0 tekenframes in de bemonsterde offscreen- en rustintervallen. Het meetbestand staat lokaal in artifacts/tech-text-performance.json. Alle normale screenshots staan onder screenshots/phase5-tech-*.png; aanvullende default-screenshots tonen de standaard 15 specks en ingeschakelde sweep. De uiteindelijke default-preview is opnieuw visueel gecontroleerd.
+- De lokale HEAD veranderde opnieuw buiten de opdrachten van de agent (onder meer 8603a90). De agent heeft uitsluitend read-only Git-opdrachten gebruikt, geen commits gemaakt en externe wijzigingen niet teruggedraaid.
+- Browserscope: Chromium; geen Firefox/Safari, echte-apparaat- of publieke deploymenttest. De broneditor gebruikt nog de bestaande openbare Sandpack-service.
 
 ## Fase 4 — complete catalogus en sidebar
 

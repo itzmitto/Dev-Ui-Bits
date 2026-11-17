@@ -30,6 +30,8 @@ describe('original Tech Text geometry and integration',()=>{
     expect(normalizeTechText({fontSize:NaN,speed:-2,specks:200})).toMatchObject({fontSize:150,speed:0,specks:60});
     expect(()=>validateSchema(techTextControls,{...techTextDefaults})).not.toThrow();
     expect(techTextControls).toHaveLength(26);
+    expect(()=>validateSchema([{key:'color',label:'Color',type:'color',group:{},inherit:true}],{color:'currentColor'})).toThrow('groups');
+    expect(()=>validateSchema([{key:'color',label:'Color',type:'color',inherit:'true'}],{color:'currentColor'})).toThrow('inheritance');
     for(const preset of Object.values(techTextPresets))expect(Object.keys(preset).sort()).toEqual(Object.keys(techTextDefaults).sort());
     expect(techTextPresets.Minimal).toMatchObject({specks:0,guides:false,labels:false});
   });
