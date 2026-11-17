@@ -1,5 +1,6 @@
 import { lazy, type ComponentType } from 'react';
 import { textBatchOne } from './effects/textBatchOne.config';
+import { textBatchTwo } from './effects/textBatchTwo.config';
 import { techTextControls, techTextPresets, techTextValues } from './effects/TechText.config';
 import { Field } from './effects/Field';
 import { InteractiveParticleBackground } from './effects/InteractiveParticleBackground';
@@ -59,7 +60,7 @@ function def(name:string,category:Definition['category'],description:string,prev
 const backgroundControls=[color,{key:'secondary',label:'Glint color',type:'color'} as Control,{key:'background',label:'Background',type:'color'} as Control,range('speed','Speed',0,3,.05),range('scale','Scale',.5,4,.1),range('opacity','Opacity',.1,1,.05),toggle('interactive','Interactive'),strength];
 const fieldDefaults={color:'#a855f7',secondary:'#ffffff',background:'#120f17',speed:.6,scale:1.5,opacity:1,interactive:true,strength:.7,blur:0};
 const implementations:Definition[]=[
- ...Object.entries(textBatchOne).map(([source,entry])=>({...def(source.replace(/([a-z])([A-Z])/g,'$1 $2'),'Text Animations',entry.description,lazyPreview(source,source),source,entry.defaults,entry.schema),dependencies:{},styles:[`${source}.css`],supportingFiles:entry.helpers,presets:entry.presets})),
+ ...Object.entries({...textBatchOne,...textBatchTwo}).map(([source,entry])=>({...def(source.replace(/([a-z])([A-Z])/g,'$1 $2'),'Text Animations',entry.description,lazyPreview(source,source),source,entry.defaults,entry.schema),dependencies:{},styles:[`${source}.css`],supportingFiles:entry.helpers,presets:entry.presets})),
  {...def('Tech Text','Text Animations','A wordmark with interactive vector contours, precision frames and spring-driven letters.',lazyPreview('TechText','TechText'),'TechText',techTextValues,techTextControls),dependencies:{},presets:techTextPresets,styles:['TechText.css'],supportingFiles:['TechText.engine.ts','TechText.geometry.ts','TechText.types.ts']},
  {...def('Micro Slats','Backgrounds','A field of light. A rhythm of motion. Tiny slats, endless possibilities.',Field,'Field',{...fieldDefaults,mode:'slats',width:10,height:25,gap:3,roundness:.75,direction:250,paused:false},[...backgroundControls.slice(0,3),range('width','Slat width',3,30),range('height','Slat height',8,60),range('gap','Gap',1,15),range('roundness','Roundness',0,1,.05),...backgroundControls.slice(3,6),range('direction','Direction',0,360),range('blur','Blur',0,8,.5),...backgroundControls.slice(6),toggle('paused','Paused')]),isNew:true,exportName:'Field',presets:{Swell:{color:'#a855f7',secondary:'#ffffff',speed:.6,scale:1.5,direction:250},Tide:{color:'#38bdf8',secondary:'#c6f6ff',speed:.3,scale:2.5,direction:290},Ember:{color:'#fb7185',secondary:'#ffdeb0',speed:.9,scale:1.2,direction:190},Signal:{color:'#a3e635',secondary:'#ffffff',speed:1.5,scale:.6,direction:90}}},
  def('Blur Text','Text Animations','Let your words come into focus, one thought at a time.',Text.BlurText,'TextEffects',{text:'Ideas come to life.',color:'#ffffff',duration:.8,delay:.15,blur:12},[text,color,duration,delay,range('blur','Initial blur',0,30)]),
