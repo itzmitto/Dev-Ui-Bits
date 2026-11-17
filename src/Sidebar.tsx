@@ -61,7 +61,7 @@ export function Sidebar({ open, custom, mobileNav }: { open: boolean; custom: Cu
           <div id={id} hidden={isCollapsed}>{items.map(item => {
             const status = 'status' in item ? item.status : 'ready';
             const active = current?.id === item.id || componentPath(item) === pathname;
-            return <Link className={`component-link ${active ? 'active' : ''}`} title={item.name} key={item.id} to={componentPath(item)} data-status={status} aria-current={active ? 'page' : undefined}><span>{item.name}</span>{status === 'ready' ? <span className="sidebar-ready-dot" title="Ready"/> : <span className="sidebar-planned" title="Planned">Planned</span>}</Link>;
+            return <Link className={`component-link ${active ? 'active' : ''}`} title={item.name} key={item.id} to={componentPath(item)} data-status={status} aria-label={item.name} aria-description={status === 'ready' ? 'Ready' : 'Planned'} aria-current={active ? 'page' : undefined}><span>{item.name}</span>{status === 'ready' ? <span className="sidebar-ready-dot" title="Ready"/> : <span className="sidebar-planned" title="Planned">Planned</span>}</Link>;
           })}</div>
         </section>;
       })}

@@ -1,6 +1,6 @@
 # DevUI Bits
 
-Een zelfstandige bibliotheek met **239 catalogusitems: 29 werkende React-componenten en 210 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Gebouwd op het bestaande DevUI Bits-project: alle oorspronkelijke 21 effecten en functies zijn behouden.
+Een zelfstandige bibliotheek met **239 catalogusitems: 29 werkende React-componenten en 210 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Gebouwd op het bestaande DevUI Bits-project: alle 29 bestaande effecten en functies zijn behouden.
 
 **Start hier:** [SETUP-GITHUB-VERCEL.md](SETUP-GITHUB-VERCEL.md) beschrijft ZIP → VS Code → GitHub → publieke Vercel-site, met exacte commando's en controles vóór Git-initialisatie of remote-wijzigingen.
 
@@ -105,12 +105,12 @@ Alle aanvullingen gebruiken de bestaande registry en paginatemplate. Reduced mot
 Een nieuw ingebouwd component toevoegen:
 
 1. Exporteer een effect dat `EffectProps` accepteert in `src/effects/MijnEffect.tsx`.
-2. Voeg een `def(...)`-item toe aan `registry`. Geef voor iedere control een passende default op.
+2. Voeg een `def(...)`-item toe aan de interne `implementations`-lijst in `src/registry.ts`. Geef voor iedere control een passende default op.
 3. Stel `exportName` in als de echte exportnaam afwijkt van de componentnaam zonder spaties.
 4. Voeg eigen CSS toe in `styles: ['MijnEffect.css']` en helperbestanden in `supportingFiles: ['mijnHelper.ts']`. Deze paden zijn relatief aan `src/effects/`. Importeer de CSS ook eenmaal in `src/main.tsx` voor de websitepreview. De registry voegt ze automatisch toe aan de code-editor en export.
 5. Gebruik exact de reeds geplande naam om hetzelfde catalogusrecord ready te maken; zie ADDING-COMPONENTS.md.
 6. Declareer eventuele npm-dependencies in het registry-item en controleer hun licenties.
-6. Test de live preview, controls en geïsoleerde broncode. Routes en navigatie volgen uit metadata; er is geen limiet op het aantal registry-items. Bij honderden grote effecten is aanvullend lazy loading van previewmodules en broncode een logische performance-optimalisatie.
+7. Test de live preview, controls en geïsoleerde broncode. Routes en navigatie volgen uit metadata; er is geen limiet op het aantal registry-items. De previewmodules zijn lazy geladen; bij honderden grote effecten kan ook de raw broncode verder worden opgesplitst.
 
 De code-tab gebruikt de echte implementatie via Vite `?raw`. Built-ins bieden TSX en CSS; workshoptemplates zijn apart geschreven voor JSX/TSX en CSS/Tailwind. Er wordt geen nepconversie aangeboden.
 
@@ -146,13 +146,13 @@ IndexedDB is browser- en originlokaal. Je localhost-bibliotheek verschijnt dus n
 
 Het project is een gewone Vite-SPA. `vercel.json` stelt Vite, `npm ci`, `npm run build`, `dist` en een SPA-rewrite in. Daardoor werken directe links zoals `/components/tilt-card` en refreshes op die routes. De assets worden lokaal meegebundeld. Hostingmetadata van de eerdere omgeving is verwijderd.
 
-De bestaande Git-remote verwijst naar jouw repository https://github.com/itzmitto/Dev-Ui-Bits. In fase 3 is uitsluitend lokaal gewerkt: geen Git-mutatiecommando’s, remote-wijzigingen of Vercel-deployment uitgevoerd. Je bepaalt zelf wanneer je commit, pusht en publiceert. De handleiding SETUP-GITHUB-VERCEL.md blijft beschikbaar; de lokale production preview is daadwerkelijk getest, een publieke Vercel-deployment is in deze ronde niet getest.
+De bestaande Git-remote verwijst naar jouw repository https://github.com/itzmitto/Dev-Ui-Bits. In fase 3 en 4 is uitsluitend lokaal gewerkt: geen Git-mutatiecommando’s, remote-wijzigingen of Vercel-deployment uitgevoerd. Je bepaalt zelf wanneer je commit, pusht en publiceert. De handleiding SETUP-GITHUB-VERCEL.md blijft beschikbaar; de lokale production preview is daadwerkelijk getest, een publieke Vercel-deployment is in deze ronde niet getest.
 
 De SPA-configuratie volgt de [officiële Vercel-documentatie](https://vercel.com/docs/frameworks/frontend/vite#using-vite-to-make-spas).
 
 ## Volledige bron-ZIP
 
-Voor fase 3 is op verzoek **geen nieuwe bron-ZIP gemaakt**. Een eerder archief uit fase 2 bevat deze lokale wijzigingen niet. Onderstaand bestaand script blijft beschikbaar voor wanneer je zelf wilt exporteren.
+Voor fase 3 en 4 is op verzoek **geen nieuwe bron-ZIP gemaakt**. Een eerder archief uit fase 2 bevat deze lokale wijzigingen niet. Onderstaand bestaand script blijft beschikbaar voor wanneer je zelf wilt exporteren.
 
 ```sh
 npm run source:zip
@@ -170,8 +170,8 @@ De galleryillustraties zijn lokaal opgebouwde originele SVG's; er zijn geen stoc
 
 Sandpack heeft internettoegang tot zijn openbare bundler nodig. Tailwind-workshoppreviews gebruiken de Tailwind-browsercompiler via jsDelivr; de hoofdwebsite gebruikt de normale productiebundel. Er zijn geen API-keys nodig. Dependencylicenties en servicevoorwaarden zijn verschillende zaken; het project is niet volledig offline en de licentiecontrole geeft geen juridische garantie. Bekende onzekerheden over ontbrekende historische upstreamnotices staan expliciet in LICENSE_REVIEW.md.
 
-## Lokale oplevering fase 3
+## Lokale oplevering fase 4
 
 De daadwerkelijke projectroot is de bestaande `DevUI-Bits/`-submap van de gevonden projectmap. Voer de npm-commando’s uit in die map. De Git-remote is uitsluitend gelezen; er zijn door de ontwikkelagent geen Git-mutaties, pushes of deployments uitgevoerd. Committen, pushen en publiceren doe je zelf. De bestaande Vercel-configuratie is behouden.
 
-De Playwright-suite bevat de bestaande component-, Customize-, Sandpack-, IndexedDB- en exportflows plus homepage-, thema-, navigatie- en responsive regressietests. Screenshots staan lokaal in `screenshots/` en worden door Git genegeerd. De elf geteste viewportmaten zijn 375×812, 430×932, 768×1024, 1024×768, 1280×800, 1366×768, 1440×900, 1920×1080, 2560×1440, 3440×1440 en 3840×2160, steeds in dark en light. De concrete resultaten en grenzen staan in PROGRESS.md.
+De Playwright-suite bevat de bestaande component-, Customize-, Sandpack-, IndexedDB- en exportflows plus homepage-, thema-, navigatie- en responsive regressietests. Fase 4 voegt controles toe voor alle 239 catalogusroutes, namen, categorieën, filters, sortering, favorieten, placeholders en routealiases. Screenshots staan lokaal in `screenshots/` en worden door Git genegeerd. De elf geteste viewportmaten zijn 375×812, 430×932, 768×1024, 1024×768, 1280×800, 1366×768, 1440×900, 1920×1080, 2560×1440, 3440×1440 en 3840×2160, steeds in dark en light. De laatste lokale productieronde slaagt: typecheck, 10 Vitest-tests, productiebuild en 73 Playwright-tests. De catalogus en planned-pagina’s zijn op de tien fase-4-breedtes in beide thema’s gecontroleerd; de behouden homepage/detailmatrix bevat ook 1280px. Browsercontrole is beperkt tot Chromium. De concrete resultaten, herstelde fouten en grenzen staan in PROGRESS.md.

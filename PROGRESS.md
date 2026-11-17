@@ -4,9 +4,10 @@ Bijgewerkt: 17 november 2026. Versie 1.1.0.
 
 ## Fase 4 — complete catalogus en sidebar
 
-Status: catalogus en navigatie geïmplementeerd; browserregressies en visuele vergelijking lopen. De eerdere aanvraag voor een echt Crystalized Ball-effect is vervangen door de laatste opdracht: uitsluitend catalogus en placeholders. Crystalized Ball blijft planned.
+Status: catalogus, navigatie, visuele controle en volledige productieregressie afgerond. De eerdere aanvraag voor een echt Crystalized Ball-effect is vervangen door de laatste opdracht: uitsluitend catalogus en placeholders. Crystalized Ball blijft planned.
 
 - Dezelfde bestaande projectroot gebruikt: /home/andre/Personal-Projects/Project-Dev-Ui-Bits/DevUI-Bits. Geen nieuw project, nieuwe dependencies, effectimplementaties, IndexedDB-migratie, bron-ZIP, Git-mutatiecommando’s of deployment.
+- Tijdens deze ronde veranderde HEAD buiten de door de agent uitgevoerde opdrachten (onder meer d9ce486 en ee5a917). De agent gebruikte uitsluitend read-only Git-inspectie en heeft die externe commits niet gemaakt of teruggedraaid.
 - Alle 217 aangeleverde namen in de opgegeven categorie en volgorde geregistreerd. 22 bestaande namen die niet op die lijst stonden, zijn behouden. Eindtotaal: 239 unieke records, 29 ready en 210 planned.
 - Eén definitieve registry met een discriminated union: planned bevat alleen metadata; ready bevat de echte renderer, defaults, schema, dependencies en bronkoppeling. Dubbele ids en routes worden expliciet afgewezen.
 - Scroll Reveal en Animated List naar de aangeleverde categorie verplaatst met behoud van hun oude URLs als aliases. Alle oorspronkelijke 29 implementaties en hun id blijven bestaan. Bijna gelijknamige effecten worden niet ten onrechte als ready gemarkeerd.
@@ -17,13 +18,20 @@ Status: catalogus en navigatie geïmplementeerd; browserregressies en visuele ve
 - Ready-previewmodules waar zinvol naar React.lazy verplaatst. Er start geen effect op de catalogus zonder klik; maximaal één cataloguspreview tegelijk. De bestaande homepage en echte detailpagina’s gebruiken hun behouden implementaties onder Suspense.
 - ADDING-COMPONENTS.md toegevoegd voor toekomstige planned → ready-ontwikkeling, zonder dubbele records of routes. README bijgewerkt.
 
-### Controle tot nu toe
+### Controle en visuele vergelijking
 
 - Actuele live React Bits-catalogus bekeken, inclusief donkere styling, Geist, 32px-titel, compacte sidebar en drie cardkolommen. Er was geen screenshotbijlage zichtbaar in deze chat; de visuele vergelijking gebruikt de live referentie.
 - Strict TypeScript geslaagd. Vitest 10/10 geslaagd, inclusief volledige naamvolgorde, aantallen, unieke ids/slugs/routes, oude aliases, statusgrenzen en echte bronbestanden.
 - Productiebuild geslaagd. De aanvankelijke waarschuwingen over foundationmodules die zowel lazy als direct gebruikt werden zijn opgelost; de overige effectmodules zijn apart geladen.
 - Eerste gerichte browserronde 7/8: sidebar/aliases, favorieten, previewbeperking en 375/1920px in beide thema’s slagen. De filtercontrole vond een race bij snelle opeenvolgende URL-filterwijzigingen; updates worden nu met de actuele URL samengevoegd en de controle wacht op de zichtbare filterstatus.
-- Volledige browsercontrole en eindresultaten volgen na de laatste run.
+- Eerste volledige productieronde: 72/73 geslaagd. De oudere mobiele navigatiecheck ontdekte dat het Ready-statuspunt via zijn title de toegankelijke linknaam veranderde. Sidebarlinks hebben nu een expliciete componentnaam en een aparte statusbeschrijving voor schermlezers; de volledige suite wordt opnieuw uitgevoerd.
+- Screenshots van catalogus en planned-pagina’s op alle tien gevraagde breedtes in dark en light gemaakt. De 375px-light-, 1920px-dark- en 3840px-light-catalogus en de 1920px-dark-placeholder visueel geïnspecteerd. De sidebarspacing is na de eerste vergelijking compacter gemaakt.
+- Browsercontrole is lokaal in Chromium; geen afzonderlijke Safari-, Firefox-, echte-apparaat- of publieke deploymenttest uitgevoerd. Sandpack blijft afhankelijk van zijn bestaande openbare bundler.
+- De entrybundel is door lazy effectmodules teruggebracht van circa 589 kB naar 427 kB (133 kB gzip). De editor blijft een aparte chunk van circa 624 kB (211 kB gzip); CSS circa 117 kB (22 kB gzip). Raw broncode blijft centraal beschikbaar; planned records laden geen effectmodules.
+- Definitieve volledige productieronde: **73/73 Playwright-tests geslaagd in 2,8 minuten**, expliciete procesexit 0. test-results/.last-run.json meldt passed zonder failedTests. Dit omvat de oorspronkelijke 47 regressies plus 26 nieuwe cataloguschecks.
+- Alle 239 componentroutes daadwerkelijk geopend en gecontroleerd; alle 29 echte previews, Customize, broncode, Sandpack-compilatie/bewerken/fouten/reset, extra bestanden, themawissels, IndexedDB opslaan/herladen/bewerken en JSON-import/export slagen. De herstelde mobiele Tilt Card-navigatie slaagt ook. Geen vastgestelde React-runtimefouten in de gecontroleerde flows.
+- Catalogus en planned-pagina gecontroleerd op 375×812, 430×932, 768×1024, 1024×768, 1366×768, 1440×900, 1920×1080, 2560×1440, 3440×1440 en 3840×2160, elk in dark en light. Assertions controleren gridkolommen, thema, drawer, actieve link, directe route/refresh en geen horizontale overflow. De behouden homepage/detailmatrix controleert daarnaast 1280×800.
+- Laatste typecheck, Vitest 10/10, productiebuild en git diff --check geslaagd. Node 24.22.2 en npm 11.19.1 gebruikt. De productiepreview draaide lokaal op 4175; de optionele Chromium-locatie is alleen via environment meegegeven en niet in het project hardcoded. Screenshots staan in screenshots/phase4-*.png en blijven door Git genegeerd.
 
 ## Fase 3 — homepage, responsive layout en thema
 
