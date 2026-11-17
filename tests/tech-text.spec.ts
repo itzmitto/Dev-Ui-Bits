@@ -1,3 +1,4 @@
+import fs from 'node:fs/promises';
 import { test,expect,type Page,type Locator } from '@playwright/test';
 const route='/text-animations/tech-text';
 const canvas=(page:Page)=>page.locator('.preview-device .tech-text canvas');
@@ -16,6 +17,7 @@ async function inkPoint(c:Locator,index=0){
  },index);
 }
 async function hoverPoint(page:Page,c:Locator,point:{localX:number;localY:number}){await c.scrollIntoViewIfNeeded();const rect=(await c.boundingBox())!;await page.mouse.move(rect.x+point.localX,rect.y+point.localY);}
+async function settle(c:Locator){let previous='';await expect.poll(async()=>{const next=await c.evaluate((el:HTMLCanvasElement)=>el.toDataURL());const stable=next===previous;previous=next;return stable;}).toBe(true);}
 async function ink(c:Locator,index=0){return c.evaluate((el:HTMLCanvasElement,index)=>{
  const g=JSON.parse(el.dataset.glyphs!)[index],scale=el.width/el.getBoundingClientRect().width;
  const pixels=el.getContext('2d')!.getImageData(Math.round(g.x*scale),Math.round(g.y*scale),Math.round(g.width*scale),Math.round(g.height*scale)).data;
@@ -41,8 +43,8 @@ test('letter reveal traces a dashed silhouette, changes to solid and area reveal
  await open(page);await still(page);const c=canvas(page),point=await inkPoint(c),full=await ink(c);
  await hoverPoint(page,c,point);await expect(c).toHaveAttribute('data-active-letter','D');
  await expect.poll(()=>ink(c)).toBeLessThan(full*.35);
- const dashed=await ink(c);await page.getByLabel('Line Style',{exact:true}).selectOption('solid');await hoverPoint(page,c,point);
- await expect.poll(()=>ink(c)).toBeGreaterThan(dashed*1.1);
+ await settle(c);const dashed=await ink(c);await page.getByLabel('Line Style',{exact:true}).selectOption('solid');await hoverPoint(page,c,point);
+ await settle(c);expect(await ink(c)).toBeGreaterThan(dashed*1.1);
  await page.getByLabel('Reveal Mode',{exact:true}).selectOption('off');await hoverPoint(page,c,point);await expect.poll(()=>ink(c)).toBeGreaterThan(full*.97);
  await page.getByLabel('Reveal Mode',{exact:true}).selectOption('area');await page.getByLabel('Reach',{exact:true}).fill('40');await page.getByLabel('Softness',{exact:true}).fill('0.7');await hoverPoint(page,c,point);
  await expect.poll(()=>ink(c)).toBeLessThan(full*.95);expect(await ink(c)).toBeGreaterThan(full*.35);
@@ -91,6 +93,21 @@ test('keyboard selection works and reduced motion settles while preserving point
  await page.getByLabel('Intro Type',{exact:true}).selectOption('assemble');await expect(c).toHaveAttribute('data-intro-progress','1.000');
 });
 
+test('animation loop pauses outside view and when idle, while the active sweep runs smoothly',async({page})=>{
+ await page.addInitScript(()=>{
+  const original=CanvasRenderingContext2D.prototype.clearRect;
+  Object.assign(window,{techDraws:0});
+  CanvasRenderingContext2D.prototype.clearRect=function(...args){if(this.canvas instanceof HTMLCanvasElement&&this.canvas.matches('.tech-text canvas')){const w=window as unknown as {techDraws:number};w.techDraws++;}return original.apply(this,args);};
+ });
+ await open(page);await canvas(page).scrollIntoViewIfNeeded();await page.mouse.move(0,0);
+ const frames=()=>page.evaluate(()=>(window as unknown as {techDraws:number}).techDraws);
+ const start=await frames(),time=Date.now();await page.waitForTimeout(1000);const fps=(await frames()-start)*1000/(Date.now()-time);expect(fps).toBeGreaterThan(20);
+ await page.getByRole('heading',{name:'Properties',exact:true}).scrollIntoViewIfNeeded();await page.waitForTimeout(250);const hidden=await frames();await page.waitForTimeout(300);expect(await frames()).toBe(hidden);
+ await still(page);await canvas(page).scrollIntoViewIfNeeded();await page.mouse.move(0,0);await settle(canvas(page));const idle=await frames();await page.waitForTimeout(300);expect(await frames()).toBe(idle);
+ await fs.mkdir('artifacts',{recursive:true});await fs.writeFile('artifacts/tech-text-performance.json',JSON.stringify({sample:'Chromium headless, 1536×1024, default sweep',fps,hiddenDraws:0,idleDraws:0},null,2));
+ for(let index=0;index<4;index++){await page.goto('/text-animations/blur-text');await open(page);}await expect(canvas(page)).toHaveCount(1);
+});
+
 test('real TypeScript, CSS and helpers compile in Sandpack and edits stay isolated from the source',async({page})=>{
  await open(page);await page.getByRole('tab',{name:'Code',exact:true}).click();
  for(const name of ['TechText.tsx','TechText.engine.ts','TechText.geometry.ts','TechText.types.ts','TechText.css'])await expect(page.getByRole('button',{name,exact:true})).toBeVisible();
@@ -111,8 +128,8 @@ for(const [width,height] of [[375,812],[768,1024],[1440,900],[1920,1080],[2560,1
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   const fit=await c.evaluate((el:HTMLCanvasElement)=>{const rect=el.getBoundingClientRect(),glyphs=JSON.parse(el.dataset.glyphs!);return glyphs.every((g:{x:number;y:number;width:number;height:number})=>g.x>=0&&g.y>=0&&g.x+g.width<=rect.width&&g.y+g.height<=rect.height);});expect(fit).toBe(true);
   const point=await inkPoint(c);await hoverPoint(page,c,point);await expect(c).toHaveAttribute('data-active-letter','D');await page.waitForTimeout(250);await page.screenshot({path:`screenshots/phase5-tech-${width}-${theme}.png`});
-  await page.getByRole('button',{name:'Mobile viewport',exact:true}).click();expect((await page.getByTestId('preview-device').boundingBox())!.width).toBeLessThanOrEqual(375);
-  await page.getByRole('button',{name:'Tablet viewport',exact:true}).click();expect((await page.getByTestId('preview-device').boundingBox())!.width).toBeLessThanOrEqual(768);
+  await page.getByRole('button',{name:'Mobile viewport',exact:true}).click();await expect.poll(async()=>(await page.getByTestId('preview-device').boundingBox())!.width).toBeLessThanOrEqual(375);
+  await page.getByRole('button',{name:'Tablet viewport',exact:true}).click();await expect.poll(async()=>(await page.getByTestId('preview-device').boundingBox())!.width).toBeLessThanOrEqual(768);
   await page.getByRole('button',{name:'Fullscreen preview',exact:true}).click();await expect(page.locator('.fullscreen-preview')).toBeVisible();await page.keyboard.press('Escape');await expect(page.locator('.fullscreen-preview')).toHaveCount(0);
   await page.getByRole('button',{name:`Switch to ${theme==='dark'?'light':'dark'} theme`}).click();await expect(c).toHaveAttribute('aria-label','DevUI Bits');await page.reload();await expect(c).toHaveAttribute('aria-label','DevUI Bits');expect(errors).toEqual([]);
  });

@@ -45,6 +45,7 @@ export class TechTextEngine {
     this.options=options;
     if(restart)this.introElapsed=0;
     if(!options.draggable && this.drag)this.finishDrag(false);
+    this.canvas.style.touchAction=options.draggable?'none':'pan-y';
     this.layout();this.schedule();
   }
   private fontsChanged=()=>{this.typography='';this.layout();this.schedule();};
@@ -102,7 +103,7 @@ export class TechTextEngine {
     if(key!==this.typography){
       if(this.drag)this.finishDrag(false);
       this.typography=key;this.sprites.clear();this.glyphs=[];this.drag=null;this.keyboard=-1;this.frameBox.opacity=0;
-      this.canvas.dataset.dragging='false';this.canvas.style.touchAction='pan-y';
+      this.canvas.dataset.dragging='false';this.canvas.style.touchAction=this.options.draggable?'none':'pan-y';
       let prefix='';
       chars.forEach((char,index)=>{
         prefix+=char;
@@ -158,7 +159,7 @@ export class TechTextEngine {
   private finishDrag(click:boolean) {
     const drag=this.drag;if(!drag)return;this.drag=null;
     if(this.canvas.hasPointerCapture(drag.pointerId))this.canvas.releasePointerCapture(drag.pointerId);
-    this.canvas.dataset.dragging='false';this.canvas.style.touchAction='pan-y';
+    this.canvas.dataset.dragging='false';this.canvas.style.touchAction=this.options.draggable?'none':'pan-y';
     if(this.reduced.matches){const g=this.glyphs[drag.index];if(g)g.dx=g.dy=0;}
     else if(click&&!drag.moved&&this.options.clickKick)this.kick(drag.index);
     this.schedule();
