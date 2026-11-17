@@ -60,7 +60,7 @@ export function MaskedHeading(p:EffectProps){
  useEffect(()=>{const s=data.current;s.time=0;wake();},[p.reveal,p.trigger,p.text]);
  useEffect(()=>{
   const s=data.current;let live=true;s.image=null;s.video?.pause();s.video=null;
-  const src=str(p,'src','');if(!src)return;
+  const src=str(p,'src','');if(!src||p.mediaType==='mesh')return;
   if(p.mediaType==='video'){const video=document.createElement('video');video.crossOrigin='anonymous';video.muted=true;video.loop=true;video.playsInline=true;video.src=src;s.video=video;const visibility=new IntersectionObserver(([e])=>{if(e.isIntersecting&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&!latest.current.paused)void video.play().catch(()=>{});else video.pause();});visibility.observe(host.current!);video.addEventListener('loadeddata',wake);return()=>{live=false;visibility.disconnect();video.pause();video.removeEventListener('loadeddata',wake);video.removeAttribute('src');video.load();};}
   const image=new Image();image.crossOrigin='anonymous';image.onload=()=>{if(live){s.image=image;wake();}};image.src=src;return()=>{live=false;image.onload=null;};
  },[p.src,p.mediaType,p.paused]);
