@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { RotateCcw, SlidersHorizontal } from "lucide-react";
 import type { Control, EffectProps } from "./types";
 type Props = {
@@ -47,7 +48,9 @@ export function Controls({
             </select>
           </label>
         )}
-        {schema.map((control) => (
+        {schema.map((control, index) => (
+          <Fragment key={control.key}>
+          {control.group && control.group !== schema[index - 1]?.group && <h3 className="control-group">{control.group}</h3>}
           <label
             key={control.key}
             className={`control-row control-${control.type}`}
@@ -58,10 +61,11 @@ export function Controls({
                 <input
                   type="color"
                   aria-label={control.label}
-                  value={String(values[control.key])}
+                  value={/^#[0-9a-f]{6}$/i.test(String(values[control.key])) ? String(values[control.key]) : "#ffffff"}
                   onChange={(e) => set(control.key, e.target.value)}
                 />
-                <span>{String(values[control.key]).toUpperCase()}</span>
+                <span>{values[control.key] === "currentColor" ? "Inherited" : String(values[control.key]).toUpperCase()}</span>
+                {control.inherit && <button type="button" className="color-inherit" aria-label={`Inherit ${control.label}`} aria-pressed={values[control.key] === "currentColor"} onClick={() => set(control.key, "currentColor")}>↶</button>}
               </div>
             ) : control.type === "toggle" ? (
               <input
@@ -123,6 +127,7 @@ export function Controls({
               </div>
             )}
           </label>
+          </Fragment>
         ))}
       </div>
     </section>

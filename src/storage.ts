@@ -18,7 +18,7 @@ export function validateSchema(value:unknown,defaults:EffectProps):Control[]{
   keys.add(item.key);
   if(item.type==='range'||item.type==='number'){if(typeof defaults[item.key]!=='number'||!Number.isFinite(item.min)||!Number.isFinite(item.max)||item.min>=item.max||!Number.isFinite(item.step)||item.step<=0)throw new Error('Numeric controls need numeric defaults and finite min, max, and positive step values.');}
   else if(item.type==='toggle'&&typeof defaults[item.key]!=='boolean')throw new Error('Toggle properties must be booleans.');
-  else if(item.type==='color'&&(!/^#[0-9a-f]{6}$/i.test(String(defaults[item.key]))))throw new Error('Colors must use six-digit hex values.');
+  else if(item.type==='color'&&!(item.inherit===true&&defaults[item.key]==='currentColor')&&(!/^#[0-9a-f]{6}$/i.test(String(defaults[item.key]))))throw new Error('Colors must use six-digit hex values.');
   else if(item.type==='select'&&(!Array.isArray(item.options)||!item.options.every((o:unknown)=>typeof o==='string')||!item.options.includes(defaults[item.key])))throw new Error('Select controls need string options including the default.');
  }
  return value as Control[];
