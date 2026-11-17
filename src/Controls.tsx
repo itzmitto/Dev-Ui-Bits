@@ -33,7 +33,7 @@ export function Controls({
             <span>Preset</span>
             <select
               aria-label="Preset"
-              defaultValue=""
+              value={Object.keys(presets).find(name => Object.entries(presets[name]).every(([key, value]) => values[key] === value)) ?? ""}
               onChange={(e) => {
                 if (e.target.value)
                   onChange({ ...values, ...presets[e.target.value] });

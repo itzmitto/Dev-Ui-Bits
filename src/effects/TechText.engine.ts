@@ -1,4 +1,4 @@
-import { clamp01, falloff, pointOnContours, spring, traceAlpha } from './TechText.geometry';
+import { clamp01, pointOnContours, spring, traceAlpha } from './TechText.geometry';
 import type { Point, TechTextOptions } from './TechText.types';
 
 type Sprite = { mask: HTMLCanvasElement; fill: HTMLCanvasElement; pixels: Uint8ClampedArray; path: Path2D; contours: Point[][]; left: number; top: number; width: number; height: number; scale: number };
@@ -14,6 +14,8 @@ export class TechTextEngine {
   private sprites=new Map<string,Sprite>();
   private width=1;private height=1;private dpr=1;private fontSize=150;
   private left=0;private wordWidth=0;private baseline=0;private cap=0;private xHeight=0;private descent=0;
+  private areaCanvas=document.createElement('canvas');
+  private areaOpacity=0;private areaX=0;private areaY=0;
   private color='white';private accent='white';private typography='';
   private pointer={x:-1e5,y:-1e5,inside:false};
   private drag: { index:number; pointerId:number; x:number; y:number; moved:boolean } | null=null;
@@ -98,6 +100,7 @@ export class TechTextEngine {
     this.baseline=(this.height+full.actualBoundingBoxAscent-full.actualBoundingBoxDescent)/2;
     const key=JSON.stringify([p.text,font,p.letterSpacing]);
     if(key!==this.typography){
+      if(this.drag)this.finishDrag(false);
       this.typography=key;this.sprites.clear();this.glyphs=[];this.drag=null;this.keyboard=-1;this.frameBox.opacity=0;
       this.canvas.dataset.dragging='false';this.canvas.style.touchAction='pan-y';
       let prefix='';
@@ -115,6 +118,8 @@ export class TechTextEngine {
     this.canvas.dataset.fontSize=this.fontSize.toFixed(3);
     this.canvas.dataset.glyphs=JSON.stringify(this.glyphs.map(g=>({char:g.char,x:this.left+g.x+g.sprite.left+3,y:this.baseline+g.sprite.top+3,width:g.sprite.width-6,height:g.sprite.height-6})));
     this.canvas.dataset.intro=p.intro;
+    const bufferWidth=Math.max(1,...this.glyphs.map(g=>g.sprite.mask.width)),bufferHeight=Math.max(1,...this.glyphs.map(g=>g.sprite.mask.height));
+    if(this.areaCanvas.width!==bufferWidth||this.areaCanvas.height!==bufferHeight){this.areaCanvas.width=bufferWidth;this.areaCanvas.height=bufferHeight;}
   }
   private hit(x:number,y:number) {
     for(let index=this.glyphs.length-1;index>=0;index--){
@@ -214,6 +219,19 @@ export class TechTextEngine {
     }
     c.restore();return Math.abs(b.opacity-opacity)>.005||!!g&&(p.specks>0&&p.speed>0);
   }
+  private drawArea(g:Glyph,gx:number,gy:number,opacity:number) {
+    const c=this.ctx,b=this.areaCanvas.getContext('2d')!,s=g.sprite,p=this.options;
+    const gradient=b.createRadialGradient(this.areaX-gx,this.areaY-gy,p.reach*(1-p.softness),this.areaX-gx,this.areaY-gy,p.reach);
+    gradient.addColorStop(0,`rgba(0,0,0,${this.areaOpacity})`);gradient.addColorStop(1,'rgba(0,0,0,0)');
+    b.setTransform(spriteScale,0,0,spriteScale,0,0);b.clearRect(0,0,this.areaCanvas.width/spriteScale,this.areaCanvas.height/spriteScale);
+    b.globalCompositeOperation='source-over';b.drawImage(s.fill,0,0,s.width,s.height);
+    b.globalCompositeOperation='destination-out';b.fillStyle=gradient;b.fillRect(0,0,s.width,s.height);
+    c.globalAlpha=opacity;c.drawImage(this.areaCanvas,0,0,s.mask.width,s.mask.height,gx,gy,s.width,s.height);
+    b.globalCompositeOperation='source-over';b.clearRect(0,0,s.width,s.height);
+    b.strokeStyle=this.color;b.lineWidth=p.strokeWidth;b.lineJoin='round';b.setLineDash(p.lineStyle==='dashed'?[p.dashLength,p.dashGap]:[]);b.stroke(s.path);
+    b.globalCompositeOperation='destination-in';b.fillStyle=gradient;b.fillRect(0,0,s.width,s.height);
+    c.drawImage(this.areaCanvas,0,0,s.mask.width,s.mask.height,gx,gy,s.width,s.height);b.globalCompositeOperation='source-over';
+  }
   private draw=(now:number)=>{
     this.raf=0;if(this.destroyed||!this.visible||document.hidden)return;
     const dt=this.last?Math.min(.04,(now-this.last)/1000):1/60;this.last=now;
@@ -233,6 +251,11 @@ export class TechTextEngine {
     let animate=inIntro||sweeping;
     if((p.guides&&this.active>=0)||(p.intro==='metrics'&&inIntro))this.guides(inIntro?Math.min(1,intro*6):1);
     const smoothing=reduced?1:1-Math.exp(-18*dt);
+    const areaTarget=p.reveal==='area'&&(this.pointer.inside||sweeping)?1:0;
+    if(areaTarget){if(this.areaOpacity<.01){this.areaX=x;this.areaY=y;}else{this.areaX+=(x-this.areaX)*smoothing;this.areaY+=(y-this.areaY)*smoothing;}}
+    this.areaOpacity+=(areaTarget-this.areaOpacity)*smoothing;
+    animate ||= Math.abs(areaTarget-this.areaOpacity)>.003;
+
     this.glyphs.forEach((g,index)=>{
       if(!this.drag||this.drag.index!==index){
         [g.dx,g.vx]=spring(g.dx,g.vx,dt,p.bounce);[g.dy,g.vy]=spring(g.dy,g.vy,dt,p.bounce);
@@ -242,11 +265,7 @@ export class TechTextEngine {
       let target=0;
       if(p.reveal!=='off'){
         if(p.reveal==='letter')target=index===this.active?1:0;
-        else if(this.pointer.inside||sweeping){
-          const sx=this.left+g.x+g.dx+g.sprite.left,sy=this.baseline+g.dy+g.sprite.top;
-          const nearestX=Math.max(sx,Math.min(x,sx+g.sprite.width)),nearestY=Math.max(sy,Math.min(y,sy+g.sprite.height));
-          target=falloff(Math.hypot(nearestX-x,nearestY-y),p.reach,p.softness);
-        }
+
       }
       g.reveal+=(target-g.reveal)*smoothing;animate ||= Math.abs(target-g.reveal)>.003;
       const s=g.sprite,gx=this.left+g.x+g.dx+s.left,gy=this.baseline+g.dy+s.top;
@@ -271,7 +290,9 @@ export class TechTextEngine {
       if(moving&&p.reveal!=='off'){
         c.save();c.translate(this.left+g.x+s.left,this.baseline+s.top);c.globalAlpha=.2;c.strokeStyle=this.color;c.lineWidth=p.strokeWidth;c.setLineDash(p.lineStyle==='dashed'?[p.dashLength,p.dashGap]:[]);c.stroke(s.path);c.restore();
       }
-      c.globalAlpha=(1-outline)*opacity;c.drawImage(s.fill,gx,gy,s.width,s.height);
+      if(p.reveal==='area'&&this.areaOpacity>.002&&!inIntro){
+        this.drawArea(g,gx,gy,opacity);
+      } else {c.globalAlpha=(1-outline)*opacity;c.drawImage(s.fill,gx,gy,s.width,s.height);}
       if(outline>.002){c.translate(gx,gy);c.globalAlpha=outline*opacity;c.strokeStyle=this.color;c.lineWidth=p.strokeWidth;c.lineJoin='round';c.setLineDash(p.lineStyle==='dashed'?[p.dashLength,p.dashGap]:[]);c.stroke(s.path);}
       c.restore();
     });
