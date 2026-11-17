@@ -52,7 +52,8 @@ export default function CatalogPage({ category, favoritesOnly = false }: { categ
   useEffect(() => { document.title = `${favoritesOnly ? 'Favorites' : selectedCategory ?? 'Components'} — DevUI Bits`; }, [favoritesOnly, selectedCategory]);
   useEffect(() => { setPreview(null); }, [selectedCategory, status, sort, favoritesOnly]);
   const update = (key: string, value: string) => {
-    const next = new URLSearchParams(params);
+    // Merge against the committed URL, including rapid changes during a router transition.
+    const next = new URLSearchParams(window.location.search);
     if (value === 'all' || value === 'catalog') next.delete(key); else next.set(key,value);
     if (category && key === 'category') navigate(`/browse${next.size ? `?${next}` : ''}`);
     else setParams(next, { replace: true });

@@ -150,7 +150,7 @@ export default function App() {
 function RightRail() {
   const { pathname } = useLocation();
   const current =
-    registry.find((c) => componentPath(c) === pathname) ?? registry[0];
+    findComponent(...pathname.slice(1).split("/") as [string, string]) ?? registry[0];
   const relatives = registry
     .filter((c) => c.category === current.category && c.id !== current.id)
     .slice(0, 3);

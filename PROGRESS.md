@@ -1,6 +1,29 @@
 # DevUI Bits — voortgang
 
-Bijgewerkt: 16 november 2026. Versie 1.1.0.
+Bijgewerkt: 17 november 2026. Versie 1.1.0.
+
+## Fase 4 — complete catalogus en sidebar
+
+Status: catalogus en navigatie geïmplementeerd; browserregressies en visuele vergelijking lopen. De eerdere aanvraag voor een echt Crystalized Ball-effect is vervangen door de laatste opdracht: uitsluitend catalogus en placeholders. Crystalized Ball blijft planned.
+
+- Dezelfde bestaande projectroot gebruikt: /home/andre/Personal-Projects/Project-Dev-Ui-Bits/DevUI-Bits. Geen nieuw project, nieuwe dependencies, effectimplementaties, IndexedDB-migratie, bron-ZIP, Git-mutatiecommando’s of deployment.
+- Alle 217 aangeleverde namen in de opgegeven categorie en volgorde geregistreerd. 22 bestaande namen die niet op die lijst stonden, zijn behouden. Eindtotaal: 239 unieke records, 29 ready en 210 planned.
+- Eén definitieve registry met een discriminated union: planned bevat alleen metadata; ready bevat de echte renderer, defaults, schema, dependencies en bronkoppeling. Dubbele ids en routes worden expliciet afgewezen.
+- Scroll Reveal en Animated List naar de aangeleverde categorie verplaatst met behoud van hun oude URLs als aliases. Alle oorspronkelijke 29 implementaties en hun id blijven bestaan. Bijna gelijknamige effecten worden niet ten onrechte als ready gemarkeerd.
+- Uitgebreide sidebar met branding, Browse all, categorie-iconen, GET STARTED, EXPLORE, vijf inklapbare categorieën, eigen scrollcontainer, actieve highlight en automatische positionering. Mobiele drawer en dark/light blijven het bestaande systeem gebruiken.
+- Components-overzicht met teller, categorie-/statusfilter, echte sorteeropties, URL-persistentie en compacte statuscards. Desktop standaard drie kolommen, bredere schermen vier/vijf/zes, tablet twee, mobiel één. Geen zoekveld of Create-knop teruggebracht.
+- Eén PlannedComponentPreview voor alle geplande cards en detailpagina’s, zonder nep-effecten, Code, Editor of Customize. Elke entry heeft een werkende route en een teruglink.
+- GET STARTED en EXPLORE hebben echte informatiepagina’s. MCP vermeldt expliciet dat er geen server is. Blocks, App UI, Templates en Skills bevatten geen verzonnen content. Favorieten zijn werkend, lokaal en los van bestaande IndexedDB-data opgeslagen.
+- Ready-previewmodules waar zinvol naar React.lazy verplaatst. Er start geen effect op de catalogus zonder klik; maximaal één cataloguspreview tegelijk. De bestaande homepage en echte detailpagina’s gebruiken hun behouden implementaties onder Suspense.
+- ADDING-COMPONENTS.md toegevoegd voor toekomstige planned → ready-ontwikkeling, zonder dubbele records of routes. README bijgewerkt.
+
+### Controle tot nu toe
+
+- Actuele live React Bits-catalogus bekeken, inclusief donkere styling, Geist, 32px-titel, compacte sidebar en drie cardkolommen. Er was geen screenshotbijlage zichtbaar in deze chat; de visuele vergelijking gebruikt de live referentie.
+- Strict TypeScript geslaagd. Vitest 10/10 geslaagd, inclusief volledige naamvolgorde, aantallen, unieke ids/slugs/routes, oude aliases, statusgrenzen en echte bronbestanden.
+- Productiebuild geslaagd. De aanvankelijke waarschuwingen over foundationmodules die zowel lazy als direct gebruikt werden zijn opgelost; de overige effectmodules zijn apart geladen.
+- Eerste gerichte browserronde 7/8: sidebar/aliases, favorieten, previewbeperking en 375/1920px in beide thema’s slagen. De filtercontrole vond een race bij snelle opeenvolgende URL-filterwijzigingen; updates worden nu met de actuele URL samengevoegd en de controle wacht op de zichtbare filterstatus.
+- Volledige browsercontrole en eindresultaten volgen na de laatste run.
 
 ## Fase 3 — homepage, responsive layout en thema
 

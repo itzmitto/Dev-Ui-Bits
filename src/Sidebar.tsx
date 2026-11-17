@@ -66,6 +66,6 @@ export function Sidebar({ open, custom, mobileNav }: { open: boolean; custom: Cu
         </section>;
       })}
     </nav>
-    <div className="sidebar-footer"><span><FileText size={13}/> {registry.filter(item => item.status === 'ready').length} ready · {registry.filter(item => item.status === 'planned').length} planned</span></div>
+    <div className="sidebar-footer"><span><FileText size={13}/> {registry.filter(item => item.status === 'ready').length + custom.length} ready · {registry.filter(item => item.status === 'planned').length} planned</span></div>
   </aside>;
 }

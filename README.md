@@ -1,6 +1,6 @@
 # DevUI Bits
 
-Een zelfstandige bibliotheek met **29 originele React-componenten**, live previews, schema-gestuurde Customize-controls, echte broncode, Sandpack en een lokale componentworkshop. Gebouwd op het bestaande DevUI Bits-project: alle oorspronkelijke 21 effecten en functies zijn behouden.
+Een zelfstandige bibliotheek met **239 catalogusitems: 29 werkende React-componenten en 210 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Gebouwd op het bestaande DevUI Bits-project: alle oorspronkelijke 21 effecten en functies zijn behouden.
 
 **Start hier:** [SETUP-GITHUB-VERCEL.md](SETUP-GITHUB-VERCEL.md) beschrijft ZIP → VS Code → GitHub → publieke Vercel-site, met exacte commando's en controles vóór Git-initialisatie of remote-wijzigingen.
 
@@ -31,6 +31,28 @@ npm run test:e2e
 
 Op Linux eventueel `npx playwright install --with-deps chromium`. De testconfiguratie gebruikt standaard Playwright's Chromium, zonder een lokaal absoluut browserpad. Optioneel kan `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` naar een eigen Chromium-installatie wijzen. `PLAYWRIGHT_BASE_URL` laat dezelfde tests op een al draaiende production preview draaien; de standaardtests starten anders zelf Vite op poort 5173.
 
+## Complete componentcatalogus
+
+`/browse` en `/get-started/index` openen dezelfde volledige catalogus. Deze bevat alle 217 aangeleverde namen in de gevraagde volgorde plus 22 bestaande namen die nog niet in die lijst stonden: **239 unieke records**, waarvan **29 Ready** en **210 Planned**. Er zijn in deze fase geen nieuwe effecten gebouwd. Crystalized Ball blijft gepland.
+
+| Categorie | Totaal | Ready | Planned |
+| --- | ---: | ---: | ---: |
+| Text Animations | 34 | 5 | 29 |
+| Animations | 41 | 3 | 38 |
+| Components | 56 | 10 | 46 |
+| Micro Interactions | 39 | 5 | 34 |
+| Backgrounds | 69 | 6 | 63 |
+
+De sidebar bevat GET STARTED, EXPLORE en de vijf inklapbare categorieën. De lange lijst scrollt zelfstandig, markeert de actieve entry en opent automatisch de geselecteerde categorie. Op mobiel blijft het de bestaande drawer met Escape en focusherstel. Er is geen Search Components-veld of Create Component-navigatie.
+
+De catalogus heeft categorie- en statusfilters, sortering op catalogusvolgorde, naam en ready-first, een dynamische teller en compacte cards. Filters staan in de URL en blijven na refresh behouden. Favorieten werken lokaal via de bladwijzerknoppen en `/favorites`; ze worden apart van IndexedDB opgeslagen. Een cataloguspreview start alleen op verzoek, maximaal één tegelijk, en rendert niet buiten beeld. De meeste effectmodules worden pas geladen wanneer ze nodig zijn.
+
+Alle bestaande component-URLs blijven werken. Scroll Reveal staat nu bij Text Animations en Animated List bij Components, met behoud van respectievelijk `/animations/scroll-reveal` en `/animations/animated-list` als aliases naar hetzelfde record. Vergelijkbare namen zoals Tilted Card en Tilt Card zijn niet zonder echte implementatie samengevoegd.
+
+Geplande detailpagina’s hebben uitsluitend metadata, status, een eenvoudige previewcontainer en een teruglink. Code, Editor en Customize ontbreken tot er echte broncode is. GET STARTED bevat eigen introductie, installatie, changelog, favorieten en een eerlijke MCP-informatiepagina: er is geen MCP-server geconfigureerd. Blocks, App UI, Templates en Skills zijn duidelijk geplande collecties.
+
+**Verder ontwikkelen:** [ADDING-COMPONENTS.md](ADDING-COMPONENTS.md) beschrijft hoe één planned component met behoud van id en route ready wordt, inclusief renderer, defaults, controls, CSS, dependencies, Sandpack en tests.
+
 ## Homepage, thema en responsive layout
 
 De homepage bevat een interactieve particle-hero, vijf registrycategorieën en zes echte kleine live previews. De navbar bevat Home, Components, Categories, de [GitHub-repository](https://github.com/itzmitto/Dev-Ui-Bits) en een sun/moon-knop. De zoekvelden, de `/`-sneltoets en publieke Create-links zijn verwijderd.
@@ -39,7 +61,7 @@ Dark/light werkt op de volledige applicatie, inclusief navigatie, Customize, bro
 
 Centrale CSS-variabelen in `src/styles.css` definiëren achtergrond, tekst, surfaces, hover, borders, muted text, accent, sidebar, toolbar, inputs, radius, shadow en spacing. Tailwind v4 verwijst naar dezelfde tokens. De bibliotheek gebruikt een flexibel grid: de rechterrail verdwijnt onder 1440 px en de sidebar wordt onder 840 px een uitschuifbaar menu met Escape, focusherstel en scroll-lock. Boven 1920 px krijgen preview en controls meer ruimte; ook ultrawide en 4K hebben expliciete afwerking.
 
-Homepagepreviews worden pas bij het eerste verschijnen gemount en behouden daarna hun interactiestatus. Canvas-loops en CSS-animaties pauzeren buiten beeld; de hero gebruikt het bestaande particle-effect met visibility- en reduced-motion-ondersteuning. De Sandpack-editor wordt als aparte chunk geladen. De registry importeert de 29 ingebouwde effectmodules en hun broncode nog gezamenlijk; opsplitsing per component is een toekomstige optimalisatie voor honderden effecten, geen bestaande laadlimiet.
+Homepagepreviews worden pas bij het eerste verschijnen gemount en behouden daarna hun interactiestatus. Canvas-loops en CSS-animaties pauzeren buiten beeld; de hero gebruikt het bestaande particle-effect met visibility- en reduced-motion-ondersteuning. De Sandpack-editor wordt als aparte chunk geladen. De meeste effectmodules worden inmiddels via React.lazy geladen. Field en de homepage-particles worden ook rechtstreeks door bestaande onderdelen gebruikt. De raw broncode blijft centraal beschikbaar voor Code en export; verder opsplitsen daarvan is een mogelijke vervolgstap voor honderden zware implementaties.
 
 ## Componenten
 
@@ -60,7 +82,12 @@ Alle aanvullingen gebruiken de bestaande registry en paginatemplate. Reduced mot
 
 ## Architectuur en uitbreiden
 
-- `src/registry.ts`: metadata, defaults, controls, dependencies en bronbestandskoppelingen. De registry bouwt automatisch sidebar, categorieën, routes, Customize en codebestanden.
+- `src/registry.ts`: één definitieve ready/planned-registry, lazy previewmodules, defaults, controls, bronbestanden en routealiases.
+- `src/catalogNames.ts`: de 217 aangeleverde namen, categorieën en volgorde.
+- `src/CatalogPage.tsx` + `src/Sidebar.tsx`: filters, sortering, kaarten en uitgebreide navigatie.
+- `src/PlannedComponentPreview.tsx`: één gedeelde placeholder en geplande detailpagina.
+- `src/catalogState.ts` + `src/CatalogUI.tsx`: lokale favorieten en statusweergave.
+- `src/catalog.css`: gethematiseerde catalogus-, sidebar- en responsive styling.
 - `src/types.ts`: `Definition`, `CustomComponent`, categorieën en controls.
 - `src/effects/`: eigen React-, Motion-, CSS- en Canvas-effecten. CSS-3D heeft geen Three.js nodig; er zijn geen GSAP- of Three.js-dependencies toegevoegd.
 - `src/App.tsx`: gedeelde bibliotheekshell, componentpagina, collecties en behouden workshoproutes.
@@ -81,7 +108,8 @@ Een nieuw ingebouwd component toevoegen:
 2. Voeg een `def(...)`-item toe aan `registry`. Geef voor iedere control een passende default op.
 3. Stel `exportName` in als de echte exportnaam afwijkt van de componentnaam zonder spaties.
 4. Voeg eigen CSS toe in `styles: ['MijnEffect.css']` en helperbestanden in `supportingFiles: ['mijnHelper.ts']`. Deze paden zijn relatief aan `src/effects/`. Importeer de CSS ook eenmaal in `src/main.tsx` voor de websitepreview. De registry voegt ze automatisch toe aan de code-editor en export.
-5. Declareer eventuele npm-dependencies in het registry-item en controleer hun licenties.
+5. Gebruik exact de reeds geplande naam om hetzelfde catalogusrecord ready te maken; zie ADDING-COMPONENTS.md.
+6. Declareer eventuele npm-dependencies in het registry-item en controleer hun licenties.
 6. Test de live preview, controls en geïsoleerde broncode. Routes en navigatie volgen uit metadata; er is geen limiet op het aantal registry-items. Bij honderden grote effecten is aanvullend lazy loading van previewmodules en broncode een logische performance-optimalisatie.
 
 De code-tab gebruikt de echte implementatie via Vite `?raw`. Built-ins bieden TSX en CSS; workshoptemplates zijn apart geschreven voor JSX/TSX en CSS/Tailwind. Er wordt geen nepconversie aangeboden.
