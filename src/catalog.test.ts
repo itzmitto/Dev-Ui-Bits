@@ -17,15 +17,15 @@ const originalRoutes = [
 ];
 describe('phase 4 catalog and route compatibility', () => {
   it('registers all 217 requested names in their category and requested order', () => {
-    expect(catalogNames.map(group => group.names.length)).toEqual([33,38,48,34,64]);
+    expect(catalogNames.map(group => group.names.length)).toEqual([33,38,48,34,64,7]);
     for (const {category,names} of catalogNames) {
       const entries = registry.filter(item => item.category === category);
       expect(entries.slice(0,names.length).map(item => item.name)).toEqual(names);
       for (const name of names) expect(registry.filter(item => item.name === name)).toHaveLength(1);
     }
-    expect(registry).toHaveLength(239);
-    expect(readyComponents).toHaveLength(45);
-    expect(registry.filter(item => item.status === 'planned')).toHaveLength(194);
+    expect(registry).toHaveLength(246);
+    expect(readyComponents).toHaveLength(50);
+    expect(registry.filter(item => item.status === 'planned')).toHaveLength(196);
   });
   it('retains every original ready route, including moved-category aliases', () => {
     for (const route of originalRoutes) {

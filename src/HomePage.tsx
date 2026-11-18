@@ -5,8 +5,8 @@ import { registry, readyComponents } from './registry';
 import { categories, categorySlug, componentPath, type Definition } from './types';
 import { InteractiveParticleBackground } from './effects/InteractiveParticleBackground';
 import { useTheme } from './theme';
-const icons = [Type, Sparkles, Layers, Grid2X2, MousePointer2];
-const descriptions = ['Give every word a little personality.', 'Motion that makes an interface feel alive.', 'Thoughtful building blocks, ready to interact.', 'Set the scene with something unexpected.', 'Small moments. A lasting impression.'];
+const icons = [Type, Sparkles, Layers, Grid2X2, MousePointer2, MousePointer2];
+const descriptions = ['Give every word a little personality.', 'Motion that makes an interface feel alive.', 'Thoughtful building blocks, ready to interact.', 'Set the scene with something unexpected.', 'Small moments. A lasting impression.', 'Original interactive trails that follow your curiosity.'];
 const featuredSlugs = ['micro-slats', 'blur-text', '3d-interactive-card', 'animated-tabs', 'morphing-button', 'spotlight-card'];
 const featured = featuredSlugs.map(slug => readyComponents.find(item => item.slug === slug)!);
 function useVisible<T extends HTMLElement>() {

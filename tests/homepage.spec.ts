@@ -1,13 +1,13 @@
 import { test, expect } from '@playwright/test';
 
 const github = 'https://github.com/itzmitto/Dev-Ui-Bits';
-const categories = ['text-animations','animations','components','backgrounds','micro-interactions'];
+const categories = ['text-animations','animations','components','backgrounds','micro-interactions','cursor-trails'];
 
 test('homepage, categories and public navigation use the existing registry', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Animated React Components for Creative Developers');
-  await expect(page.locator('.home-category')).toHaveCount(5);
+  await expect(page.locator('.home-category')).toHaveCount(6);
   await expect(page.locator('.home-feature')).toHaveCount(6);
   await expect(page.locator('.sidebar')).toHaveCount(0);
   await expect(page.getByRole('searchbox')).toHaveCount(0);
@@ -21,7 +21,7 @@ test('homepage, categories and public navigation use the existing registry', asy
   expect(paths).toEqual(categories.map(category => '/' + category));
   for (const path of paths) {
     await page.goto(path!); await expect(page.locator('.collection-card').first()).toBeVisible();
-    await expect(page.locator('.component-link[data-status=ready]')).toHaveCount(45);
+    await expect(page.locator('.component-link[data-status=ready]')).toHaveCount(50);
     await expect(page.locator('input[aria-label="Search collection"], a[href="/create"]')).toHaveCount(0);
   }
   await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Home', exact: true }).click();

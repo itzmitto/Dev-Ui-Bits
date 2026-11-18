@@ -1,3 +1,20 @@
+### Fase 8 — batch 2 gecontroleerd
+
+- Chroma Halo, Dither Cursor en Glyph Stream toegevoegd met eigen engines: vervormde advecterende blooms, een vervallend scalair veld met Bayer-dithering, en elastische glyph-tiles met momentum en scramble.
+- 246 items, 50 Ready, 196 Planned. Pigment Trail en Stardust Cursor nog Planned.
+- Daadwerkelijk geslaagd: strict TypeScript, productiebuild, 34 Vitest-tests en zes gerichte Playwright-tests inclusief alle vijf echte Sandpack-previews. Autoplay- en pointer-screenshots bekeken. Geen Pro-broncode of externe assets gebruikt.
+- Vervolgpunt: batch 3, daarna brede responsive-, lifecycle-, performance- en regressietests.
+
+## Fase 8 — Cursor Trails (18 november 2026), batch 1 gecontroleerd
+
+- Nieuwe categorie Cursor Trails: zeven unieke routes, waarvan Arc Cursor en Celebration Cursor functioneel aangesloten zijn; de andere vijf blijven Planned tot hun eigen batch slaagt.
+- Actueel: 246 catalogusitems, 47 Ready, 199 Planned. Alle 45 eerdere Ready-componenten behouden.
+- Eigen Canvas 2D-engines: coherente elektrische polylijnen/vertakkingen/klikontlading; confetti met zwaartekracht, drag, flutter, wind en rotatie.
+- Batch 1 daadwerkelijk geslaagd: strict TypeScript, productiebuild, 34 Vitest-tests en 3 gerichte Playwright-tests inclusief beide echte Sandpack-voorbeelden, presets, pause, reset, restart, pointer en klik.
+- Browsercontrole vond een ontbrekende categorie-icoonkoppeling in de detailpagina; hersteld en opnieuw getest. Publieke Pro-demo's alleen visueel bekeken, geen implementatiecode of assets overgenomen. Eigen vorm/timing kan afwijken.
+- Vervolgpunt: batch 2 — Chroma Halo, Dither Cursor, Glyph Stream. Daarna batch 3 en volledige regressiecontrole.
+- Geen Git-mutaties, publicatie of ZIP uitgevoerd door deze uitvoering.
+
 # DevUI Bits — voortgang
 
 Bijgewerkt: 18 november 2026. Versie 1.1.0.

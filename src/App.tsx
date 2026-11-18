@@ -73,7 +73,7 @@ import { FavoriteButton, StatusBadge } from "./CatalogUI";
 import { ExploreSection, LibraryInfo } from "./LibraryInfo";
 import { HeaderActions, SiteFooter } from "./SiteChrome";
 const Editor = lazy(() => import("./Editor"));
-const icons = [Type, Sparkles, Layers, Grid2X2, MousePointer2];
+const icons = [Type, Sparkles, Layers, Grid2X2, MousePointer2, MousePointer2];
 
 type Notify = (message: string) => void;
 class ErrorBoundary extends Component<

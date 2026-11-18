@@ -1,16 +1,16 @@
 import { test, expect } from '@playwright/test';
 
 const totals = [
-  ['text-animations',34], ['animations',41], ['components',56], ['micro-interactions',39], ['backgrounds',69],
+  ['text-animations',34], ['animations',41], ['components',56], ['micro-interactions',39], ['backgrounds',69], ['cursor-trails',7],
 ] as const;
 
 test('catalog includes all entries, real statuses, category filters, sorting and URL persistence', async ({ page }) => {
   await page.goto('/browse');
   await expect(page.getByRole('heading',{level:1})).toHaveText('Components');
-  await expect(page.locator('.collection-card')).toHaveCount(239);
-  await expect(page.getByTestId('catalog-count')).toHaveAttribute('data-total','239');
-  await expect(page.locator('.catalog-card[data-status=ready]')).toHaveCount(45);
-  await expect(page.locator('.catalog-card[data-status=planned]')).toHaveCount(194);
+  await expect(page.locator('.collection-card')).toHaveCount(246);
+  await expect(page.getByTestId('catalog-count')).toHaveAttribute('data-total','246');
+  await expect(page.locator('.catalog-card[data-status=ready]')).toHaveCount(50);
+  await expect(page.locator('.catalog-card[data-status=planned]')).toHaveCount(196);
   await expect(page.locator('canvas')).toHaveCount(0);
   await expect(page.locator('input[placeholder*=Search], input[aria-label="Filter components"], a[href="/create"]')).toHaveCount(0);
   const allNames = await page.locator('.catalog-card h2').allTextContents();
@@ -23,9 +23,9 @@ test('catalog includes all entries, real statuses, category filters, sorting and
   }
   await page.getByLabel('Filter category').selectOption('all');
   await expect(page.getByLabel('Filter category')).toHaveValue('all');
-  await expect(page.locator('.collection-card')).toHaveCount(239);
-  await page.getByRole('button',{name:'Ready 45',exact:true}).click();
-  await expect(page.locator('.collection-card')).toHaveCount(45);
+  await expect(page.locator('.collection-card')).toHaveCount(246);
+  await page.getByRole('button',{name:'Ready 50',exact:true}).click();
+  await expect(page.locator('.collection-card')).toHaveCount(50);
   await expect(page.locator('.catalog-card[data-status=planned]')).toHaveCount(0);
   await page.getByLabel('Sort components').selectOption('name-asc');
   await expect.poll(async()=>{
@@ -38,16 +38,16 @@ test('catalog includes all entries, real statuses, category filters, sorting and
     return names.join('|') === [...names].sort((a,b)=>new Intl.Collator('en',{numeric:true}).compare(b,a)).join('|');
   }).toBe(true);
   await page.getByRole('button',{name:'Reset filters'}).click(); await expect(page).toHaveURL(/\/browse$/);
-  await expect(page.locator('.collection-card')).toHaveCount(239);
+  await expect(page.locator('.collection-card')).toHaveCount(246);
   await page.goto('/get-started/index'); await expect(page.getByRole('heading',{level:1})).toHaveText('Components');
 });
 
-test('every one of the 239 sidebar component routes loads its own ready or planned page', async ({ page }) => {
+test('every one of the 246 sidebar component routes loads its own ready or planned page', async ({ page }) => {
   test.setTimeout(180000);
   const errors: string[] = []; page.on('pageerror',error=>errors.push(error.message));
   await page.goto('/browse');
   const entries = await page.locator('.component-link').evaluateAll(elements=>elements.map(element=>({route:element.getAttribute('href')!,name:element.getAttribute('title')!,status:element.getAttribute('data-status')!})));
-  expect(entries).toHaveLength(239); expect(new Set(entries.map(item=>item.route)).size).toBe(239);
+  expect(entries).toHaveLength(246); expect(new Set(entries.map(item=>item.route)).size).toBe(246);
   for (const item of entries) {
     const response = await page.goto(item.route); expect(response?.status(),item.route).toBe(200);
     await expect(page.getByRole('heading',{level:1})).toHaveText(item.name);
