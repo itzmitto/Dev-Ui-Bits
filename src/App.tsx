@@ -4,6 +4,7 @@ import {
   lazy,
   useEffect,
   useRef,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
@@ -62,6 +63,7 @@ import {
   validateDependencies,
 } from "./storage";
 import { download, exportJSON, exportProject } from "./export";
+import { aiContext, copyText, type Documentation } from './codeDocumentation';
 import { Controls } from "./Controls";
 import { Field } from "./effects/Field";
 import { starterFiles } from "./templates";
@@ -72,6 +74,7 @@ import { PlannedComponentPage } from "./PlannedComponentPreview";
 import { FavoriteButton, StatusBadge } from "./CatalogUI";
 import { ExploreSection, LibraryInfo } from "./LibraryInfo";
 import { HeaderActions, SiteFooter } from "./SiteChrome";
+const CodeDocumentation = lazy(() => import('./CodeDocumentation'));
 const Editor = lazy(() => import("./Editor"));
 const icons = [Type, Sparkles, Layers, Grid2X2, MousePointer2, MousePointer2];
 
@@ -278,8 +281,11 @@ function ComponentPage({
     [viewport, setViewport] = useState("desktop"),
     [fullscreen, setFullscreen] = useState(false),
     [previewBg, setPreviewBg] = useState("#120f17"),
-    [showContent, setShowContent] = useState(false);
-  const files = own ? customFiles(item, values) : builtinFiles(item, values);
+    [showContent, setShowContent] = useState(false),
+    [editorOpened,setEditorOpened] = useState(false);
+  const files = useMemo(()=>own ? customFiles(item, values) : builtinFiles(item, values),[item,values,own]);
+  const doc:Documentation={name:item.name,description:item.description,schema:item.schema,values,defaults:item.defaults,dependencies:item.dependencies??{},files,primaryFile:own?`/Component.${item.language}`:`/effects/${item.source}.tsx`,usageFile:own?`/App.${item.language}`:'/App.tsx',language:own&&item.language==='jsx'?'JavaScript':'TypeScript',styling:own&&item.styling==='tailwind'?'Tailwind':'CSS'};
+  const selectTab=(next:string)=>{if(next==='editor')setEditorOpened(true);setTab(next);};
   const deps = item.dependencies ?? {};
   useEffect(() => {
     document.title = `${item.name} — DevUI Bits`;
@@ -311,7 +317,7 @@ function ComponentPage({
     .slice(0, 3);
   const copy = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      await copyText(text);
       notify("Copied to clipboard");
     } catch {
       notify("Clipboard unavailable. Open Code and select the text.");
@@ -343,7 +349,7 @@ function ComponentPage({
               aria-selected={tab === t.id}
               aria-controls="component-panel"
               key={t.id}
-              onClick={() => setTab(t.id)}
+              onClick={() => selectTab(t.id)}
               className={tab === t.id ? "active" : ""}
             >
               <t.icon size={14} />
@@ -371,6 +377,23 @@ function ComponentPage({
               ))}
             </div>
           )}
+          {tab==='preview'&&<>                <button
+                  className="icon-button"
+                  aria-label="Restart animation"
+                  title="Restart animation"
+                  onClick={() => setRevision((r) => r + 1)}
+                >
+                  <RotateCcw size={14} />
+                </button>
+                <button
+                  className="icon-button"
+                  aria-label={
+                    fullscreen ? "Close fullscreen" : "Fullscreen preview"
+                  }
+                  onClick={() => setFullscreen(!fullscreen)}
+                >
+                  {fullscreen ? <X size={15} /> : <Maximize size={15} />}
+                </button></>}
           <button
             className="icon-button"
             aria-label="Copy component code"
@@ -385,6 +408,7 @@ function ComponentPage({
           >
             <Copy size={15} />
           </button>
+          <button className="ai-copy-button" onClick={()=>void copy(aiContext(doc))}>Copy for AI</button>
           {own && (
             <Link className="small-button" to={`/edit/${item.id}`}>
               Edit
@@ -393,8 +417,7 @@ function ComponentPage({
         </div>
       </div>
       <div id="component-panel" role="tabpanel" className="component-panel">
-        {tab === "preview" ? (
-          <>
+        {<div className="preview-tab-panel" hidden={tab!=="preview"}>
             <section
               className={`preview-frame ${fullscreen ? "fullscreen-preview" : ""}`}
               aria-label="Live component preview"
@@ -423,23 +446,7 @@ function ComponentPage({
                     <Type size={14} />
                   </button>
                 )}
-                <button
-                  className="icon-button"
-                  aria-label="Restart animation"
-                  title="Restart animation"
-                  onClick={() => setRevision((r) => r + 1)}
-                >
-                  <RotateCcw size={14} />
-                </button>
-                <button
-                  className="icon-button"
-                  aria-label={
-                    fullscreen ? "Close fullscreen" : "Fullscreen preview"
-                  }
-                  onClick={() => setFullscreen(!fullscreen)}
-                >
-                  {fullscreen ? <X size={15} /> : <Maximize size={15} />}
-                </button>
+
               </div>
               <div
                 className={`preview-device device-${viewport}`}
@@ -523,78 +530,10 @@ function ComponentPage({
               onReset={reset}
               presets={!own ? item.presets : undefined}
             />
-          </>
-        ) : (
-          <Suspense
-            fallback={
-              <div className="loading-state">Loading code workspace…</div>
-            }
-          >
-            {tab === "code" ? (
-              <div className="source-section">
-                <div className="code-intro">
-                  <span>
-                    <Code2 size={15} />{" "}
-                    {own ? item.language.toUpperCase() : "React TSX"}{" "}
-                    <span className="tag">
-                      {own && item.styling === "tailwind" ? "Tailwind" : "CSS"}
-                    </span>
-                  </span>
-                  <button
-                    className="text-button"
-                    onClick={() => setTab("editor")}
-                  >
-                    Open live editor <ArrowUpRight size={13} />
-                  </button>
-                </div>
-                <Editor
-                  files={files}
-                  name={item.name}
-                  dependencies={deps}
-                  readOnly
-                />
-                <div className="source-actions">
-                  <p>Original source. All supporting files included.</p>
-                  <button
-                    className="small-button"
-                    onClick={() =>
-                      exportProject(
-                        files,
-                        item.name,
-                        deps,
-                        own && item.styling === "tailwind",
-                      )
-                    }
-                  >
-                    <ArrowDownToLine size={13} /> Export project
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <Editor
-                files={files}
-                name={item.name}
-                dependencies={deps}
-                tailwind={own && item.styling === "tailwind"}
-                notify={notify}
-                onSave={
-                  own
-                    ? async (updated) => {
-                        await useLibrary
-                          .getState()
-                          .save({
-                            ...item,
-                            files: updated,
-                            updatedAt: Date.now(),
-                          });
-                        notify("Component saved to your library");
-                      }
-                    : undefined
-                }
-              />
-            )}
-          </Suspense>
-        )}
+          </div>}
+        {tab==='code'&&<Suspense fallback={<div className="loading-state">Loading source documentation…</div>}><CodeDocumentation doc={doc} onEdit={()=>selectTab('editor')} notify={notify}/></Suspense>}
+        {editorOpened&&<div className="editor-tab-panel" hidden={tab!=='editor'}><Suspense fallback={<div className="loading-state">Loading isolated playground…</div>}><Editor files={files} name={item.name} dependencies={deps} tailwind={own&&item.styling==='tailwind'} notify={notify} onSave={own?async(updated)=>{await useLibrary.getState().save({...item,files:updated,updatedAt:Date.now()});notify('Component saved to your library');}:undefined}/></Suspense></div>}
+
       </div>
       <section className="installation" id="installation">
         <div className="section-title">

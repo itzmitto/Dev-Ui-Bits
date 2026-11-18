@@ -1,135 +1,15 @@
-import { Fragment } from "react";
-import { RotateCcw, SlidersHorizontal } from "lucide-react";
-import type { Control, EffectProps } from "./types";
-type Props = {
-  schema: Control[];
-  values: EffectProps;
-  onChange: (p: EffectProps) => void;
-  onReset: () => void;
-  presets?: Record<string, EffectProps>;
-};
-export function Controls({
-  schema,
-  values,
-  onChange,    
-  onReset,
-  presets,
-}: Props) {
-  const set = (key: string, value: string | number | boolean) =>
-    onChange({ ...values, [key]: value });
-  return (
-    <section className="customize" id="customize">
-      <div className="section-bar">
-        <h2>
-          <SlidersHorizontal size={15} /> Customize
-        </h2>
-        <button onClick={onReset} className="text-button">
-          <RotateCcw size={12} /> Reset
-        </button>
-      </div>
-      <div className="controls-grid">
-        {presets && (
-          <label className="control-row">
-            <span>Preset</span>
-            <select
-              aria-label="Preset"
-              value={Object.keys(presets).find(name => Object.entries(presets[name]).every(([key, value]) => values[key] === value)) ?? ""}
-              onChange={(e) => {
-                if (e.target.value)
-                  onChange({ ...values, ...presets[e.target.value] });
-              }}
-            >
-              <option value="" disabled>
-                Choose a preset
-              </option>
-              {Object.keys(presets).map((p) => (
-                <option key={p}>{p}</option>
-              ))}
-            </select>
-          </label>
-        )}
-        {schema.map((control, index) => (
-          <Fragment key={control.key}>
-          {control.group && control.group !== schema[index - 1]?.group && <h3 className="control-group">{control.group}</h3>}
-          <label
-            key={control.key}
-            className={`control-row control-${control.type}`}
-          >
-            <span>{control.label}</span>
-            {control.type === "color" ? (
-              <div className="color-control">
-                <input
-                  type="color"
-                  aria-label={control.label}
-                  value={/^#[0-9a-f]{6}$/i.test(String(values[control.key])) ? String(values[control.key]) : "#ffffff"}
-                  onChange={(e) => set(control.key, e.target.value)}
-                />
-                <span>{values[control.key] === "currentColor" ? "Inherited" : String(values[control.key]).toUpperCase()}</span>
-                {control.inherit && <button type="button" className="color-inherit" aria-label={`Inherit ${control.label}`} aria-pressed={values[control.key] === "currentColor"} onClick={() => set(control.key, "currentColor")}>↶</button>}
-              </div>
-            ) : control.type === "toggle" ? (
-              <input
-                type="checkbox"
-                role="switch"
-                aria-label={control.label}
-                checked={Boolean(values[control.key])}
-                onChange={(e) => set(control.key, e.target.checked)}
-              />
-            ) : control.type === "select" ? (
-              <select
-                aria-label={control.label}
-                value={String(values[control.key])}
-                onChange={(e) => set(control.key, e.target.value)}
-              >
-                {control.options?.map((o) => (
-                  <option key={o}>{o}</option>
-                ))}
-              </select>
-            ) : control.type === "text" ? (
-              <input
-                type="text"
-                aria-label={control.label}
-                value={String(values[control.key] ?? "")}
-                onChange={(e) => set(control.key, e.target.value)}
-              />
-            ) : (
-              <div className="numeric-control">
-                <input
-                  aria-label={control.label}
-                  type={control.type === "range" ? "range" : "number"}
-                  min={control.min}
-                  max={control.max}
-                  step={control.step ?? 1}
-                  value={Number(values[control.key] ?? 0)}
-                  style={
-                    control.type === "range"
-                      ? ({
-                          "--fill": `${((Number(values[control.key]) - Number(control.min)) / (Number(control.max) - Number(control.min))) * 100}%`,
-                        } as React.CSSProperties)
-                      : undefined
-                  }
-                  onChange={(e) => {
-                    const n = Number(e.target.value);
-                    if (Number.isFinite(n))
-                      set(
-                        control.key,
-                        Math.min(
-                          control.max ?? Infinity,
-                          Math.max(control.min ?? -Infinity, n),
-                        ),
-                      );
-                  }}
-                />
-                <output>
-                  {String(values[control.key])}
-                  {control.key === "direction" ? "°" : ""}
-                </output>
-              </div>
-            )}
-          </label>
-          </Fragment>
-        ))}
-      </div>
-    </section>
-  );
+import {Fragment,useEffect,useState,type CSSProperties} from 'react';
+import {ChevronDown,RotateCcw} from 'lucide-react';
+import type {Control,EffectProps} from './types';
+type Props={schema:Control[];values:EffectProps;onChange:(p:EffectProps)=>void;onReset:()=>void;presets?:Record<string,EffectProps>};
+type FieldProps={control:Control;value:string|number|boolean;set:(value:string|number|boolean)=>void};
+export const validHex=(value:string)=>/^#[0-9a-f]{6}$/i.test(value);
+export const clampControl=(value:number,control:Control)=>Math.min(control.max??Infinity,Math.max(control.min??-Infinity,value));
+function ColorControl({control,value,set}:FieldProps){
+ const [draft,setDraft]=useState(String(value)),[invalid,setInvalid]=useState(false);useEffect(()=>{setDraft(String(value));setInvalid(false);},[value]);
+ return <div className="color-control"><input type="color" aria-label={control.label} value={validHex(String(value))?String(value):'#ffffff'} onChange={e=>set(e.target.value)}/><input className="hex-input" aria-label={`${control.label} hex`} aria-invalid={invalid} value={draft==='currentColor'?'Inherited':draft} readOnly={value==='currentColor'} spellCheck={false} maxLength={9} onChange={e=>{const next=e.target.value;setDraft(next);const ok=validHex(next);setInvalid(!ok);if(ok)set(next);}} onBlur={()=>{if(!validHex(draft)&&draft!=='currentColor'){setDraft(String(value));setInvalid(false);}}} onKeyDown={e=>{if(e.key==='Escape'){setDraft(String(value));setInvalid(false);}}}/>{control.inherit&&<button type="button" className="color-inherit" aria-label={`Inherit ${control.label}`} aria-pressed={value==='currentColor'} onClick={()=>set('currentColor')}>↶</button>}</div>;
 }
+function SliderControl({control,value,set}:FieldProps){const n=Number(value),fill=Math.max(0,Math.min(100,(n-Number(control.min))/(Number(control.max)-Number(control.min))*100));const angle=control.type==='angle'||/^(direction|rotation|tilt|crossAngle|lightAngle)$/.test(control.key);return <div className="numeric-control"><input aria-label={control.label} type="range" min={control.min} max={control.max} step={control.step??1} value={n} style={{'--fill':`${fill}%`} as CSSProperties} onChange={e=>{const next=Number(e.target.value);if(Number.isFinite(next))set(clampControl(next,control));}}/><output aria-hidden="true">{Number(n.toFixed(3))}{angle?'°':''}</output></div>;}
+function NumberControl({control,value,set}:FieldProps){return <input className="number-field" type="number" aria-label={control.label} min={control.min} max={control.max} step={control.step??1} value={Number(value)} onChange={e=>{if(e.target.value==='')return;const n=e.target.valueAsNumber;if(Number.isFinite(n))set(clampControl(n,control));}}/>;}
+function SelectControl({control,value,set}:FieldProps){return <div className="select-field"><select aria-label={control.label} value={String(value)} onChange={e=>set(e.target.value)}>{control.options?.map(option=><option key={option}>{option}</option>)}</select><ChevronDown size={11}/></div>;}
+export function Controls({schema,values,onChange,onReset,presets}:Props){const set=(key:string,value:string|number|boolean)=>onChange({...values,[key]:value});return <section className="customize" id="customize"><div className="section-bar"><h2>Customize</h2><button onClick={onReset} className="text-button"><RotateCcw size={12}/> Reset</button></div><div className="controls-grid">{presets&&Object.keys(presets).length>0&&<label className="control-row control-select"><span>Preset</span><div className="select-field"><select aria-label="Preset" value={Object.keys(presets).find(name=>Object.entries(presets[name]).every(([key,value])=>values[key]===value))??''} onChange={e=>{if(e.target.value)onChange({...values,...presets[e.target.value]});}}><option value="" disabled>Custom</option>{Object.keys(presets).map(name=><option key={name}>{name}</option>)}</select><ChevronDown size={11}/></div></label>}{schema.map((control,index)=>{const field={control,value:values[control.key]??'',set:(value:string|number|boolean)=>set(control.key,value)};return <Fragment key={control.key}>{control.group&&control.group!==schema[index-1]?.group&&<h3 className="control-group">{control.group}</h3>}<label className={`control-row control-${control.type}`}><span>{control.label}</span>{control.type==='color'?<ColorControl {...field}/>:control.type==='toggle'?<input type="checkbox" role="switch" aria-label={control.label} checked={Boolean(field.value)} onChange={e=>field.set(e.target.checked)}/>:control.type==='select'?<SelectControl {...field}/>:control.type==='text'?<input className="text-field" type="text" aria-label={control.label} value={String(field.value)} onChange={e=>field.set(e.target.value)}/>:control.type==='number'?<NumberControl {...field}/>:<SliderControl {...field}/>}</label></Fragment>;})}</div></section>;}

@@ -3,7 +3,7 @@ import type { EffectProps } from './effects/types';
 export type { EffectProps } from './effects/types';
 export const categories = ['Text Animations','Animations','Components','Backgrounds','Micro Interactions','Cursor Trails'] as const;
 export type Category = typeof categories[number];
-export type Control = {key:string;label:string;type:'range'|'number'|'color'|'text'|'select'|'toggle';min?:number;max?:number;step?:number;options?:string[];inherit?:boolean;group?:string};
+export type Control = {key:string;label:string;type:'range'|'angle'|'number'|'color'|'text'|'select'|'toggle';min?:number;max?:number;step?:number;options?:string[];inherit?:boolean;group?:string};
 export type FileMap = Record<string,string>;
 export type ComponentMetadata = {id:string;name:string;slug:string;category:Category;description:string;aliases?:string[]};
 export type PlannedDefinition = ComponentMetadata & {status:'planned'};
