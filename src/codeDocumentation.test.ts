@@ -1,0 +1,10 @@
+import {it,expect} from 'vitest';
+import {aiContext,allFiles,installation,type Documentation} from './codeDocumentation';
+import {builtinFiles,readyComponents} from './registry';
+import {validHex,clampControl} from './Controls';
+const item=readyComponents.find(x=>x.slug==='blur-text')!;
+const doc:Documentation={name:item.name,description:item.description,schema:item.schema,values:item.defaults,defaults:item.defaults,dependencies:item.dependencies,files:builtinFiles(item,item.defaults),primaryFile:`/effects/${item.source}.tsx`,usageFile:'/App.tsx',language:'TypeScript',styling:'CSS'};
+it('gives real versioned package commands and local source instructions, never a fictional registry',()=>{for(const manager of ['npm','pnpm','yarn','bun'] as const){const result=installation(doc,manager);expect(result.command).toContain(`${manager} ${manager==='npm'?'install':'add'}`);expect(result.command).toContain("'motion@^14.14.0'");expect(result.text).toContain('src/effects/TextEffects.tsx');expect(result.text).not.toContain('shadcn');}expect(installation({...doc,dependencies:{}}).command).toBe(null);});
+it('copies complete current props, defaults, dependencies and exact actual files for AI',()=>{const context=aiContext({...doc,values:{...doc.values,text:'A custom value'}});expect(context).toContain('A custom value');for(const [path,source]of Object.entries(doc.files)){expect(context).toContain('src'+path);expect(allFiles(doc.files)).toContain(source);}expect(context).toContain(item.description);});
+it('exposes each existing ready component and real usage source without missing files',()=>{for(const entry of readyComponents){const files=builtinFiles(entry,entry.defaults);expect(files['/App.tsx']).toContain(`import { ${entry.exportName} }`);for(const value of Object.values(files))expect(value).toBeTruthy();}});
+it('validates full hex values and clamps numeric controls without accepting invalid colors',()=>{expect(validHex('#00fFaA')).toBe(true);for(const invalid of ['red','#ff','#abcdefg','not a color'])expect(validHex(invalid)).toBe(false);expect(clampControl(12,{key:'n',label:'N',type:'angle',min:0,max:10})).toBe(10);});
