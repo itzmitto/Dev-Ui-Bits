@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
 import type { EffectProps } from './effects/types';
 export type { EffectProps } from './effects/types';
-export const categories = ['Text Animations','Animations','Components','Backgrounds','Micro Interactions'] as const;
+export const categories = ['Text Animations','Animations','Components','Backgrounds','Micro Interactions','Cursor Trails'] as const;
 export type Category = typeof categories[number];
 export type Control = {key:string;label:string;type:'range'|'number'|'color'|'text'|'select'|'toggle';min?:number;max?:number;step?:number;options?:string[];inherit?:boolean;group?:string};
 export type FileMap = Record<string,string>;

@@ -5,7 +5,7 @@ import { registry, findComponent } from './registry';
 import { catalogCategories } from './catalogNames';
 import { categorySlug, componentPath, type Category, type CustomComponent } from './types';
 
-const categoryIcons = { 'Text Animations': Type, Animations: Sparkles, Components: Layers, 'Micro Interactions': MousePointer2, Backgrounds: Grid2X2 };
+const categoryIcons = { 'Text Animations': Type, Animations: Sparkles, Components: Layers, 'Micro Interactions': MousePointer2, Backgrounds: Grid2X2, 'Cursor Trails': WandSparkles };
 export const startLinks = [
   { label: 'Introduction', path: '/get-started/introduction', icon: BookOpen },
   { label: 'Installation', path: '/get-started/installation', icon: Code2 },

@@ -52,6 +52,7 @@ export const catalogNames = [
     'Threads', 'Hyperspeed', 'Iridescence', 'Waves', 'Magnet Lines', 'Grid Distortion',
     'Ballpit', 'Orb', 'Letter Glitch', 'Grid Motion', 'Shape Grid', 'Liquid Chrome', 'Balatro',
   ] },
+  { category: 'Cursor Trails', names: ['Arc Cursor','Celebration Cursor','Chroma Halo','Dither Cursor','Glyph Stream','Pigment Trail','Stardust Cursor'] },
 ] satisfies { category: Category; names: string[] }[];
 
 export const catalogCategories = catalogNames.map(group => group.category);
