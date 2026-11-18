@@ -3,14 +3,14 @@ import {num,str,type EffectProps} from './types';
 import {glassDisplacement} from './glassOptics';
 import {galleryArt} from './galleryArt';
 import './GlassSurface.css';
-export type GlassPaneProps={children:ReactNode;width?:number|string;height?:number;radius?:number;distortion?:number;borderWidth?:number;blur?:number;opacity?:number;brightness?:number;saturation?:number;dispersion?:number;renderer?:'auto'|'frosted';className?:string};
+export type GlassPaneProps={children:ReactNode;width?:number|string;height?:number;radius?:number;distortion?:number;borderWidth?:number;blur?:number;opacity?:number;brightness?:number;saturation?:number;dispersion?:number;renderer?:'auto'|'frosted';tintColor?:string;className?:string};
 /** The map encodes the gradient of a rounded lens; backdrop filtering samples real content behind the pane. */
-export function GlassPane({children,width=320,height=76,radius=38,distortion=60,borderWidth=.12,blur=1,opacity=.1,brightness=1.15,saturation=1.2,dispersion=3,renderer='auto',className=''}:GlassPaneProps){
+export function GlassPane({children,width=320,height=76,radius=38,distortion=60,borderWidth=.12,blur=1,opacity=.1,brightness=1.15,saturation=1.2,dispersion=3,renderer='auto',tintColor='#ffffff',className=''}:GlassPaneProps){
  const host=useRef<HTMLDivElement>(null),id=`glass-${useId().replace(/:/g,'')}`,[box,setBox]=useState({width:320,height});
  useEffect(()=>{const node=host.current!;const observer=new ResizeObserver(()=>{const w=node.clientWidth,h=node.clientHeight;setBox(old=>old.width===w&&old.height===h?old:{width:w,height:h});});observer.observe(node);return()=>observer.disconnect();},[]);
  const map=useMemo(()=>glassDisplacement(box.width,box.height,radius,borderWidth),[box.width,box.height,radius,borderWidth]);
  const filter=renderer==='frosted'?`blur(${blur+5}px) saturate(${saturation}) brightness(${brightness})`:`url(#${id}) blur(${blur}px) saturate(${saturation}) brightness(${brightness})`;
- return <div ref={host} className={`glass-pane ${className}`} data-renderer={renderer} style={{width,maxWidth:'100%',height,borderRadius:radius,background:`rgba(255,255,255,${opacity})`,backdropFilter:filter,WebkitBackdropFilter:filter} as CSSProperties}>
+ return <div ref={host} className={`glass-pane ${className}`} data-renderer={renderer} style={{width,maxWidth:'100%',height,borderRadius:radius,background:`color-mix(in srgb,${tintColor} ${opacity*100}%,transparent)`,backdropFilter:filter,WebkitBackdropFilter:filter} as CSSProperties}>
  <svg className="glass-filter-defs" aria-hidden="true"><defs><filter id={id} x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB"><feImage href={map} x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="lens"/><feDisplacementMap in="SourceGraphic" in2="lens" scale={distortion} xChannelSelector="R" yChannelSelector="G" result="base"/>{dispersion>0&&<><feDisplacementMap in="SourceGraphic" in2="lens" scale={distortion+dispersion*2} xChannelSelector="R" yChannelSelector="G"/><feColorMatrix type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="red"/><feDisplacementMap in="SourceGraphic" in2="lens" scale={distortion-dispersion*2} xChannelSelector="R" yChannelSelector="G"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0"/><feBlend in2="red" mode="screen"/></>}</filter></defs></svg>
  <div className="glass-pane-content">{children}</div></div>;
 }

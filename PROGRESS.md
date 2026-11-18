@@ -1,3 +1,13 @@
+## Fase 9 — productievalidatie bezig (18 november 2026)
+
+**Registry: 246 items, 58 Ready, 188 Planned.** De zes bestaande catalogusrecords Glass Surface, Fluid Glass, Reflective Card, Accordion Gallery, Glass Icons en Chroma Grid zijn gekoppeld aan eigen implementaties. Alle zes zijn al afzonderlijk interactief getest en compileren in Sandpack. De volledige productieregressiesuite loopt nog; onderstaande vorige faserapporten zijn historische resultaten.
+
+Reeds uitgevoerd: strict typecheck, 42/42 Vitest-tests, productiebuild, 11/11 gedeelde Playground-checks en 6/6 nieuwe interactie-/Sandpack-checks. Een eerste bredere regressierun vond een verouderde Code-selector, een verdwenen directe exportactie en een offscreen canvas-pixelassertie. Export is hersteld; tests gebruiken de echte documentatieviewer en controleren pixels pas wanneer het canvas zichtbaar is. De volledige suite wordt opnieuw uitgevoerd. Een eerste zescomponentenrun had zes onjuiste statusbadgeselectors; die zijn hersteld en de zes inhoudelijke tests zijn daarna geslaagd.
+
+Nieuw: compact gedeeld Customize, gevalideerde hex-invoer, lichte Install/Usage/Code-viewer, echte copyacties, Edit in Playground met lazy Sandpack, behouden preview-state en bereikbare fullscreen-close. Visuele screenshots zijn bekeken; tekstcontrol-wrapping en Chroma Grid-clipping zijn verbeterd. Geen nieuwe dependencies, externe assets of database-migraties. Geen Git-mutaties of deployments uitgevoerd door deze agent.
+
+---
+
 ## Fase 8 afgerond — zeven originele Cursor Trails (18 november 2026)
 
 **Actueel: 246 catalogusitems, 52 Ready, 194 Planned.** Alle 45 bestaande Ready-componenten, bestaande routes, homepage, themes, controls, Sandpack en IndexedDB zijn behouden. Alleen de zeven gevraagde nieuwe cursor-effecten en hun categorie zijn toegevoegd; overige geplande effecten zijn ongewijzigd.

@@ -1,4 +1,5 @@
 import { lazy, type ComponentType } from 'react';
+import { glassComponents } from './effects/glassComponents.config';
 import { cursorTrails } from './effects/cursorTrails.config';
 import { animationBatchOne } from './effects/animationBatchOne.config';
 import { textBatchOne } from './effects/textBatchOne.config';
@@ -62,6 +63,7 @@ function def(name:string,category:Definition['category'],description:string,prev
 const backgroundControls=[color,{key:'secondary',label:'Glint color',type:'color'} as Control,{key:'background',label:'Background',type:'color'} as Control,range('speed','Speed',0,3,.05),range('scale','Scale',.5,4,.1),range('opacity','Opacity',.1,1,.05),toggle('interactive','Interactive'),strength];
 const fieldDefaults={color:'#a855f7',secondary:'#ffffff',background:'#120f17',speed:.6,scale:1.5,opacity:1,interactive:true,strength:.7,blur:0};
 const implementations:Definition[]=[
+ ...Object.entries(glassComponents).map(([source,entry])=>({...def(source.replace(/([a-z])([A-Z])/g,'$1 $2'),'Components',entry.description,lazyPreview(source,source),source,entry.defaults,entry.schema),dependencies:{},styles:[`${source}.css`],supportingFiles:entry.helpers,presets:entry.presets})),
  ...Object.entries(cursorTrails).map(([source,entry])=>({...def(source.replace(/([a-z])([A-Z])/g,'$1 $2'),'Cursor Trails',entry.description,lazyPreview(source,source),source,entry.defaults,entry.schema),dependencies:{},styles:['cursorTrails.css'],supportingFiles:entry.helpers,presets:entry.presets})),
  ...Object.entries(animationBatchOne).map(([source,entry])=>({...def(source.replace(/([a-z])([A-Z])/g,'$1 $2'),'Animations',entry.description,lazyPreview(source,source),source,entry.defaults,entry.schema),dependencies:{},styles:[`${source}.css`],supportingFiles:entry.helpers,presets:entry.presets})),
  ...Object.entries({...textBatchOne,...textBatchTwo}).map(([source,entry])=>({...def(source.replace(/([a-z])([A-Z])/g,'$1 $2'),'Text Animations',entry.description,lazyPreview(source,source),source,entry.defaults,entry.schema),dependencies:Object.fromEntries<string>(entry.helpers.includes('textDisplay.css')?[['@fontsource/geist','^5.3.0']]:[]),styles:[`${source}.css`],supportingFiles:entry.helpers,presets:entry.presets})),

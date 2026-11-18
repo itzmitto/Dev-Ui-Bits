@@ -19,3 +19,4 @@
 @media(max-width:599px){.customize .controls-grid{grid-template-columns:minmax(0,1fr)}.customize .control-row{height:36px;min-height:36px}.code-documentation{gap:16px}.documentation-tools{align-items:flex-start;flex-wrap:wrap}.code-variants select{max-width:125px}.code-viewer pre{font-size:10px}.preview-toolbar .ai-copy-button{font-size:9px;padding:6px}.doc-section-bar{padding-inline:5px}}
 
 .customize .control-row{flex-wrap:nowrap}.customize .control-row input.text-field{height:100%;padding:0;width:51%;border:0;background:transparent;box-shadow:none;border-radius:0;font-size:11px}.customize .control-row.control-text>span{max-width:46%}
+.customize .control-row{flex-direction:row}.customize .control-row>span{font-size:11px}.customize .control-row input.number-field{width:65px;height:100%;padding:0;border:0;background:transparent;box-shadow:none;text-align:right;font-size:11px}

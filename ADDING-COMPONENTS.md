@@ -142,3 +142,18 @@ Neem alle transitieve imports mee in `supportingFiles`: cursorRuntime.tsx, curso
 `tests/cursor-trails.spec.ts` controleert alle routes en Sandpack-voorbeelden, echte pointer/klik, presets/pause/reset/restart, gevraagde schermgroottes, themes, touch/fullscreen, schaalcoördinaten, offscreen/reduced motion en unmount-cleanup. `src/cursorTrails.test.ts` controleert algoritmen, unieke records, volledige presets en transitieve bronexports. Het profielscript gebruikt native canvas-drawmetingen op de lokale productiebuild en schrijft alleen genegeerde artifacts. Test bronwijzigingen opnieuw voordat je Ready rapporteert.
 
 De zeven cursor-effecten zijn zelfstandig geschreven aan de hand van de functionele opdracht en zichtbare algemene demo-ideeën. Gebruik dit patroon ook bij vervolgwerk: geen Pro-code, Copy for AI, registryendpoints, shaderextractie of beschermde assets. Zie LICENSE_REVIEW.md voor de afbakening.
+
+
+## Gedeeld Playground en documentatie (fase 9)
+
+`Controls.tsx` en `playground.css` verzorgen automatisch het compacte schema-grid voor iedere Ready-component. Gebruik bestaande types range/angle/number/text/color/select/toggle; labels moeten uniek en toegankelijk zijn. Een ongeldige hex-draft wijzigt geen echte prop. `Control.group` is optioneel, niet verplicht: voeg geen kunstmatige controls toe voor een mooier grid. De resetfunctie en complete presets komen van de bestaande definitie. Alle updates moeten andere waarden behouden.
+
+`codeDocumentation.ts` bouwt Install, Usage, alle bestanden en AI-context uit dezelfde echte `builtinFiles`-output. `CodeDocumentation.tsx` is een lichte lexical viewer: geen compiler en geen Sandpack-start. Voeg geen kunstmatige JavaScript/Tailwind-conversie toe. Package-managercommando’s installeren uitsluitend de vermelde dependencies. Lokale component-/helper-/CSS-bestanden moeten via de getoonde paden worden toegevoegd.
+
+De Code-tab biedt Edit in Playground en bronexport. `Editor.tsx` wordt lazy geladen op verzoek. Laat de preview gemount maar hidden bij een tabwissel; dit bewaart bijvoorbeeld actieve tabs en selectie. Gebruik visibility-aware clocks zodat een behouden, verborgen canvas niet blijft renderen. Bewaar ook editor-drafts bij theme-/tabwissels.
+
+`glassComponents.config.ts` bevat de zes metadata-/schema-/presetsets; `registry.ts` koppelt ze aan bestaande catalogusitems. Maak geen nieuwe records voor deze slugs. GlassSurface exporteert ook `GlassPane`; AccordionGallery exporteert `AccordionPanels`; GlassIcons exporteert `GlassIconGrid`; ChromaGrid exporteert `ChromaCards`. Neem altijd alle transitieve imports mee in supportingFiles, inclusief CSS. De exporttest controleert lokale imports tegen de werkelijke bronbestanden en Sandpack compileert ieder voorbeeld.
+
+Voor eigen optica: `glassOptics.ts` genereert lokaal een afgeronde normaalmap; `FluidGlass.renderer.ts` bevat de onafhankelijke shader en dispose-functie. Hergebruik deze eigen utilities waar passend, maar neem geen externe shadercode of assets over zonder expliciet geschikte herdistributierechten. WebGL-fallbacks moeten eerlijk gelabeld zijn en reduced motion respecteren. Beperk DPR, pauzeer onzichtbare canvassen en ruim shaders, buffers, textures, observers en callbacks op.
+
+Nieuwe regressies staan in playground.spec.ts, glass-components.spec.ts, codeDocumentation.test.ts en glassComponents.test.ts. Controleer echte clipboard-inhoud, preview-identiteit, alle Ready-schema’s, importpaden, Sandpack-compilatie, offscreen/reduced motion, unmount-cleanup en de 3/2/1 control-layout tot 4K. Bestaande tests voor Editor blijven Sandpack controleren; Code-viewertests gebruiken nu `.code-documentation .code-viewer`.

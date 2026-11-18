@@ -1,6 +1,6 @@
 # DevUI Bits
 
-Een zelfstandige bibliotheek met **246 catalogusitems: 52 werkende React-componenten en 194 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Gebouwd op het bestaande DevUI Bits-project: alle 29 bestaande effecten en functies zijn behouden.
+Een zelfstandige bibliotheek met **246 catalogusitems: 58 werkende React-componenten en 188 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Gebouwd op het bestaande DevUI Bits-project: alle 29 bestaande effecten en functies zijn behouden.
 
 **Start hier:** [SETUP-GITHUB-VERCEL.md](SETUP-GITHUB-VERCEL.md) beschrijft ZIP → VS Code → GitHub → publieke Vercel-site, met exacte commando's en controles vóór Git-initialisatie of remote-wijzigingen.
 
@@ -246,3 +246,21 @@ De renderers gebruiken de bestaande visibility-aware klok en begrenzen DPR op ma
 Teststatus en laatste visuele/performance-uitkomsten staan in PROGRESS.md. Herhaal de lokale renderproef met `PLAYWRIGHT_BASE_URL=http://localhost:4173 node scripts/profile-animation-effects.mjs` na het starten van een production preview. De proef telt renderupdates en offscreen/reduced-motionstilstand; dit is geen algemene hardware-FPS-garantie. Het precieze vervolgpunt is batch 2: Ripple Distortion, Elastic Mesh, Swarm Cursor, Halftone Reveal en Pixel Swap.
 
 Definitieve verificatie van fase 7, batch 1 (18 november): **strict TypeScript, 31/31 Vitest, productiebuild en 154/154 Playwright-tests geslaagd**. De suite bevat alle behouden regressies plus 26 nieuwe checks voor rendering, controls, presets, werkelijke Sandpack-compilatie, GPU-/observer-/RAF-cleanup, contextverlies/fallback, eigen afbeeldingen/video, diepe routes, touch/DPR, geschaalde pointerposities en acht viewportmaten in beide thema’s. Lokale Chromium-renderproef: circa 59–60 Canvas/WebGL-updates/s voor de vier grafische effecten, nul offscreen/reduced-motion-draws in de gemeten intervallen. De DOM-animatie Scroll Expand wordt niet door deze drawprofiler geteld. Dit is geen algemene hardware-, browser- of geheugenlekgarantie. Batch 2 is nog niet geïmplementeerd.
+
+
+## Fase 9 — Playground en code-documentatie
+
+Alle Ready-pagina’s gebruiken één compact Customize-grid (3/2/1 kolommen), met directe updates, instelbare presets, gevalideerde hexvelden en echte toetsenbordbediening. De Code-tab toont **Install, Usage en Code**: werkelijke dependencies, lokale bestandsinstructies, syntaxkleuren, regelnummers, bronbestandsselectie en uitklapbare snippets. Alleen daadwerkelijk beschikbare taal-/stijlvarianten worden getoond. Er is geen DevUI-package of shadcn-installatieregistry.
+
+Copy Install, Copy Usage, Copy Code, Copy All Files en Copy for AI kopiëren de eigen bronbestanden en actuele instellingen. **Edit in Playground** opent pas dan Sandpack; de bestaande Editor-tab, live foutmeldingen, meerdere bestanden, Reset, Copy en export blijven beschikbaar. De oorspronkelijke preview blijft gemount bij tabwissels; instellingen en interactieve state blijven behouden. Animatieklokken pauzeren wanneer de verborgen preview buiten beeld is.
+
+Zes bestaande Planned-items hebben nu eigen implementaties in dezelfde registry:
+
+- **Glass Surface**: eigen lens-normalmap + SVG-displacement voor echte backdrop-vervorming; `GlassPane` accepteert React children. Frosted-modus is een expliciete browserfallback.
+- **Fluid Glass**: zelfstandige WebGL SDF-raymarcher met torus, bol en afgeronde kubus, optische dikte, refractie, dispersie, reflections en pointer-/klikmorphing. Bij ontbrekende WebGL is er een duidelijk gelabelde, eenvoudiger Canvas-lens.
+- **Reflective Card**: procedureel bemonsterde studio-reflectie met brushed metal, pointerlicht en tilt; optionele eigen video-URL. Geen webcamtoegang of externe standaardvideo.
+- **Accordion Gallery**: uitschuifbare panelen met eigen SVG-artwork, parallax, kleuronthulling en pijltjes/Home/End-navigatie.
+- **Glass Icons**: eigen vectoriconen en echte glazen platen, met kleurbending, highlights en bruikbare detailacties. `GlassIconGrid` ondersteunt eigen items, links en callbacks.
+- **Chroma Grid**: gedempte cursor-spotlight onthult kleur boven grayscale; eigen artwork, flexibele kolommen en toegankelijke detaildialogen. `ChromaCards` ondersteunt eigen items/links.
+
+Geen nieuwe dependencies. Alle oorspronkelijke 52 Ready-componenten en alle 246 routes blijven behouden; overige 188 items zijn Planned. Broncode en lokale export bevatten alle transitieve helpers. Publieke demo’s zijn visuele/functionele referenties, geen compatibiliteitsgarantie. De procedurele studio, eigen illustraties, vereenvoudigde fallback en onafhankelijk geschreven glasoptica verschillen zichtbaar van sommige officiële voorbeelden. Zie PROGRESS.md voor daadwerkelijk uitgevoerde tests en LICENSE_REVIEW.md voor herkomst en beperkingen.

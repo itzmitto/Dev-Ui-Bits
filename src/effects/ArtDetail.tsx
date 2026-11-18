@@ -1,0 +1,3 @@
+import {useEffect,useRef} from 'react';
+import type {AccordionItem} from './AccordionGallery';
+export function ArtDetail({item,onClose}:{item:AccordionItem;onClose:()=>void}){const ref=useRef<HTMLDialogElement>(null);useEffect(()=>{const el=ref.current!;el.showModal();return()=>el.close();},[]);return <dialog ref={ref} className="chroma-detail" aria-label={item.label} onCancel={e=>{e.preventDefault();onClose();}} onClick={e=>{if(e.target===e.currentTarget)onClose();}}><button aria-label="Close artwork" onClick={onClose}>×</button><img src={item.image} alt={item.alt??item.label}/><h3>{item.label}</h3></dialog>;}

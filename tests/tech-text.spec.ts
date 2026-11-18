@@ -34,7 +34,7 @@ test('exact defaults, real pixels, font measurements, text, font family, spacing
  const before=await c.getAttribute('data-glyphs');await page.getByLabel('Font Family',{exact:true}).fill('monospace');await expect(c).not.toHaveAttribute('data-glyphs',before!);
  const spacing=await c.getAttribute('data-glyphs');await page.getByLabel('Letter Spacing',{exact:true}).fill('0.1');await expect(c).not.toHaveAttribute('data-glyphs',spacing!);
  await page.getByLabel('Alignment',{exact:true}).selectOption('left');await expect.poll(()=>c.evaluate(el=>JSON.parse((el as HTMLCanvasElement).dataset.glyphs!)[0].x)).toBeLessThan(45);
- await page.getByLabel('Text Color',{exact:true}).fill('#ff3344');await expect.poll(()=>c.evaluate((el:HTMLCanvasElement)=>{const data=el.getContext('2d')!.getImageData(0,0,el.width,el.height).data;let count=0;for(let i=0;i<data.length;i+=4)if(data[i]>230&&data[i+1]<80&&data[i+3]>200)count++;return count;})).toBeGreaterThan(100);
+ await page.getByLabel('Text Color',{exact:true}).fill('#ff3344');await c.scrollIntoViewIfNeeded();await page.mouse.move(0,0);await expect.poll(()=>c.evaluate((el:HTMLCanvasElement)=>{const data=el.getContext('2d')!.getImageData(0,0,el.width,el.height).data;let count=0;for(let i=0;i<data.length;i+=4)if(data[i]>230&&data[i+1]<80&&data[i+3]>200)count++;return count;})).toBeGreaterThan(100);
  await page.getByRole('button',{name:'Inherit Text Color',exact:true}).click();await expect(page.getByRole('button',{name:'Inherit Text Color'})).toHaveAttribute('aria-pressed','true');
  await expect(c).toHaveAttribute('data-instance','original');expect(errors).toEqual([]);
 });

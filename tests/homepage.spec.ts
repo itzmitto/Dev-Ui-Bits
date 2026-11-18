@@ -22,7 +22,7 @@ test('homepage, categories and public navigation use the existing registry', asy
   expect(paths).toEqual(categories.map(category => '/' + category));
   for (const path of paths) {
     await page.goto(path!); await expect(page.locator('.collection-card').first()).toBeVisible();
-    await expect(page.locator('.component-link[data-status=ready]')).toHaveCount(52);
+    await expect(page.locator('.component-link[data-status=ready]')).toHaveCount(58);
     await expect(page.locator('input[aria-label="Search collection"], a[href="/create"]')).toHaveCount(0);
   }
   await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Home', exact: true }).click();
@@ -45,7 +45,7 @@ test('system preference, manual theme, navigation and reload stay synchronized',
   await expect(page.locator('.sidebar')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await page.getByRole('tab', { name: 'Code', exact: true }).click();
   await expect(page.locator('.code-documentation .code-viewer').first()).toBeVisible();
-  await expect(page.locator('.code-documentation .code-viewer').first()).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(page.locator('.code-documentation .code-viewer').first()).toHaveCSS('background-color', 'rgb(250, 249, 252)');
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.reload(); await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
