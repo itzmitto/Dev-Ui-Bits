@@ -9,8 +9,8 @@ test('catalog includes all entries, real statuses, category filters, sorting and
   await expect(page.getByRole('heading',{level:1})).toHaveText('Components');
   await expect(page.locator('.collection-card')).toHaveCount(246);
   await expect(page.getByTestId('catalog-count')).toHaveAttribute('data-total','246');
-  await expect(page.locator('.catalog-card[data-status=ready]')).toHaveCount(50);
-  await expect(page.locator('.catalog-card[data-status=planned]')).toHaveCount(196);
+  await expect(page.locator('.catalog-card[data-status=ready]')).toHaveCount(52);
+  await expect(page.locator('.catalog-card[data-status=planned]')).toHaveCount(194);
   await expect(page.locator('canvas')).toHaveCount(0);
   await expect(page.locator('input[placeholder*=Search], input[aria-label="Filter components"], a[href="/create"]')).toHaveCount(0);
   const allNames = await page.locator('.catalog-card h2').allTextContents();
@@ -24,8 +24,8 @@ test('catalog includes all entries, real statuses, category filters, sorting and
   await page.getByLabel('Filter category').selectOption('all');
   await expect(page.getByLabel('Filter category')).toHaveValue('all');
   await expect(page.locator('.collection-card')).toHaveCount(246);
-  await page.getByRole('button',{name:'Ready 50',exact:true}).click();
-  await expect(page.locator('.collection-card')).toHaveCount(50);
+  await page.getByRole('button',{name:'Ready 52',exact:true}).click();
+  await expect(page.locator('.collection-card')).toHaveCount(52);
   await expect(page.locator('.catalog-card[data-status=planned]')).toHaveCount(0);
   await page.getByLabel('Sort components').selectOption('name-asc');
   await expect.poll(async()=>{

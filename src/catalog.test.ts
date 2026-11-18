@@ -24,8 +24,8 @@ describe('phase 4 catalog and route compatibility', () => {
       for (const name of names) expect(registry.filter(item => item.name === name)).toHaveLength(1);
     }
     expect(registry).toHaveLength(246);
-    expect(readyComponents).toHaveLength(50);
-    expect(registry.filter(item => item.status === 'planned')).toHaveLength(196);
+    expect(readyComponents).toHaveLength(52);
+    expect(registry.filter(item => item.status === 'planned')).toHaveLength(194);
   });
   it('retains every original ready route, including moved-category aliases', () => {
     for (const route of originalRoutes) {

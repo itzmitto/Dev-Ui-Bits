@@ -17,10 +17,10 @@ export function useCursorCanvas(p:EffectProps,draw:CursorDraw){
   const {width,height,dpr}=box.current;const active=p.interactive!==false&&input.current.inside;
   const auto=!active&&p.autoplay===true&&!reduced;
   const target=active?input.current:auto?{x:width*(.5+.28*Math.sin(state.time*.86)),y:height*(.5+.22*Math.sin(state.time*1.37))}:{x:state.initialized?state.x:width/2,y:state.initialized?state.y:height/2};
-  const prevX=state.x,prevY=state.y;
+  const initialized=state.initialized,prevX=state.x,prevY=state.y;
   if(!state.initialized||reduced){state.x=target.x;state.y=target.y;state.initialized=true;}
   else {const smoothing=bound(p.followSpeed,.035,.001,.5),alpha=1-Math.exp(-step/smoothing);state.x+=(target.x-state.x)*alpha;state.y+=(target.y-state.y)*alpha;}
-  const dx=state.x-prevX,dy=state.y-prevY,speed=Math.min(2200,Math.hypot(dx,dy)/Math.max(step,.001));
+  const dx=initialized?state.x-prevX:0,dy=initialized?state.y-prevY:0,speed=Math.min(2200,Math.hypot(dx,dy)/Math.max(step,.001));
   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,width,height);
   const burst=input.current.burst;input.current.burst=0;
   const alive=draw({ctx,width,height,dt,time:state.time,reduced,x:state.x,y:state.y,dx,dy,speed,active:active||auto,moved:(active||auto)&&Math.hypot(dx,dy)>.12,burst});
@@ -28,7 +28,7 @@ export function useCursorCanvas(p:EffectProps,draw:CursorDraw){
   return !reduced&&(auto||alive||((active||auto)&&Math.hypot(target.x-state.x,target.y-state.y)>.15));
  });
  const box=useAnimationCanvas(host,canvas,wake,String(p.quality??'high'));
- const point=(event:ReactPointerEvent<HTMLDivElement>)=>{if(p.interactive===false||p.paused===true)return;const pos=canvasPoint(event.currentTarget,event.clientX,event.clientY);Object.assign(input.current,pos,{inside:true,initialized:true});wake();};
+ const point=(event:ReactPointerEvent<HTMLDivElement>)=>{if(p.interactive===false||p.paused===true)return;const pos=canvasPoint(event.currentTarget,event.clientX,event.clientY);if(!input.current.inside)follower.current.initialized=false;Object.assign(input.current,pos,{inside:true,initialized:true});wake();};
  const handlers={onPointerEnter:point,onPointerMove:point,onPointerDown:(event:ReactPointerEvent<HTMLDivElement>)=>{point(event);if(p.interactive===false||p.paused===true)return;input.current.burst++;if(event.pointerType!=='mouse')event.currentTarget.setPointerCapture(event.pointerId);wake();},onPointerUp:(event:ReactPointerEvent<HTMLDivElement>)=>{if(event.pointerType!=='mouse'){input.current.inside=false;if(event.currentTarget.hasPointerCapture(event.pointerId))event.currentTarget.releasePointerCapture(event.pointerId);wake();}},onPointerLeave:()=>{input.current.inside=false;wake();},onPointerCancel:()=>{input.current.inside=false;wake();}};
  return {host,canvas,handlers};
 }
