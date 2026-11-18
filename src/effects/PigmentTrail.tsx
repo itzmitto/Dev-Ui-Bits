@@ -27,15 +27,15 @@ export function PigmentTrail(p:EffectProps){
   if(s.points.length>1800)s.points.splice(0,s.points.length-1800);if(s.drops.length>200)s.drops.splice(0,s.drops.length-200);
   const stamp=(x:number,y:number,radius:number,age:number,distance:number,angle:number,stretch:number,seed:number)=>{
    const life=fadeInk(age,fade);if(life<.002||intensity===0)return;
-   const wet=1-Math.exp(-age/bloom),mix=pigmentMix(distance,cycle),tile=Math.min(atlas.colors-1,Math.floor(mix*(atlas.colors-1))),w=radius*Math.pow(life,.3)*(1+bleed*wet*.3)*(1+brushEdge(distance*.5,seed)*rough*.12),opacity=clamp01(life*intensity*(gouache?.45:.3));
-   c.save();c.translate(x,y);c.rotate(angle+Math.sin(seed)*.12);c.scale(stretch,1/stretch);c.globalCompositeOperation=gouache?'source-over':'multiply';
+   const wet=1-Math.exp(-age/bloom),mix=pigmentMix(distance,cycle),tile=Math.min(atlas.colors-1,Math.floor(mix*(atlas.colors-1))),w=radius*Math.pow(life,.3)*(1+bleed*wet*.3)*(1+brushEdge(distance*.5,seed)*rough*.12),opacity=clamp01(life*intensity*(gouache?.8:.5));
+   c.save();c.translate(x,y);c.rotate(angle+Math.sin(seed)*.12);c.scale(stretch,1);c.globalCompositeOperation=gouache?'source-over':'multiply';
    // A low-opacity, growing fringe spreads independently of the dense, textured core.
    if(bleed>0){const wetSize=w*(1.1+bleed*wet*.45);c.globalAlpha=opacity*(gouache?.16:.23)*bleed;c.drawImage(atlas.canvas,tile*atlas.tile,atlas.tile,atlas.tile,atlas.tile,-wetSize,-wetSize,wetSize*2,wetSize*2);}
    c.globalAlpha=opacity;c.drawImage(atlas.canvas,tile*atlas.tile,0,atlas.tile,atlas.tile,-w,-w,w*2,w*2);c.restore();
   };
   for(const v of s.points)stamp(v.x,v.y,v.radius,v.age,v.distance,v.angle,v.stretch,v.seed);
   for(const drop of s.drops){drop.age+=f.dt;const flight=Math.max(0,1-drop.age/.28),drag=Math.exp(-f.dt*9);drop.x+=drop.vx*f.dt*flight;drop.y+=drop.vy*f.dt*flight;drop.vx*=drag;drop.vy*=drag;const settled=clamp01((drop.age-.1)/bloom);stamp(drop.x,drop.y,drop.radius*(.5+.5*settled),Math.max(0,drop.age-.25),drop.distance,drop.seed,1.1,drop.seed);}
-  if(grain>0&&s.grainPattern){c.globalCompositeOperation='destination-out';c.globalAlpha=1;c.fillStyle=s.grainPattern;c.fillRect(0,0,f.width,f.height);}
+  if(grain>0&&s.grainPattern){c.globalCompositeOperation='destination-out';c.globalAlpha=gouache?.55:1;c.fillStyle=s.grainPattern;c.fillRect(0,0,f.width,f.height);}
   c.globalAlpha=1;c.globalCompositeOperation='source-over';engine.host.current?.setAttribute('data-particles',String(s.points.length+s.drops.length));return s.points.length>0||s.drops.length>0;
  });return <PaintSurface name="Pigment Trail" p={p} engine={engine}/>;
 }

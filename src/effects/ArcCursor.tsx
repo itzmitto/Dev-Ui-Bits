@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { str,type EffectProps } from './types';
 import { mixColor } from './cursorRuntime';
+import { rgba } from './animationCanvas';
 import { usePaintCursor, PaintSurface, value,clamp01 } from './paintCursorRuntime';
 type Knot={x:number;y:number;age:number;distance:number};
 type Pulse={x:number;y:number;age:number;seed:number};
@@ -26,9 +27,10 @@ export function ArcCursor(p:EffectProps){
    if(vertices.length<2||intensity===0)return;
    const path=new Path2D();path.moveTo(vertices[0].x,vertices[0].y);for(let i=1;i<vertices.length;i++)path.lineTo(vertices[i].x,vertices[i].y);
    // One continuous bloom per strand; varying subpixel cores are drawn separately.
-   c.strokeStyle=color;c.globalAlpha=clamp01(alpha*intensity*(light?.14:.08)*glow);c.lineWidth=thickness*(light?6:3);c.shadowColor=color;c.shadowBlur=light?glow*18:glow*3;c.stroke(path);c.shadowBlur=0;
-   for(let i=1;i<vertices.length;i++){const a=vertices[i-1],b=vertices[i],life=Math.min(a.life,b.life);c.globalAlpha=clamp01(alpha*life*intensity);c.strokeStyle=color;c.lineWidth=thickness*b.width*(light?1.5:1);c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke();if(light&&hot){c.strokeStyle=mixColor('#ffffff',accent,.12);c.lineWidth=Math.max(.25,thickness*b.width*.85);c.globalAlpha=clamp01(alpha*life*intensity*.9);c.stroke();}}
+   c.strokeStyle=light?mixColor(color,'#c4afff',.3):color;c.globalAlpha=clamp01(alpha*intensity*(light?.16:.08)*glow);c.lineWidth=thickness*(light?6:3);c.shadowColor=color;c.shadowBlur=light?glow*22:glow*3;c.stroke(path);c.shadowBlur=0;
+   for(let i=1;i<vertices.length;i++){const a=vertices[i-1],b=vertices[i],life=Math.min(a.life,b.life);c.globalAlpha=clamp01(alpha*life*intensity);c.strokeStyle=color;c.lineWidth=thickness*b.width*(light?1.5:1);c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke();if(light&&hot){c.strokeStyle=mixColor('#ffffff',accent,.12);c.lineWidth=Math.max(.25,thickness*b.width*.85);c.globalAlpha=clamp01(alpha*Math.sqrt(life)*intensity*.95);c.stroke();}}
   };
+  if(light&&glow>0&&intensity>0&&s.knots.length){const tip=s.knots[s.knots.length-1],life=clamp01(1-tip.age/length),radius=12+glow*20,halo=c.createRadialGradient(tip.x,tip.y,0,tip.x,tip.y,radius);halo.addColorStop(0,rgba(primary,.35));halo.addColorStop(.22,rgba(primary,.16));halo.addColorStop(1,rgba(primary,0));c.globalAlpha=clamp01(life*intensity*glow);c.fillStyle=halo;c.fillRect(tip.x-radius,tip.y-radius,radius*2,radius*2);}
   for(let strand=0;strand<strands;strand++){
    const vertices:Vertex[]=[];
    for(let i=1;i<s.knots.length;i++){

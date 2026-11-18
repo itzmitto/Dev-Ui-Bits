@@ -1,3 +1,38 @@
+## Fase 10 — Arc Cursor & Pigment Trail rebuild (18 november 2026)
+
+**246 items / 58 Ready / 188 Planned.** Alleen de twee bestaande cursorimplementaties en hun eigen metadata zijn aangepast. Geen nieuwe catalogusrecords/statuswijzigingen, dependencies of assets. De overige 56 Ready-renderers en gedeelde Customize/Code/Editor-/websitecode zijn niet gewijzigd.
+
+### Onderzoek en oude tekortkomingen
+
+De publieke Arc Cursor- en Pigment Trail-previews zijn daadwerkelijk in Chromium met Playwright-muisbewegingen bediend: idle/autoplay, langzaam en snel horizontaal, cirkel, zigzag, korte heen-en-weerbewegingen, drie klikken, stoppen, leave/re-enter, pause, modes, achtergrondkleur en relevante sliders. Ook een computer-use-tab is geopend. Uitsluitend publieke Preview-bediening/propertybeschrijvingen; geen Code-tab, beschermde code, netwerkinspectie, Pro-registry, shaders of assets. Tijdelijke analyse: `artifacts/phase10/ANALYSIS.md`.
+
+Arc tekende eerder per knot een hoekig segment met herhaalde shadow-strokes en een witte kern op elke achtergrond. Het leek bij langzaam bewegen op een regelmatige zigzag; Ink/Glow en diverse controls ontbraken. Pigment was een dubbel gevuld lint met één lineair kleurverloop van begin naar einde en blur, zonder lokale pigmentconcentraties of verschillende paint-modi. Dat kleurverloop volgde bochten/cirkels niet correct.
+
+### Eigen rendererwijzigingen
+
+- **Arc Cursor:** Catmull-Rom-padinterpolatie, fijn bemonsterde continue ruimtelijke oscillatoren, dunne verweven filamenten, getaperde cores en levensduur, afzonderlijke bloom en lichte kern, stochastische korte vorken, begrensde vertakte klikontladingen en tijdelijke tip-charge. Auto/Glow/Ink gebruiken andere compositing. Speed nul bevriest procedurele beweging; de oudste staart verdwijnt eerst.
+- **Pigment Trail:** zelf gegenereerde noise-brushatlas met twaalf ink-mixen en twee lagen, velocity-pressure, afstandsgebaseerde aaneengesloten afdrukken, drogende pigmentrand, bristlevariatie, vaste papierkorrel, plaatselijke subtractieve kleurmenging, leeftijdstaper en een afzonderlijk groeiende wet fringe. Klikdruppels bewegen kort, landen en bloeien uit. Auto/Watercolor/Gouache, quality en bestaande texture-/fade-controls werken op de renderer.
+- Een **uitsluitend voor deze twee gebruikte** inputhelper behoudt de bestaande visibility-/HiDPI-klok. Correcte geschaalde lokale pointercoördinaten, touch capture, transparante achtergrondresolutie via echte ancestors en thema-observatie. Autoplay speed/idle delay, pauze, interactive, reset/restart en presets. Geen globale cursorlisteners/tekenen buiten de preview.
+- Bestaande propnamen blijven bruikbaar: onder meer arcIntensity/trailLength/branching/followSpeed en brushSize/edgeSoftness/fadeDuration/secondColor. Nieuwe controls zijn toegevoegd, niet een tweede settingsframework. De bestaande Code-tab exporteert de echte nieuwe bestanden inclusief atlas/lifecyclehelpers; Sandpack blijft geïsoleerd.
+- Eerste visuele afwerking: minder brede paarsverzadigde Arc-bloom en een helderdere dunne kern; sterkere vaste papierkorrel, nauwkeurigere brushranden en taper van oude inkt. Geen full-canvas blur of nieuwe canvas per animatieframe.
+
+### Uitgevoerde controles tot nu toe
+
+- Strict TypeScript en productiebuild geslaagd; **48/48 Vitest-tests in 12 bestanden** geslaagd.
+- Eerste gerichte browsertestronde: **27 geslaagd / 4 gefaald**. Eén echte bug: Arc-autoplay kon na stilstand niet opnieuw ontwaken doordat de animatieklok terecht stilstond. Hersteld met een cleanup-veilige wall-clock timeout, zonder lege RAF-lus tijdens idle. Drie testaannames gecorrigeerd: kliktests moesten eerdere cursorstreken laten uitfaden; transparante previews volgen de echte achtergrond (de omliggende preview is standaard bewust donker), niet blind de documenttheme.
+- Na herstel **10/10 nieuwe productie-Playwright-tests geslaagd (1,8 minuut)**: modi, sliders, presets/reset/restart, zero intensity, discharge/splash, afloop naar nul canvaspixels, beide thema's, touch/DPR, fullscreen, diepe route-refresh en geen browsererrors. Bewijs: `artifacts/phase10-refinement-e2e.log`.
+- De eerdere 21 bestaande cursortests zijn in dezelfde eerste ronde geslaagd, inclusief zeven echte Sandpack-compilaties, edit/reset, alle zeven offscreen/reduced-motion/observer- en RAF-cleanupchecks en responsiviteit. De volledige website-hertest en definitieve performanceproef volgen hieronder na uitvoering.
+
+### Visuele bewijsvoering en grenzen
+
+Vergelijkingsscript: `scripts/compare-cursor-rebuild.mjs`; browserprofiel: `scripts/profile-cursor-rebuild.mjs`. Vergelijkingsviewport 1440×1200, dezelfde genormaliseerde paden, wit/donker en vergelijkingskleuren. Screenshotreeksen/werkelijke previewbounds en pad-/opnametijden staan onder `artifacts/phase10`. De publieke website en lokale site hebben verschillende previewafmetingen; ook renderingbelasting verschilt. Vroege opnames werden verstoord door scrollen/sticky headers en de korte Arc-levensduur; daarom volgden herhaalde opnames tijdens doorgaande muisbeweging. Lege tussentijdse beelden zijn niet als bewijs van visuele gelijkheid gebruikt.
+
+De eigen algoritmen verschillen in filamentfase, vorkverdeling, textuur, kleurmengdetails en druppelvorm van de referentie. Het is geen exacte elektrische/fluid-/papierfysica en geen pixel-perfecte kopie. Alleen Chromium wordt hier gevalideerd. Transparante previews volgen hun daadwerkelijke achtergrond; een expliciet donkere preview blijft donker bij light theme. Geen algemene hardware-/FPS-garantie of langdurige heapgarantie. Zie ook LICENSE_REVIEW.md.
+
+Geen Git-mutaties, commits, pushes, PR's, ZIP of deployments door deze uitvoering.
+
+---
+
 ## Fase 9 — gedeeld Playground en zes Components (18 november 2026)
 
 **Actueel: 246 catalogusitems, 58 Ready, 188 Planned.** Alle oorspronkelijke 52 Ready-componenten, routes/aliases, homepage, sidebar, themes, Sandpack, IndexedDB, import/export en Vercel-configuratie zijn behouden. Alleen de zes gevraagde Components zijn uit Planned gepromoveerd; overige 188 geplande items zijn ongewijzigd.
