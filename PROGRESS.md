@@ -1,4 +1,43 @@
-## Fase 8 — alle zeven Cursor Trails geïmplementeerd, eindregressie loopt (18 november 2026)
+## Fase 8 afgerond — zeven originele Cursor Trails (18 november 2026)
+
+**Actueel: 246 catalogusitems, 52 Ready, 194 Planned.** Alle 45 bestaande Ready-componenten, bestaande routes, homepage, themes, controls, Sandpack en IndexedDB zijn behouden. Alleen de zeven gevraagde nieuwe cursor-effecten en hun categorie zijn toegevoegd; overige geplande effecten zijn ongewijzigd.
+
+| Component | Route | Status |
+| --- | --- | --- |
+| Arc Cursor | /cursor-trails/arc-cursor | Ready |
+| Celebration Cursor | /cursor-trails/celebration-cursor | Ready |
+| Chroma Halo | /cursor-trails/chroma-halo | Ready |
+| Dither Cursor | /cursor-trails/dither-cursor | Ready |
+| Glyph Stream | /cursor-trails/glyph-stream | Ready |
+| Pigment Trail | /cursor-trails/pigment-trail | Ready |
+| Stardust Cursor | /cursor-trails/stardust-cursor | Ready |
+
+### Daadwerkelijk uitgevoerde eindverificatie
+
+- `npm run typecheck`: geslaagd, strict TypeScript.
+- `npm test`: **36/36 tests, 9/9 bestanden geslaagd**.
+- `npm run build`: geslaagd; Vite-productiebundel in dist.
+- `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4175 npm run test:e2e`: **175/175 geslaagd, 10,8 minuten**. Volledige behouden regressies plus 21 cursorchecks. Alle 246 sidebar-/detailroutes zijn daadwerkelijk geopend; diepe routes en refresh gecontroleerd. Bewijs: artifacts/phase8-production-e2e.log en artifacts/phase8-full-last-run.json.
+- Na die volledige run zijn alleen de laatste categorie-teksten, de scoped hintafstand en twee alpha-grensgevallen afgewerkt. De bron is opnieuw getypecheckt, met alle 36 unit-tests gecontroleerd en gebouwd. Daarna **23/23 getroffen productie-browsertests opnieuw geslaagd, 1,9 minuut**: alle 21 cursorchecks plus twee homepage/themeflows. Bewijs: artifacts/phase8-finishing-e2e.log; test-results/.last-run.json bevat passed en geen failedTests.
+- De laatste checks bevatten alle zeven echte Sandpack-compilaties, live codebewerking zonder de originele bron te wijzigen, minimale standalone props/autoplay, Reset Code, presets, pointer/klik, Pause, Reset/Restart, opacity/intensity/kleur, dither-radius/decay en geschaalde coördinaten. Confetti moet na zijn levensduur ook aantoonbaar nul canvaspixels achterlaten.
+- Alle zeven previews getest op 375×812, 430×932, 768×1024, 1440×900, 1920×1080, 2560×1440 en 3440×1440, beide themes en zonder horizontale overflow. Touch/DPR, viewportknoppen, fullscreen en Escape gecontroleerd. Console.error en pageerror worden in de cursor-preview-/Sandpack- en responsivechecks verzameld; de eindcontroles zijn foutloos.
+- Alle zeven effecten getest op offscreen suspension, reduced motion en observer-/RAF-cleanup bij SPA-unmount. Bestaande regressies testen daarnaast IndexedDB, import/export, favorieten, oude text-/animation-engines en editorfuncties.
+
+### Visuele verbetering en performance
+
+Publieke referenties en eigen desktop-/mobiele previews zijn meerdere keren bekeken. Verbeterd: de ongewenste startlijn vanaf de canvasrand, de aanvankelijk hoekige kwastribbon, grove stofdeeltjes, ontbrekende categorie-icoonkoppeling, Arc-intensity op branches, negatieve confetti-alpha aan het einde en maximale highlight-alpha. De hint staat in smalle containers nu hoger dan de bestaande previewlabels; de eindbeelden en geometrische regressiecheck bevestigen dat de overlap weg is. Verouderde teksten noemen het aantal categorieën nu dynamisch.
+
+Chroma Halo begon rond 25 draw-updates/s op desktop door full-canvas blur. Caching van organische sprites bracht het in de herhaalde productieproef naar circa 60 updates/s. Alle zeven effecten kwamen op 1440px en 375px uit op ongeveer **59–60 updates/s**, met **nul nieuwe canvasallocaties tijdens de meetintervallen**, **nul verborgen-tab-draws** en **nul doorlopende reduced-motion-draws**. Zie scripts/profile-cursor-trails.mjs, artifacts/phase8-performance.json en artifacts/phase8-performance-final.log. Dit meet deze headless Chromium-omgeving en standaardinstellingen, geen gegarandeerde FPS op andere hardware.
+
+Broncode is per effect lazy geladen. De catalogus start nog steeds maximaal één expliciet gevraagde preview. Bounded pools: Arc maximaal 150 trailpunten/8 pulses, confetti 1000 papers, halo 26/45/70 blooms, glyphs 800 tiles, pigment 650 punten/180 druppels en stof 1100/2500/4500 deeltjes. Dither past zijn celgrootte aan rond maximaal 50.000 cellen. Canvas-DPR is maximaal 2, lager bij quality low/medium. Nieuwe npm-dependencies: geen.
+
+### Herkomst, grenzen en vervolgpunt
+
+Alle zeven renderers zijn eigen Canvas 2D-implementaties met algemeen bekende technieken. Geen Pro-componentcode, Copy for AI, shaders, registrybestanden, logo’s of externe assets overgenomen. De publiek leesbare Pro-licentie en onzekerheden staan in LICENSE_REVIEW.md. Halo, glyphs, inkt en stof gebruiken analytische beweging, geen volledige vloeistofsolver. Vorm/timing kunnen afwijken van de referentie; er is geen claim van exacte reproductie. Alleen Chromium is getest; geen langdurige heap- of algemene browser-/hardwaregarantie. Sandpacks bundler blijft zoals voorheen internet nodig hebben.
+
+README.md, ADDING-COMPONENTS.md en LICENSE_REVIEW.md zijn bijgewerkt. Geen onafgeronde onderdelen binnen deze zeven cursorcomponenten. De overige 194 items blijven Planned; verdere ontwikkeling daarvan vergt een volgende opdracht. Alleen eigen testservers zijn na verificatie afgesloten. Door deze uitvoering zijn geen Git-mutaties, GitHub-pushes, deployments of source-ZIP uitgevoerd. Tijdens read-only Gitinspectie waren externe HEAD-wijzigingen zichtbaar; die zijn niet door deze uitvoering gemaakt of teruggedraaid.
+
+## Fase 8 — uitvoeringslog vóór de definitieve eindcontrole (18 november 2026)
 
 Actuele registry: **246 items, 52 Ready, 194 Planned**. Cursor Trails bevat zeven nieuwe records; de 45 eerdere Ready-items en alle bestaande Planned-records zijn behouden. Geen andere geplande Text Animations of Animations gebouwd.
 
@@ -7,14 +46,14 @@ Actuele registry: **246 items, 52 Ready, 194 Planned**. Cursor Trails bevat zeve
 - Batch 3: Pigment Trail en Stardust Cursor; strict TypeScript, build, 34 unit-tests en acht gerichte browserchecks inclusief alle zeven Sandpack-voorbeelden geslaagd. De kwast is daarna verfijnd van losse hoekige segmenten tot een doorlopende, afgeronde ribbon; stofdeeltjes zijn fijner gemaakt.
 - Uitgebreide browserproef: 18 van 19 checks slaagden, inclusief alle zeven schermbreedtes, touch/fullscreen, offscreen, reduced motion en observer-/RAF-cleanup. Eén fout bleek een meetrace na Restart in de schaaltest; die wacht nu aantoonbaar op de nieuwe preview.
 - Aanvullende pixelcontrole vond een echte fout: Arc intensity beïnvloedde de branches nog niet. Ook de branches en ontladingen zijn nu gekoppeld. De gerichte dither-/kleur-/intensity- en geïsoleerde codebewerkingstests slagen daarna alle drie.
-- Laatste strict typecheck, productiebuild en **36/36 Vitest** geslaagd. De volledige **175 Playwright-tests op production preview 4175** lopen nu; resultaat pas na afronding hieronder vastleggen.
+- Laatste strict typecheck, productiebuild en **36/36 Vitest** geslaagd. De volledige productie-regressie en gerichte eindcontrole zijn inmiddels geslaagd; zie de definitieve resultaten hierboven.
 - Visuele controle: publieke demo's en eigen previews/schermopnames bekeken; alleen gerenderd gedrag onderzocht. De effecten zijn eigen ontwerpen en kunnen qua vorm en timing afwijken. Geen Pro-broncode, shaders, registrydata of assets gebruikt.
 - Performance: eerste desktopproef vond Chroma Halo op circa 25 updates/s. Full-canvas blur vervangen door gecachete organische sprites; sterrenstofkleuren eveneens gecachet. Daarna alle zeven effecten op 1440px en 375px circa 59–60 updates/s, nul extra canvasallocaties tijdens de steekproef en nul doorlopende verborgen/reduced-motion-draws. Zie artifacts/phase8-performance.json en het reproduceerbare profielscript. Geen universele hardware-/browsergarantie.
 - Standalone defaults gecontroleerd: ook bij slechts enkele meegegeven props hebben de exports werkende autoplay/defaultwaarden. De normale websitevoorbeelden gebruiken volledige registry-defaults.
 - Geen nieuwe dependencies. README, ADDING-COMPONENTS en LICENSE_REVIEW beschrijven technieken, exports, beperkingen en Pro-licentieafbakening.
 - Deze uitvoering voert geen Git-mutaties, publicatie, deployment of source-ZIP uit. Read-only Gitinspectie liet tussentijdse externe HEAD-wijzigingen zien; deze zijn niet teruggedraaid en niet door deze uitvoering aangemaakt.
 
-Vervolgpunt: volledige productie-regressie afronden, eventuele fouten herstellen, screenshots en definitieve testaantallen vastleggen. Na succesvolle afronding zijn alle zeven gevraagde cursorcomponenten gereed; de overige 194 items blijven Planned.
+Dit tussenverslag is afgerond door de definitieve eindcontrole hierboven. Alle zeven cursorcomponenten zijn gereed; de overige 194 items blijven Planned.
 
 ### Fase 8 — batch 2 gecontroleerd
 

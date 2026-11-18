@@ -72,6 +72,8 @@ Alle engines gebruiken eigen Canvas 2D-code. Halo, glyphs, inkt en stof gebruike
 
 De bronherkomst en beperkingen van de Pro-licentie staan in [LICENSE_REVIEW.md](LICENSE_REVIEW.md). Er is geen Pro-code, registry, shader, logo of beschermd asset opgenomen. Reproduceerbare performancecontrole: start `npm run preview -- --port 4175`, voer daarna `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4175 node scripts/profile-cursor-trails.mjs` uit (eventueel met `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`). Dit meet draw-updates en lifecycle, geen universele hardware-FPS-garantie.
 
+Fase 8 daadwerkelijk gecontroleerd: **strict TypeScript, 36/36 Vitest, productiebuild en de volledige 175/175 Playwright-regressies geslaagd**. Na de laatste kleine tekst-/CSS- en alpha-correcties zijn **23/23 getroffen productiechecks opnieuw geslaagd**. Dit omvat alle zeven echte Sandpack-voorbeelden, live editing/reset, pointer/klik, presets/pause/reset/restart, zeven schermformaten in beide themes, touch/fullscreen, dither-schaling, werkelijke parameterwerking en observer-/RAF-cleanup. De laatste responsivechecks verzamelen ook console-errors; er zijn geen fouten of horizontale overflow gevonden. De productie-renderproef haalt hier circa 59–60 draw-updates/s per effect met nul doorlopende verborgen/reduced-motion-draws. Alleen Chromium is getest. Details, logpaden, gevonden en herstelde fouten staan in [PROGRESS.md](PROGRESS.md).
+
 ## Tech Text — fase 5
 
 `/text-animations/tech-text` gebruikt nu een eigen Canvas 2D-engine. Alle 29 eerdere implementaties blijven bestaan; alleen dit bestaande planned record is uitgebreid. De defaults zijn DevUI Bits, font-weight 600, maximaal 150px en -0,05em spacing. De tekst krimpt op smalle previews en centreert op de echte ink-bounds.
