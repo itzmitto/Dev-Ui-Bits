@@ -55,5 +55,5 @@ export default function HomePage() {
 }
 export function CategoriesPage() {
   useEffect(() => { document.title = 'Categories — DevUI Bits'; }, []);
-  return <div className="categories-page"><div className="component-heading"><span className="eyebrow">FIVE WAYS TO MAKE IT MOVE</span><h1>Explore the Library.</h1><p>Browse all five categories of original React components.</p></div><CategoryCards/></div>;
+  return <div className="categories-page"><div className="component-heading"><span className="eyebrow">{categories.length} WAYS TO MAKE IT MOVE</span><h1>Explore the Library.</h1><p>Browse all {categories.length} categories of original React components.</p></div><CategoryCards/></div>;
 }

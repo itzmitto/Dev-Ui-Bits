@@ -1,3 +1,21 @@
+## Fase 8 — alle zeven Cursor Trails geïmplementeerd, eindregressie loopt (18 november 2026)
+
+Actuele registry: **246 items, 52 Ready, 194 Planned**. Cursor Trails bevat zeven nieuwe records; de 45 eerdere Ready-items en alle bestaande Planned-records zijn behouden. Geen andere geplande Text Animations of Animations gebouwd.
+
+- Batch 1: Arc Cursor en Celebration Cursor; strict TypeScript, build, 34 unit-tests en drie gerichte browserchecks geslaagd.
+- Batch 2: Chroma Halo, Dither Cursor en Glyph Stream; strict TypeScript, build, 34 unit-tests en zes gerichte browserchecks inclusief vijf Sandpack-voorbeelden geslaagd.
+- Batch 3: Pigment Trail en Stardust Cursor; strict TypeScript, build, 34 unit-tests en acht gerichte browserchecks inclusief alle zeven Sandpack-voorbeelden geslaagd. De kwast is daarna verfijnd van losse hoekige segmenten tot een doorlopende, afgeronde ribbon; stofdeeltjes zijn fijner gemaakt.
+- Uitgebreide browserproef: 18 van 19 checks slaagden, inclusief alle zeven schermbreedtes, touch/fullscreen, offscreen, reduced motion en observer-/RAF-cleanup. Eén fout bleek een meetrace na Restart in de schaaltest; die wacht nu aantoonbaar op de nieuwe preview.
+- Aanvullende pixelcontrole vond een echte fout: Arc intensity beïnvloedde de branches nog niet. Ook de branches en ontladingen zijn nu gekoppeld. De gerichte dither-/kleur-/intensity- en geïsoleerde codebewerkingstests slagen daarna alle drie.
+- Laatste strict typecheck, productiebuild en **36/36 Vitest** geslaagd. De volledige **175 Playwright-tests op production preview 4175** lopen nu; resultaat pas na afronding hieronder vastleggen.
+- Visuele controle: publieke demo's en eigen previews/schermopnames bekeken; alleen gerenderd gedrag onderzocht. De effecten zijn eigen ontwerpen en kunnen qua vorm en timing afwijken. Geen Pro-broncode, shaders, registrydata of assets gebruikt.
+- Performance: eerste desktopproef vond Chroma Halo op circa 25 updates/s. Full-canvas blur vervangen door gecachete organische sprites; sterrenstofkleuren eveneens gecachet. Daarna alle zeven effecten op 1440px en 375px circa 59–60 updates/s, nul extra canvasallocaties tijdens de steekproef en nul doorlopende verborgen/reduced-motion-draws. Zie artifacts/phase8-performance.json en het reproduceerbare profielscript. Geen universele hardware-/browsergarantie.
+- Standalone defaults gecontroleerd: ook bij slechts enkele meegegeven props hebben de exports werkende autoplay/defaultwaarden. De normale websitevoorbeelden gebruiken volledige registry-defaults.
+- Geen nieuwe dependencies. README, ADDING-COMPONENTS en LICENSE_REVIEW beschrijven technieken, exports, beperkingen en Pro-licentieafbakening.
+- Deze uitvoering voert geen Git-mutaties, publicatie, deployment of source-ZIP uit. Read-only Gitinspectie liet tussentijdse externe HEAD-wijzigingen zien; deze zijn niet teruggedraaid en niet door deze uitvoering aangemaakt.
+
+Vervolgpunt: volledige productie-regressie afronden, eventuele fouten herstellen, screenshots en definitieve testaantallen vastleggen. Na succesvolle afronding zijn alle zeven gevraagde cursorcomponenten gereed; de overige 194 items blijven Planned.
+
 ### Fase 8 — batch 2 gecontroleerd
 
 - Chroma Halo, Dither Cursor en Glyph Stream toegevoegd met eigen engines: vervormde advecterende blooms, een vervallend scalair veld met Bayer-dithering, en elastische glyph-tiles met momentum en scramble.

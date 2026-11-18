@@ -15,7 +15,7 @@ export function useCursorCanvas(p:EffectProps,draw:CursorDraw){
   if(p.paused===true){input.current.burst=0;return false;}
   const dt=reduced?0:step,state=follower.current;state.time+=dt;
   const {width,height,dpr}=box.current;const active=p.interactive!==false&&input.current.inside;
-  const auto=!active&&p.autoplay===true&&!reduced;
+  const auto=!active&&p.autoplay!==false&&!reduced;
   const target=active?input.current:auto?{x:width*(.5+.28*Math.sin(state.time*.86)),y:height*(.5+.22*Math.sin(state.time*1.37))}:{x:state.initialized?state.x:width/2,y:state.initialized?state.y:height/2};
   const initialized=state.initialized,prevX=state.x,prevY=state.y;
   if(!state.initialized||reduced){state.x=target.x;state.y=target.y;state.initialized=true;}

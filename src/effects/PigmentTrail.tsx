@@ -8,7 +8,7 @@ type Drop={x:number;y:number;vx:number;vy:number;size:number;age:number;seed:num
 export const brushEdge=(distance:number,seed:number)=>Math.sin(distance*.13+seed)*.6+Math.sin(distance*.39-seed*2)*.4;
 export function PigmentTrail(p:EffectProps){
  const state=useRef({points:[] as Ink[],drops:[] as Drop[],distance:0,group:0,active:false,grainPattern:null as CanvasPattern|null});
- const engine=useCursorCanvas(p,f=>{const s=state.current,c=f.ctx,size=num(p,'brushSize',15),fade=num(p,'fadeDuration',3.5),bleed=num(p,'bleed',.5),bloom=num(p,'bloom',.9),rough=num(p,'roughness',.3),grain=num(p,'grain',.35),intensity=num(p,'intensity',1),edge=num(p,'edgeSoftness',.6),cycle=num(p,'colorCycle',700);
+ const engine=useCursorCanvas({...p,followSpeed:num(p,'followSpeed',.06)},f=>{const s=state.current,c=f.ctx,size=num(p,'brushSize',15),fade=num(p,'fadeDuration',3.5),bleed=num(p,'bleed',.5),bloom=num(p,'bloom',.9),rough=num(p,'roughness',.3),grain=num(p,'grain',.35),intensity=num(p,'intensity',1),edge=num(p,'edgeSoftness',.6),cycle=num(p,'colorCycle',700);
   if(f.active&&!s.active)s.group++;s.active=f.active;
   if(f.moved){const distance=Math.hypot(f.dx,f.dy),steps=Math.min(30,Math.max(1,Math.ceil(distance/Math.max(2,size*.3))));for(let i=0;i<steps;i++){s.distance+=distance/steps;s.points.push({x:f.x-f.dx*(1-(i+1)/steps),y:f.y-f.dy*(1-(i+1)/steps),width:size*(.75+.4/(1+f.speed*.003)),age:0,distance:s.distance,seed:s.group*.97,group:s.group});}}
   if(f.burst&&p.splash!==false){const n=f.reduced?4:22;for(let i=0;i<n;i++){const a=rand(0,Math.PI*2),v=rand(15,120);s.drops.push({x:f.x,y:f.y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,size:size*rand(.15,.65),age:0,seed:rand(0,50)});}}

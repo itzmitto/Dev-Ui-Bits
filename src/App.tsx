@@ -740,7 +740,7 @@ function Guide({ notify }: { notify: Notify }) {
           },
           {
             title: "Find your bit",
-            text: "Browse five categories, try the live previews, and adjust the controls. Your current settings are included in the exported App file.",
+            text: `Browse ${categories.length} categories, try the live previews, and adjust the controls. Your current settings are included in the exported App file.`,
           },
           {
             title: "Take the source",

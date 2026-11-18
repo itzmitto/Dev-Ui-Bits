@@ -60,7 +60,7 @@ Zeven zelfstandige effecten staan onder `/cursor-trails`: **Arc Cursor, Celebrat
 
 - Arc: coherente elektrische polylijnen, vertakkingen, glow en klikontladingen.
 - Celebration: tuimelende confetti met zwaartekracht, luchtweerstand, flutter, wind en klikexplosies.
-- Chroma: advecterende, vervormde kleurwolken op een herbruikbaar canvas met instelbare resolutie.
+- Chroma: advecterende, vervormde kleurwolken met vooraf opgebouwde organische sprites en instelbare resolutie.
 - Dither: een vervallend scalair veld met vaste Bayer-drempels; de cellen vormen één samenhangende trail.
 - Glyph: scrambling tiles met momentum, elastische tethers, viscositeit en splashes.
 - Pigment: een doorlopende kwastribbon met variabele breedte, onregelmatige randen, blooming, grain en inktspatten.
