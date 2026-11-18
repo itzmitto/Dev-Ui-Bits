@@ -1,6 +1,6 @@
 # DevUI Bits
 
-Een zelfstandige bibliotheek met **246 catalogusitems: 58 werkende React-componenten en 188 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Gebouwd op het bestaande DevUI Bits-project: alle 29 bestaande effecten en functies zijn behouden.
+Een zelfstandige bibliotheek met **246 catalogusitems: 58 werkende React-componenten en 188 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Alle 52 vóór fase 9 werkende componenten, bestaande routes en functies zijn behouden.
 
 **Start hier:** [SETUP-GITHUB-VERCEL.md](SETUP-GITHUB-VERCEL.md) beschrijft ZIP → VS Code → GitHub → publieke Vercel-site, met exacte commando's en controles vóór Git-initialisatie of remote-wijzigingen.
 
@@ -267,3 +267,5 @@ Geen nieuwe dependencies. Alle oorspronkelijke 52 Ready-componenten en alle 246 
 
 
 Optische grenzen: alleen Chromium is in deze omgeving geautomatiseerd getest. Gebruik Glass Surface’s Frosted-modus wanneer SVG-backdropfilters in een browser onvoldoende werken. Fluid Glass biedt drie eigen SDF-vormen boven een tekst-/illustratiescène; het is geen algemene renderer voor willekeurige DOM-inhoud, camera of video. De lichtberekening is een eigen realtime benadering, geen fysisch volledige lichtsimulatie. Reflective Card gebruikt een eigen studio-omgeving in plaats van de standaardvideo van de referentie. De normale preview en documentatie werken zonder Sandpack-start; compileren in Playground vraagt wel internet voor de bestaande Sandpack-service.
+
+Fase 9 is daadwerkelijk gecontroleerd met strict typecheck, 42 unit-tests, de productiebuild, 206 volledige productie-browsertests en na de laatste afwerking 32 gerichte productie-hertests. Beide nieuwe renderlussen halen in de lokale Chromium-proef circa 60 updates/s en stoppen als hun preview verborgen is of reduced motion actief is. Zie PROGRESS.md voor bewijs, meetgrenzen en het vervolgpunt.

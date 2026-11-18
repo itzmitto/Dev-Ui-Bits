@@ -1,10 +1,50 @@
-## Fase 9 — productievalidatie bezig (18 november 2026)
+## Fase 9 — gedeeld Playground en zes Components (18 november 2026)
 
-**Registry: 246 items, 58 Ready, 188 Planned.** De zes bestaande catalogusrecords Glass Surface, Fluid Glass, Reflective Card, Accordion Gallery, Glass Icons en Chroma Grid zijn gekoppeld aan eigen implementaties. Alle zes zijn al afzonderlijk interactief getest en compileren in Sandpack. De volledige productieregressiesuite loopt nog; onderstaande vorige faserapporten zijn historische resultaten.
+**Actueel: 246 catalogusitems, 58 Ready, 188 Planned.** Alle oorspronkelijke 52 Ready-componenten, routes/aliases, homepage, sidebar, themes, Sandpack, IndexedDB, import/export en Vercel-configuratie zijn behouden. Alleen de zes gevraagde Components zijn uit Planned gepromoveerd; overige 188 geplande items zijn ongewijzigd.
 
-Reeds uitgevoerd: strict typecheck, 42/42 Vitest-tests, productiebuild, 11/11 gedeelde Playground-checks en 6/6 nieuwe interactie-/Sandpack-checks. Een eerste bredere regressierun vond een verouderde Code-selector, een verdwenen directe exportactie en een offscreen canvas-pixelassertie. Export is hersteld; tests gebruiken de echte documentatieviewer en controleren pixels pas wanneer het canvas zichtbaar is. De volledige suite wordt opnieuw uitgevoerd. Een eerste zescomponentenrun had zes onjuiste statusbadgeselectors; die zijn hersteld en de zes inhoudelijke tests zijn daarna geslaagd.
+| Nieuw Ready | Route | Eigen techniek |
+| --- | --- | --- |
+| Glass Surface | /components/glass-surface | Eigen lens-normalmap, SVG-backdropdisplacement, getypeerde GlassPane met React children |
+| Fluid Glass | /components/fluid-glass | WebGL SDF-raymarching, drie morfende volumes, optische dikte, dispersie, reflecties; Canvas-fallback |
+| Reflective Card | /components/reflective-card | Procedurele studio-sampling, brushed metal, pointerlicht/tilt, optionele eigen videoreflectie |
+| Accordion Gallery | /components/accordion-gallery | Flex-expansie, eigen SVG-art, parallax, captions en roving keyboard focus |
+| Glass Icons | /components/glass-icons | Eigen vectoren, optische glasplaten, refractie/bevel, hover, callbacks en detailacties |
+| Chroma Grid | /components/chroma-grid | Gedempte pointer, echte grayscale/kleurmaskers, frames en toegankelijke artworkdialogen |
 
-Nieuw: compact gedeeld Customize, gevalideerde hex-invoer, lichte Install/Usage/Code-viewer, echte copyacties, Edit in Playground met lazy Sandpack, behouden preview-state en bereikbare fullscreen-close. Visuele screenshots zijn bekeken; tekstcontrol-wrapping en Chroma Grid-clipping zijn verbeterd. Geen nieuwe dependencies, externe assets of database-migraties. Geen Git-mutaties of deployments uitgevoerd door deze agent.
+### Gedeelde interface
+
+- Eén compact Customize-systeem, drie/twee/één kolommen, met labels links, waarden rechts, native sliders, angle/numeric controls, toggles, dropdowns, presets en gevalideerde bewerkbare hexvelden. Verouderde, conflicterende controlregels zijn uit styles.css verwijderd.
+- Code is standaard een lichte documentatieviewer: Install / Usage / Code, echte bestanden, syntaxkleuren, regelnummers, bestandskeuze, uitklappen en bronexport. Alleen beschikbare varianten. Geen fictief package-/shadcn-registrycommando.
+- Copy Install / Usage / Code / All Files / for AI kopiëren daadwerkelijke eigen informatie en actuele instellingen, met feedback en clipboardfallback.
+- Edit in Playground opent lazy de behouden Sandpack-editor. De bestaande Editor-tab, meerdere bestanden, live fouten, Reset, Copy, import/export en eigen componenten blijven beschikbaar. Geen Sandpack-start voor alleen Code lezen.
+- De echte preview blijft gemount bij tabwissels, inclusief de interactieve state. Eigen animatieklokken stoppen voor verborgen/offscreen previews. Restart remount expliciet; Reset herstelt de echte defaults. Fullscreen heeft een bereikbare eigen Close-knop en Escape.
+
+### Daadwerkelijke validatie
+
+- `npm run typecheck`: geslaagd, strict TypeScript.
+- `npm test`: **42/42 tests, 11/11 bestanden geslaagd**. Inclusief eigen lensnormalen, unieke records, volledige presets, echte bronbestanden, transitieve imports en documentatie-/clipboardteksten.
+- `npm run build`: geslaagd. De hoofdbundel ging van circa 753 naar 705 kB door ongebruikte metadata-bronstrings uit de eager raw-sourceglob te halen (gzip circa 234 → 219 kB). De eerdere chunkwaarschuwing is weg; het bestaande waarschuwingslimiet is niet verhoogd. Renderers en de zware Sandpack-editor blijven lazy chunks. De eigen bronbestanden zijn nog eager voor directe documentatie/copy; bij verdere groei is async bronloading een logisch optimalisatiepunt.
+- **Volledige productie-Playwright: 206/206 geslaagd, 13,1 minuten.** Bewijs: artifacts/phase9-production-final-e2e.log. Alle 246 sidebar-/detailroutes zijn daadwerkelijk geopend. Alle 58 Ready-schema’s zijn met gewijzigde waarden, Usage, tabwissels en Reset doorlopen. Alle zes nieuwe voorbeelden compileren in echte Sandpack-iframes.
+- Clipboardinhoud, actuele props, geen vroege Sandpack-request, behouden preview-element, Code/Editor, light/dark, persistent thema, direct openen/refresh, native en custom previews, IndexedDB, JSON-import/export en componentbronexport worden echt getest.
+- Viewports van 375/430/768/1024/1440/1920/2560/3440/3840 px; beide themes; geen horizontale pagina-overflow. Bestaande suites omvatten bovendien 1280/1366 px. Screenshots zijn daadwerkelijk bekeken, met meerdere herstelrondes voor control-wrapping, mobiele labeluitlijning, fullscreen-close, Chroma Grid-hoogte en Code-actie-uitlijning.
+- Native observers/RAF worden op SPA-unmount geteld. Fluid Glass wordt ook op concrete GPU-allocaties getest: 2 shaders, 1 program, 1 buffer, 1 texture; na unmount alles nul. Contextverlies/herstel en de eerlijk gelabelde Canvas-fallback werken. Videoreflectie is met een lokaal gegenereerde echte WebM getest op pause/resume, reduced motion, offscreen en broncleanup.
+- De eerste brede run was **198 geslaagd / 6 gefaald**. De fouten waren oude offscreen-scrollaannames door de compacte controls, een onjuiste startpagina voor de nieuwe registrytest en een screenshotvergelijking. Die zijn onderzocht en gericht hersteld vóór de geslaagde volledige hertest. Glow Cursor had na afloop aantoonbaar nul canvaspixels; alleen twee pixels in de omringende screenshot verschilden door compositing. De test vergelijkt nu de echte canvasinhoud. Er is geen werkend effect herschreven om een test te laten slagen.
+
+**Laatste afwerking geverifieerd:** na het groeperen van de Code-acties en verfijnen van Glass Icons’ mobiele gap/Lift-parallax zijn typecheck, alle 42 unit-tests en de productiebuild opnieuw geslaagd. Daarna zijn **32/32 getroffen productie-Playwright-tests opnieuw geslaagd, 1,9 minuut**, inclusief de expliciete nieuwe gap-/parallaxcheck, alle zes Sandpack-compilaties, alle 58 instellingenflows en de negen viewportgroottes. Bewijs: artifacts/phase9-finishing-e2e.log. test-results/.last-run.json bevat passed en geen failedTests.
+
+### Gemeten rendergedrag
+
+`scripts/profile-glass-components.mjs` is daadwerkelijk uitgevoerd op de definitieve productiebuild, na de browsertests. Fluid Glass en Reflective Card kwamen op 1440px en 375px uit op circa **59,8–60 draw-updates per seconde**, met **nul nieuwe canvasallocaties tijdens de meetintervallen**, **nul verborgen-preview-draws** en **nul doorlopende reduced-motion-draws**. De glasraymarcher slaat pixels buiten de objectbounds vroeg over. Bewijs: artifacts/phase9-performance.log en artifacts/phase9-performance.json. Dit is een meting in deze headless Chromium-omgeving met de standaardinstellingen, geen gegarandeerde FPS op andere hardware.
+
+### Herkomst, grenzen en vervolg
+
+Geen nieuwe dependencies, fonts, foto’s, textures of video-assets. Illustraties, vectoren, normaalmap, studio en shader zijn eigen implementaties. Alleen publieke gerenderde demo’s/propertybeschrijvingen en de twee screenshots zijn als visuele/functionele referentie gebruikt. Geen upstream componentcode, shaders, registrybestanden of Copy for AI-output overgenomen. Zie LICENSE_REVIEW.md.
+
+Alleen Chromium is hier getest. SVG-backdropfilters verschillen per browser; Frosted is een expliciete alternatieve weergave. De SDF-lens en studio zijn realtime optische benaderingen; geen exacte fysische simulatie of identieke officiële API. Fluid Glass biedt eigen tekst-/illustratiescènes, geen algemene DOM-/video-/webcamrenderer. Galleryvoorbeelden gebruiken eigen illustraties in plaats van referentiefoto’s. De fallback heeft vereenvoudigde optica en meldt dat zichtbaar. Er wordt geen pixel-perfecte gelijkheid, universele browserondersteuning of hardware-onafhankelijke FPS geclaimd.
+
+Vervolg: kies per afzonderlijke opdracht een item uit de resterende **188 Planned**-componenten. Maak geen duplicaten; koppel renderer, schema, helpers en tests aan hetzelfde record. De resterende Text Animations en Animations zijn in deze fase niet ontwikkeld.
+
+Geen Git-mutaties, GitHub-acties of deployments door deze agent. Geen project-ZIP gemaakt.
 
 ---
 
@@ -40,6 +80,10 @@ Publieke referenties en eigen desktop-/mobiele previews zijn meerdere keren beke
 Chroma Halo begon rond 25 draw-updates/s op desktop door full-canvas blur. Caching van organische sprites bracht het in de herhaalde productieproef naar circa 60 updates/s. Alle zeven effecten kwamen op 1440px en 375px uit op ongeveer **59–60 updates/s**, met **nul nieuwe canvasallocaties tijdens de meetintervallen**, **nul verborgen-tab-draws** en **nul doorlopende reduced-motion-draws**. Zie scripts/profile-cursor-trails.mjs, artifacts/phase8-performance.json en artifacts/phase8-performance-final.log. Dit meet deze headless Chromium-omgeving en standaardinstellingen, geen gegarandeerde FPS op andere hardware.
 
 Broncode is per effect lazy geladen. De catalogus start nog steeds maximaal één expliciet gevraagde preview. Bounded pools: Arc maximaal 150 trailpunten/8 pulses, confetti 1000 papers, halo 26/45/70 blooms, glyphs 800 tiles, pigment 650 punten/180 druppels en stof 1100/2500/4500 deeltjes. Dither past zijn celgrootte aan rond maximaal 50.000 cellen. Canvas-DPR is maximaal 2, lager bij quality low/medium. Nieuwe npm-dependencies: geen.
+
+### Gemeten rendergedrag
+
+`scripts/profile-glass-components.mjs` is daadwerkelijk uitgevoerd op de definitieve productiebuild, na de browsertests. Fluid Glass en Reflective Card kwamen op 1440px en 375px uit op circa **59,8–60 draw-updates per seconde**, met **nul nieuwe canvasallocaties tijdens de meetintervallen**, **nul verborgen-preview-draws** en **nul doorlopende reduced-motion-draws**. De glasraymarcher slaat pixels buiten de objectbounds vroeg over. Bewijs: artifacts/phase9-performance.log en artifacts/phase9-performance.json. Dit is een meting in deze headless Chromium-omgeving met de standaardinstellingen, geen gegarandeerde FPS op andere hardware.
 
 ### Herkomst, grenzen en vervolgpunt
 
