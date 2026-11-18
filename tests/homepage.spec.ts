@@ -44,8 +44,8 @@ test('system preference, manual theme, navigation and reload stay synchronized',
   await expect(page.locator('.customize')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(page.locator('.sidebar')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await page.getByRole('tab', { name: 'Code', exact: true }).click();
-  await expect(page.locator('.sp-code-editor')).toBeVisible();
-  await expect(page.locator('.sp-code-editor')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(page.locator('.code-documentation .code-viewer').first()).toBeVisible();
+  await expect(page.locator('.code-documentation .code-viewer').first()).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.reload(); await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');

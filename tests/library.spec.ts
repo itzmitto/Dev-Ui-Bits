@@ -22,7 +22,7 @@ test('micro interactions respond to clicks and carousel advances',async({page})=
  await page.goto('/micro-interactions/ripple-effect');await page.locator('.ripple-target').click();await expect(page.locator('.ripple-target i')).toHaveCount(1);
 });
 test('source tab shows actual TSX, CSS, supporting files and exports a ZIP',async({page})=>{
- await page.goto('/text-animations/blur-text');await page.getByRole('tab',{name:'Code',exact:true}).click();await expect(page.getByText('export function BlurText',{exact:false})).toBeVisible();await page.getByRole('button',{name:'effects.css',exact:true}).click();await expect(page.locator('.sp-code-editor')).toContainText('.effect-heading');
+ await page.goto('/text-animations/blur-text');await page.getByRole('tab',{name:'Code',exact:true}).click();await expect(page.locator('.code-documentation .code-viewer').last()).toContainText('export function BlurText');await page.getByRole('button',{name:'effects.css',exact:true}).click();await expect(page.locator('.code-documentation .code-viewer').last()).toContainText('.effect-heading');
  const download=page.waitForEvent('download');await page.getByRole('button',{name:'Export project',exact:true}).click();const d=await download;expect(d.suggestedFilename()).toBe('blur-text.zip');const data=await fs.readFile((await d.path())!);expect(data.readUInt32LE(0)).toBe(0x04034b50);await fs.mkdir('artifacts',{recursive:true});await fs.writeFile('artifacts/component-export.zip',data);
 });
 test('Sandpack compiles, edits, reports errors, resets and saves custom code persistently',async({page})=>{

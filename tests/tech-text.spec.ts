@@ -111,7 +111,7 @@ test('animation loop pauses outside view and when idle, while the active sweep r
 test('real TypeScript, CSS and helpers compile in Sandpack and edits stay isolated from the source',async({page})=>{
  await open(page);await page.getByRole('tab',{name:'Code',exact:true}).click();
  for(const name of ['TechText.tsx','TechText.engine.ts','TechText.geometry.ts','TechText.types.ts','TechText.css'])await expect(page.getByRole('button',{name,exact:true})).toBeVisible();
- await page.getByRole('button',{name:'TechText.engine.ts',exact:true}).click();await expect(page.locator('.sp-code-editor')).toContainText('class TechTextEngine');
+ await page.getByRole('button',{name:'TechText.engine.ts',exact:true}).click();await expect(page.locator('.code-documentation .code-viewer').last()).toContainText('class TechTextEngine');
  await page.getByRole('tab',{name:'Editor',exact:true}).click();
  const frame=page.frameLocator('iframe[title="Sandpack Preview"]');await expect(frame.locator('.tech-text canvas')).toHaveAttribute('aria-label','DevUI Bits',{timeout:45000});
  await expect(page.getByText('Dependencies',{exact:true})).toBeVisible();

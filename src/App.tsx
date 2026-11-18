@@ -377,7 +377,7 @@ function ComponentPage({
               ))}
             </div>
           )}
-          {tab==='preview'&&<>                <button
+          {tab==='preview'&&!fullscreen&&<>                <button
                   className="icon-button"
                   aria-label="Restart animation"
                   title="Restart animation"
@@ -423,6 +423,7 @@ function ComponentPage({
               aria-label="Live component preview"
             >
               <div className="preview-top-controls">
+                {fullscreen&&<><button className="icon-button" aria-label="Restart animation" onClick={()=>setRevision(r=>r+1)}><RotateCcw size={14}/></button><button className="icon-button" aria-label="Close fullscreen" onClick={()=>setFullscreen(false)}><X size={15}/></button></>}
                 <label className="preview-bg" title="Preview background">
                   <input
                     type="color"
