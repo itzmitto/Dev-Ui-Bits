@@ -157,3 +157,7 @@ De Code-tab biedt Edit in Playground en bronexport. `Editor.tsx` wordt lazy gela
 Voor eigen optica: `glassOptics.ts` genereert lokaal een afgeronde normaalmap; `FluidGlass.renderer.ts` bevat de onafhankelijke shader en dispose-functie. Hergebruik deze eigen utilities waar passend, maar neem geen externe shadercode of assets over zonder expliciet geschikte herdistributierechten. WebGL-fallbacks moeten eerlijk gelabeld zijn en reduced motion respecteren. Beperk DPR, pauzeer onzichtbare canvassen en ruim shaders, buffers, textures, observers en callbacks op.
 
 Nieuwe regressies staan in playground.spec.ts, glass-components.spec.ts, codeDocumentation.test.ts en glassComponents.test.ts. Controleer echte clipboard-inhoud, preview-identiteit, alle Ready-schema’s, importpaden, Sandpack-compilatie, offscreen/reduced motion, unmount-cleanup en de 3/2/1 control-layout tot 4K. Bestaande tests voor Editor blijven Sandpack controleren; Code-viewertests gebruiken nu `.code-documentation .code-viewer`.
+
+De raw-sourceglob sluit `*.config.ts` uit: dit zijn registry-/controlsmetadata, geen runtimebestanden voor de component. Zo worden de metadata niet ook nog als ongebruikte bronstrings in de startbundel opgenomen. Een runtimehelper die werkelijk nodig is moet bij supportingFiles staan en mag niet de naam van een registryconfigbestand krijgen.
+
+Customize-specifieke legacyregels zijn uit styles.css verwijderd. Houd de gedeelde control-styling in playground.css, zodat oude breakpointregels geen tweede layout blijven afdwingen.

@@ -20,3 +20,5 @@
 
 .customize .control-row{flex-wrap:nowrap}.customize .control-row input.text-field{height:100%;padding:0;width:51%;border:0;background:transparent;box-shadow:none;border-radius:0;font-size:11px}.customize .control-row.control-text>span{max-width:46%}
 .customize .control-row{flex-direction:row}.customize .control-row>span{font-size:11px}.customize .control-row input.number-field{width:65px;height:100%;padding:0;border:0;background:transparent;box-shadow:none;text-align:right;font-size:11px}
+
+.customize option{background:var(--panel);color:var(--text)}

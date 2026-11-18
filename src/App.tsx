@@ -536,7 +536,7 @@ function ComponentPage({
         {editorOpened&&<div className="editor-tab-panel" hidden={tab!=='editor'}><Suspense fallback={<div className="loading-state">Loading isolated playground…</div>}><Editor files={files} name={item.name} dependencies={deps} tailwind={own&&item.styling==='tailwind'} notify={notify} onSave={own?async(updated)=>{await useLibrary.getState().save({...item,files:updated,updatedAt:Date.now()});notify('Component saved to your library');}:undefined}/></Suspense></div>}
 
       </div>
-      <section className="installation" id="installation">
+      {tab==='preview'&&<section className="installation" id="installation">
         <div className="section-title">
           <span className="section-icon">
             <Terminal size={17} />
@@ -600,7 +600,7 @@ function ComponentPage({
             </button>
           </div>
         </div>
-      </section>
+      </section>}
       <section className="properties">
         <div className="section-bar">
           <h2>Properties</h2>

@@ -132,7 +132,7 @@ for (const entry of registry) {
   }
 }
 export const findComponent = (category: string, slug: string) => routes.get(`/${category}/${slug}`);
-const rawSources=import.meta.glob('./effects/*.{tsx,ts,css}',{query:'?raw',import:'default',eager:true}) as Record<string,string>;
+const rawSources=import.meta.glob(['./effects/*.{tsx,ts,css}','!./effects/*.config.ts'],{query:'?raw',import:'default',eager:true}) as Record<string,string>;
 export function builtinFiles(component:Definition,props:EffectProps):Record<string,string>{
  const extraFiles=Object.fromEntries([...(component.styles??[]),...(component.supportingFiles??[])].map(file=>[`/effects/${file}`,rawSources[`./effects/${file}`]]));
  return {...extraFiles,'/App.tsx':`import { ${component.exportName} } from './effects/${component.source}';\nimport './effects/effects.css';\n${(component.styles??[]).map(file=>`import './effects/${file}';`).join('\n')}\nimport './styles.css';\n\nexport default function App() {\n  return <main className="preview-stage"><${component.exportName} {...${JSON.stringify(props,null,2)}} /></main>;\n}\n`,[`/effects/${component.source}.tsx`]:rawSources[`./effects/${component.source}.tsx`],'/effects/types.ts':rawSources['./effects/types.ts'],'/effects/effects.css':rawSources['./effects/effects.css'],'/styles.css':'*{box-sizing:border-box}body{margin:0;background:#120f17;font-family:system-ui,sans-serif}.preview-stage{height:100vh;min-height:350px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:white}button{font-family:inherit}'};
