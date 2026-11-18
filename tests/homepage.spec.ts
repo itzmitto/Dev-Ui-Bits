@@ -17,6 +17,7 @@ test('homepage, categories and public navigation use the existing registry', asy
   await expect(link).toHaveAttribute('href', github); await expect(link).toHaveAttribute('target', '_blank'); await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   await link.focus(); await expect(link).toBeFocused();
   await page.getByRole('link', { name: 'Browse Categories', exact: true }).click(); await expect(page).toHaveURL(/\/categories$/);
+  await expect(page.locator('.categories-page .component-heading p')).toHaveText(`Browse all ${categories.length} categories of original React components.`);
   const paths = await page.locator('.home-category').evaluateAll(elements => elements.map(element => element.getAttribute('href')));
   expect(paths).toEqual(categories.map(category => '/' + category));
   for (const path of paths) {
