@@ -1,6 +1,6 @@
 # DevUI Bits
 
-Een zelfstandige bibliotheek met **239 catalogusitems: 45 werkende React-componenten en 194 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Gebouwd op het bestaande DevUI Bits-project: alle 29 bestaande effecten en functies zijn behouden.
+Een zelfstandige bibliotheek met **246 catalogusitems: 52 werkende React-componenten en 194 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Gebouwd op het bestaande DevUI Bits-project: alle 29 bestaande effecten en functies zijn behouden.
 
 **Start hier:** [SETUP-GITHUB-VERCEL.md](SETUP-GITHUB-VERCEL.md) beschrijft ZIP → VS Code → GitHub → publieke Vercel-site, met exacte commando's en controles vóór Git-initialisatie of remote-wijzigingen.
 
@@ -13,7 +13,7 @@ npm ci
 npm run dev
 ```
 
-Open de door Vite afgedrukte URL. `/` opent de nieuwe homepage. `/browse` toont alle componenten; `/categories` toont de vijf categorieën. Alle bestaande component-URLs blijven direct bereikbaar, inclusief `/backgrounds/micro-slats`. Geen ChatGPT-login, API-key, accountkoppeling of backend nodig. Gebruik de meegeleverde `.npmrc` en `vendor/`-map; deze horen bij de overdraagbare dependencyconfiguratie.
+Open de door Vite afgedrukte URL. `/` opent de nieuwe homepage. `/browse` toont alle componenten; `/categories` toont de zes categorieën. Alle bestaande component-URLs blijven direct bereikbaar, inclusief `/backgrounds/micro-slats`. Geen ChatGPT-login, API-key, accountkoppeling of backend nodig. Gebruik de meegeleverde `.npmrc` en `vendor/`-map; deze horen bij de overdraagbare dependencyconfiguratie.
 
 ```sh
 npm run typecheck
@@ -33,7 +33,7 @@ Op Linux eventueel `npx playwright install --with-deps chromium`. De testconfigu
 
 ## Complete componentcatalogus
 
-`/browse` en `/get-started/index` openen dezelfde volledige catalogus. Deze bevat alle 217 aangeleverde namen in de gevraagde volgorde plus 22 bestaande namen die nog niet in die lijst stonden: **239 unieke records**, waarvan **45 Ready** en **194 Planned**. In fase 4 zijn uitsluitend catalogus en placeholders gebouwd. Fase 5 voegt Tech Text toe. Fase 6 leverde tien extra Text Animations. Fase 7 ontwikkelt uitsluitend Animations, te beginnen met vijf bestaande planned records.
+`/browse` en `/get-started/index` openen dezelfde volledige catalogus. Deze bevat alle 217 aangeleverde namen in de gevraagde volgorde plus 22 bestaande namen en zeven originele Cursor Trails: **246 unieke records**, waarvan **52 Ready** en **194 Planned**. In fase 4 zijn uitsluitend catalogus en placeholders gebouwd. Fase 5 voegt Tech Text toe. Fase 6 leverde tien extra Text Animations. Fase 7 ontwikkelt uitsluitend Animations, te beginnen met vijf bestaande planned records.
 
 | Categorie | Totaal | Ready | Planned |
 | --- | ---: | ---: | ---: |
@@ -42,8 +42,9 @@ Op Linux eventueel `npx playwright install --with-deps chromium`. De testconfigu
 | Components | 56 | 10 | 46 |
 | Micro Interactions | 39 | 5 | 34 |
 | Backgrounds | 69 | 6 | 63 |
+| Cursor Trails | 7 | 7 | 0 |
 
-De sidebar bevat GET STARTED, EXPLORE en de vijf inklapbare categorieën. De lange lijst scrollt zelfstandig, markeert de actieve entry en opent automatisch de geselecteerde categorie. Op mobiel blijft het de bestaande drawer met Escape en focusherstel. Er is geen Search Components-veld of Create Component-navigatie.
+De sidebar bevat GET STARTED, EXPLORE en de zes inklapbare categorieën. De lange lijst scrollt zelfstandig, markeert de actieve entry en opent automatisch de geselecteerde categorie. Op mobiel blijft het de bestaande drawer met Escape en focusherstel. Er is geen Search Components-veld of Create Component-navigatie.
 
 De catalogus heeft categorie- en statusfilters, sortering op catalogusvolgorde, naam en ready-first, een dynamische teller en compacte cards. Filters staan in de URL en blijven na refresh behouden. Favorieten werken lokaal via de bladwijzerknoppen en `/favorites`; ze worden apart van IndexedDB opgeslagen. Een cataloguspreview start alleen op verzoek, maximaal één tegelijk, en rendert niet buiten beeld. De meeste effectmodules worden pas geladen wanneer ze nodig zijn.
 
@@ -52,6 +53,24 @@ Alle bestaande component-URLs blijven werken. Scroll Reveal staat nu bij Text An
 Geplande detailpagina’s hebben uitsluitend metadata, status, een eenvoudige previewcontainer en een teruglink. Code, Editor en Customize ontbreken tot er echte broncode is. GET STARTED bevat eigen introductie, installatie, changelog, favorieten en een eerlijke MCP-informatiepagina: er is geen MCP-server geconfigureerd. Blocks, App UI, Templates en Skills zijn duidelijk geplande collecties.
 
 **Verder ontwikkelen:** [ADDING-COMPONENTS.md](ADDING-COMPONENTS.md) beschrijft hoe één planned component met behoud van id en route ready wordt, inclusief renderer, defaults, controls, CSS, dependencies, Sandpack en tests.
+
+## Cursor Trails — fase 8
+
+Zeven zelfstandige effecten staan onder `/cursor-trails`: **Arc Cursor, Celebration Cursor, Chroma Halo, Dither Cursor, Glyph Stream, Pigment Trail en Stardust Cursor**. Alle 45 eerdere Ready-componenten en 194 andere Planned-items zijn behouden. Sidebar, categoriepagina, homepage-categoriekaarten, filters en tellers gebruiken dezelfde registry.
+
+- Arc: coherente elektrische polylijnen, vertakkingen, glow en klikontladingen.
+- Celebration: tuimelende confetti met zwaartekracht, luchtweerstand, flutter, wind en klikexplosies.
+- Chroma: advecterende, vervormde kleurwolken op een herbruikbaar canvas met instelbare resolutie.
+- Dither: een vervallend scalair veld met vaste Bayer-drempels; de cellen vormen één samenhangende trail.
+- Glyph: scrambling tiles met momentum, elastische tethers, viscositeit en splashes.
+- Pigment: een doorlopende kwastribbon met variabele breedte, onregelmatige randen, blooming, grain en inktspatten.
+- Stardust: fijne sprite-particles met turbulente stroming, swirl, gekleurde wakes en rollende klikpuffs.
+
+Iedere pagina heeft volledige presets, schema-controls, Pause, Autoplay, touch/pointerinteractie en de bestaande Reset/Restart/fullscreen-tools. Effecten blijven binnen hun eigen preview. De echte TSX, CSS en alle lokale helpers zijn meegeleverd in Code en de geïsoleerde Sandpack-editor; er zijn geen nieuwe dependencies of externe assets nodig. Sandpack zelf heeft zoals voorheen internet nodig.
+
+Alle engines gebruiken eigen Canvas 2D-code. Halo, glyphs, inkt en stof gebruiken analytische beweging; het zijn geen numerieke vloeistofsimulaties of kopieën van Pro-shaders. Vorm, beweging en timing kunnen afwijken van de openbare referenties. Reduced motion schakelt automatische beweging uit en laat statische pointer-/tapfeedback toe. DPR is maximaal 2 (lager bij quality low/medium); pools en ditherraster zijn begrensd. Grote dichtheden of fullscreen op tragere apparaten kunnen minder vloeiend zijn; gebruik lagere quality/density.
+
+De bronherkomst en beperkingen van de Pro-licentie staan in [LICENSE_REVIEW.md](LICENSE_REVIEW.md). Er is geen Pro-code, registry, shader, logo of beschermd asset opgenomen. Reproduceerbare performancecontrole: start `npm run preview -- --port 4175`, voer daarna `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4175 node scripts/profile-cursor-trails.mjs` uit (eventueel met `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`). Dit meet draw-updates en lifecycle, geen universele hardware-FPS-garantie.
 
 ## Tech Text — fase 5
 

@@ -75,3 +75,23 @@ De op 17 november gelezen en op 18 november opnieuw gecontroleerde upstream LICE
 Defaultmedia: een eigen analytisch gerenderde iriserende ring, eigen DevUI-code/bolt/diamond-vectorvormen en een zelfgeschreven SVG-landschap. Geen officiële React Bits-logo’s, referentiefoto’s, modellen, shaders, fontbestanden of Pro-assets toegevoegd. De ring/het landschap wijken zichtbaar af van de originele demo-afbeeldingen; dat is gedocumenteerd. Presetnamen zijn als zichtbare functionaliteit onderzocht; waarden zijn eigen combinaties en geen kopie van upstream-configuratiebestanden.
 
 Geen nieuwe npm-dependencies, assetdiensten, API-keys of accounts. Normale previews gebruiken alleen bestaande packages en browser-API’s. Sandpack blijft de bestaande externe bundler gebruiken; eigen Media/Image URL’s kunnen uiteraard verkeer naar de door de gebruiker gekozen server veroorzaken. De gebruiker blijft verantwoordelijk voor rechten en CORS van eigen media. Er is door de agent niets gepubliceerd, gecommit, gepusht of gedeployd.
+
+## Fase 8 — originele Cursor Trails, controle 18 november 2026
+
+Publiek bekeken visuele referenties (alleen gerenderde previews, zichtbare bediening en beschrijving):
+
+- https://pro.reactbits.dev/docs/components/arc-cursor
+- https://pro.reactbits.dev/docs/components/celebration-cursor
+- https://pro.reactbits.dev/docs/components/chroma-halo
+- https://pro.reactbits.dev/docs/components/dither-cursor
+- https://pro.reactbits.dev/docs/components/glyph-stream
+- https://pro.reactbits.dev/docs/components/pigment-trail
+- https://pro.reactbits.dev/docs/components/stardust-cursor
+
+De openbare [React Bits Pro License Agreement](https://pro.reactbits.dev/license) vermeldt als laatste wijziging 11 september 2026. Secties 2.4 en 2.6 beperken herdistributie, onder meer in publieke componentbibliotheken, en verduidelijken dat openbare previews geen toestemming geven om de onderliggende broncode, componenten of implementatiedetails te extraheren of te kopiëren. Een betaalde licentie is dus geen vrijbrief voor het publiceren van Pro-broncode. Dit is een feitelijke inventarisatie van de gelezen voorwaarden, geen juridisch oordeel of garantie over onafhankelijke vormgeving of namen.
+
+Daarom is geen Code-tab, Copy for AI, beschermd registryendpoint, netwerkbundel, shader, assetbestand of afgeschermde implementatie gebruikt. De browser is alleen gebruikt om de openbare visuele presentatie te bekijken en pointerinteractie uit te voeren. Vergelijkingsschermafbeeldingen staan uitsluitend in genegeerde `artifacts/`, niet in public assets of de componentbron.
+
+De nieuwe DevUI-code is zelfstandig geschreven: sinus-gebaseerde coherente elektrische polylijnen en vertakkingen; Newtoniaanse confettideeltjes met drag/flutter; vervormde advecterende blooms; een zelf opgebouwd scalair veld met algemeen bekende Bayer-ordered-dithering; glyphdeeltjes met elastische tethers; kwastribbons met eigen ruimtelijke randruis en procedurele grain; stofdeeltjes met analytische turbulentie en gecachete radiale sprites. Geen upstream-algoritme, parameterconfiguratie of presetbestand gekopieerd. Eigen presets zijn lokaal afgestemd. Hergebruik betreft alleen bestaande eigen Canvas-/lifecyclehelpers. De vorm en beweging kunnen zichtbaar verschillen; er wordt geen exacte gelijkheid of officiële compatibiliteit geclaimd.
+
+Er zijn geen nieuwe npm-dependencies, fonts, afbeeldingen, logo’s, textures of online assets toegevoegd. React en de bestaande browser-/UI-tools behouden hun eerder beschreven licenties. De eigen code valt onder de bestaande project-MIT-licentie, die geen rechten op React Bits Pro-materiaal verleent. Deze uitvoering publiceert niets en voert geen Git-mutaties of deployments uit. Controleer rechten opnieuw wanneer later toch externe code of assets worden toegevoegd.
