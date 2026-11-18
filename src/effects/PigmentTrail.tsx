@@ -28,9 +28,10 @@ export function PigmentTrail(p:EffectProps){
   const stamp=(x:number,y:number,radius:number,age:number,distance:number,angle:number,stretch:number,seed:number)=>{
    const life=fadeInk(age,fade);if(life<.002||intensity===0)return;
    const wet=1-Math.exp(-age/bloom),mix=pigmentMix(distance,cycle),tile=Math.min(atlas.colors-1,Math.floor(mix*(atlas.colors-1))),w=radius*Math.pow(life,.3)*(1+bleed*wet*.3)*(1+brushEdge(distance*.5,seed)*rough*.12),opacity=clamp01(life*intensity*(gouache?.8:.5));
-   c.save();c.translate(x,y);c.rotate(angle+Math.sin(seed)*.12);c.scale(stretch,1);c.globalCompositeOperation=gouache?'source-over':'multiply';
-   // A low-opacity, growing fringe spreads independently of the dense, textured core.
-   if(bleed>0){const wetSize=w*(1.1+bleed*wet*.45);c.globalAlpha=opacity*(gouache?.16:.23)*bleed;c.drawImage(atlas.canvas,tile*atlas.tile,atlas.tile,atlas.tile,atlas.tile,-wetSize,-wetSize,wetSize*2,wetSize*2);}
+   c.save();c.translate(x,y);c.rotate(angle+Math.sin(seed)*.12);c.scale(stretch,1);c.globalCompositeOperation=gouache?'source-over':'darken';
+   // A growing wet fringe spreads independently of the core. Darken avoids repeatedly
+   // multiplying neighbouring stamps into black, while crossings still mix subtractively.
+   if(bleed>0){const wetSize=w*(1.15+bleed*wet*.8);c.globalAlpha=opacity*(gouache?.16:.55)*bleed;c.drawImage(atlas.canvas,tile*atlas.tile,atlas.tile,atlas.tile,atlas.tile,-wetSize,-wetSize,wetSize*2,wetSize*2);}
    c.globalAlpha=opacity;c.drawImage(atlas.canvas,tile*atlas.tile,0,atlas.tile,atlas.tile,-w,-w,w*2,w*2);c.restore();
   };
   for(const v of s.points)stamp(v.x,v.y,v.radius,v.age,v.distance,v.angle,v.stretch,v.seed);
