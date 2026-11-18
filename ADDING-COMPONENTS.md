@@ -15,7 +15,7 @@ Sidebar, tellers, filters, kaarten, favorieten en detailroutes lezen deze regist
 
 ## Van planned naar ready
 
-Bijvoorbeeld: **Crystalized Ball** staat al op `/animations/crystalized-ball` met id `crystalized-ball`.
+Registratievoorbeeld: **Crystalized Ball** staat inmiddels Ready op `/animations/crystalized-ball`, met id `crystalized-ball`. Het onderstaande beschrijft zijn integratiepatroon; voeg deze implementatie niet nogmaals toe. Gebruik voor een volgende nieuwe implementatie een echt Planned-record, zoals Ripple Distortion.
 
 1. Zoek de naam in `src/catalogNames.ts` en controleer het bestaande item, de route en status in de registry. Maak geen nieuwe naam, slug of id aan.
 2. Bestudeer de zichtbare referentie en maak een eigen effectimplementatie. Voeg het echte effect toe als `src/effects/CrystalizedBall.tsx`, met een named export `CrystalizedBall`.
@@ -118,3 +118,15 @@ De lifecycle-browsertest instrumenteert ResizeObserver, IntersectionObserver en 
 Sandpack-assetresolutie: `src/sandboxAssets.ts` behandelt uitsluitend de bekende package-relatieve URL’s in `/effects/textDisplay.css`. Het live draft gebruikt versievaste jsDelivr-fontassets; read-only Code en normale projectexports behouden de originele lokale package-imports. Verander de versie bewust wanneer de fontdependency wordt bijgewerkt. De adapter muteert de bronbestanden niet, en de memoization in Editor bewaart gebruikersbewerkingen bij themawissels. Controleer niet alleen of het iframe rendert: eis ook dat de bedoelde FontFace met het juiste gewicht werkelijk `loaded` is. Een systeemfallback kan een ogenschijnlijk geslaagde preview opleveren.
 
 De vier typografische engines Text Loop, Masked Heading, Particle Text en Warp Text gebruiken eveneens textDisplay.css met expliciete voorbeelddependency @fontsource/geist. Split Flap blijft systeemmonospace. De registry leidt deze fontdependency af van de aanwezige helper, zodat runtime en source-export niet uiteenlopen. Text Loop meet de echte SVG-tekst en vult gesloten curves met een heel aantal frases; laadwijzigingen van fonts vernieuwen de meting. Gebruik bij toekomstige acroniemen zoals ASCII Text expliciet de bestaande catalogusnaam als een automatische PascalCase-naamverdeling niet klopt.
+
+## Animations-modules (fase 7)
+
+`animationBatchOne.config.ts` bevat alleen metadata, primitive defaults, controls en volledige presets. `registry.ts` koppelt deze aan dezelfde bestaande catalogusrecords; het is geen tweede registry. Voeg de volgende Animations-batch op dezelfde manier toe en behoud de exacte catalogusnamen/routes. De volgende nog Planned-component is Ripple Distortion.
+
+Canvas-effecten kunnen `animationCanvas.ts` gebruiken voor ResizeObserver, DPR-cap en kleurconversie. Het deelt de bestaande `textRuntime.ts`-klok; ondanks de historische naam is die bruikbaar voor native animaties. De klok beheert offscreen/document visibility, reduced motion en één RAF. Iedere module houdt zijn eigen rendering en interactiestate in refs. Pointerbewegingen horen geen React-render per frame te veroorzaken.
+
+Crystalized Ball exporteert zowel de eigen GPU-renderer als de lichtere Canvas-fallback. Voeg **alle** transitieve helpers toe aan supportingFiles. Electric Logo hergebruikt alleen de eigen bestaande Tech Text-contourutility en typehelper. `animationArt.ts` bevat eigen proceduraal artwork en een lokale SVG-data-URL; geen upstreammedia of assetaccount. Externe afbeeldingen hebben CORS én geschikte gebruiksrechten nodig.
+
+Test niet alleen een zichtbaar iframe: controleer dat de bedoelde renderer daadwerkelijk draait. Sandpacks loopbeveiliging liet een 160.000-iteratielus voor 40.000 vierdelige particle-seeds afbreken en activeerde daardoor ten onrechte de fallback. De seedgenerator doet nu maximaal 40.000 iteraties met vier writes per iteratie. Ditherberekeningen zijn per rij opgedeeld en adaptief begrensd. Schakel de veiligheidscontrole niet uit om grote, legitieme berekeningen te laten werken.
+
+De browsertests controleren ook echte GPU-resourceaantallen (shaders/programs/buffers), contextverlies/herstel, ontbrekende WebGL, observer-/RAF-teardown, broncompilatie, acht viewportgroottes en beide themes. Stop en documenteer resterende fouten voordat een nieuwe batch als klaar wordt gepresenteerd. `ScrollExpandProps` ondersteunt getypeerde React children in een normaal project; de primitive Customize-editor gebruikt Overlay Title als demo-inhoud. Window-scroll vraagt buiten de begrensde demo om een eigen natuurlijke paginalayout.

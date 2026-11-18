@@ -1,10 +1,41 @@
 # DevUI Bits — voortgang
 
-Bijgewerkt: 17 november 2026. Versie 1.1.0.
+Bijgewerkt: 18 november 2026. Versie 1.1.0.
+
+## Fase 7 — Animations, batch 1 afgerond
+
+Hervat op 18 november na de gevraagde stop. De vijf bestaande entries Crystalized Ball, Electric Logo, Dither Veil, Glow Cursor en Scroll Expand zijn geïntegreerd met echte modules, controls, presets en volledige bronexports. Registry: 239 totaal, 45 Ready / 194 Planned; Animations 8 Ready / 33 Planned, Text Animations ongewijzigd 16 Ready / 18 Planned. Alle vijf zijn Ready na werkende preview, controls, presets, echte broncompilatie en de definitieve productieregressie. Alle 40 eerdere Ready-implementaties zijn behouden.
+
+- 17 november: openbare demo’s/controls/presetmenu’s onderzocht, sliders werkelijk bediend en Frost/Silk geselecteerd. Eigen effectcode en eigen standaardmedia, geen gekopieerde effectbron of assets. Nieuwe dependencies: geen.
+- Eerste ontwikkelronde: 18/21 Playwright geslaagd; drie failures. Sandpack brak de 160.000 seedwrites af via loopbeveiliging: herschreven naar 40.000 iteraties zonder beveiliging uit te schakelen. Een sliderselector raakte de gelijknamige Particles-sidebarlink: op slider-role gericht. Reduced-motionmetadata liep achter op de daadwerkelijk gelezen mediawaarde: klokstatus ook in het renderframe gesynchroniseerd. Gerichte hercontroles: 2/2 ball/source/interactiechecks en 1/1 lifecyclecheck geslaagd.
+- 18 november: strikte TypeScript, 30/30 Vitest en productiebuild daadwerkelijk geslaagd vóór de laatste Electric Logo-bloomoptimalisatie. De ontwikkelronde van **22/22 Playwright-tests is geslaagd in 2,1 minuten**. GPU-resourcevrijgave is toegevoegd aan de eerdere interactie-, responsive-, broncompilatie-, observer- en RAF-checks.
+- Crystalized Ball: native WebGL met volume-particles tot 40.000 en geanimeerde elektrische rand; shaderwerk beperkt tot de relevante randzone/scissor. De lichtere echte Canvas-fallback is apart geëxporteerd en toont expliciet de fallbackstatus, met maximaal 2.200 particles. Contextverlies/herstel en initiële WebGL-afwezigheid zijn gericht getest.
+- Electric Logo: eigen alpha-contouren, uniforme samples en gecachete normalen; bloom op halve resolutie, kern op volle DPR; eigen codevorm en CORS-imageoptie. Dither Veil: vijf echte quantisatie-/error-diffusionvarianten, kleurreveal en adaptief begrensde celroosters. Glow Cursor: eigen geadveceerde lichtfilamenten en vortices, geleidelijk uitdovende halo. Scroll Expand: echte interne scroll, pinned frame/zoom, video-lifecycle en getypeerde children; window-mode vraagt een passende documentflow.
+- Eerste renderproef vóór optimalisaties: ongeveer 43 updates/s bol, 46 logo, 59 dither, 60 cursor in softwaregerenderde Chromium. Offscreen en reduced motion telkens nul gemeten draws. Definitieve herhaling op de productiebuild: bol 60,0, Electric Logo 60,0, Dither Veil 58,9 en Glow Cursor 60,0 Canvas/WebGL-renderupdates/s. Bij alle vier zijn in de gemeten offscreen- en reduced-motionintervallen nul draws geteld, zonder page-/consoleerrors. Scroll Expand is DOM-gebaseerd en wordt niet door deze drawprofiler geteld; zijn beweging en teardown zijn via de browserinteractie- en RAF-checks gecontroleerd. Alle vijf definitieve screenshots en de actieve cursor-/scrollcaptures zijn visueel geïnspecteerd. Eigen logo/artwork en het eenvoudigere fallbackbeeld blijven expliciete verschillen met de referentie. Het gaat om renderupdates, niet bewezen fysiek gepresenteerde FPS of een universele geheugenlekgarantie.
+
+Eerste volledige productieronde: **153/153 geslaagd in 8,6 minuten**, exit 0. Daarna zijn alleen de lokale pointerconversie en directe reduced-motioncursor verfijnd; typecheck, 31/31 Vitest en herbouw slagen. De laatste volledige ronde op exact die definitieve build slaagt: **154/154 Playwright-tests in 8,1 minuten**, procesexit 0 en test-results/.last-run.json = passed zonder failedTests. Daarmee slagen alle 128 behouden regressies en 26 nieuwe animatiechecks. De laatste strict TypeScript-check, **31/31 Vitest** en productiebuild slagen eveneens. De geschaalde pointer/reduced-motionpixeltest slaagt op de ontwikkelversie. De media-/grote-roosterchecks slagen eveneens; de eerste keyingtest las vóór de asynchrone afbeeldingslading en wacht nu op de werkelijk geladen contour. Dit is gericht opnieuw geslaagd. De laatste typecheck en **31/31 Vitest** slagen.
+
+Verificatiegrenzen: Chromium op deze Linux-omgeving; geen Safari/Firefox of echte mobiele GPU getest. De bol rapporteert ANGLE/SwiftShader software-rendering. De screenshotvergelijking is geen pixelperfectheidsclaim: logo, ring-artwork en landschap zijn eigen assets; Canvas-fallback en analytische light-trail verschillen van de upstreamweergave. Window-scroll vraagt een natuurlijke paginalayout; de begrensde demo gebruikt standaard interne scroll. CORS en rechten voor eigen media blijven bij de gebruiker. Geen nieuwe dependencies, datamigratie of andere Planned-implementaties.
+
+Nog Planned — alle 33 resterende aangevraagde Animations:
+
+- Batch 2: Ripple Distortion, Elastic Mesh, Swarm Cursor, Halftone Reveal, Pixel Swap.
+- Batch 3: Cursor Grid, Animated Content, Fade Content, Electric Border, Orbit Images.
+- Batch 4: Pixel Transition, Glare Hover, Logo Loop, Target Cursor, Laser Flow.
+- Batch 5: Ghost Cursor, Gradual Blur, Click Spark, Magnet, Strands.
+- Batch 6: Sticker Peel, Pixel Trail, Cubes, Metallic Paint, Noise.
+- Batch 7: Shape Blur, Crosshair, Image Trail, Ribbons.
+- Batch 8: Splash Cursor, Meta Balls, Blob Cursor, Star Border.
+
+Batch 1 is volledig afgeleverd. Volgend implementatiepunt is **Ripple Distortion**, gevolgd door de overige vier componenten van batch 2. Er is nog geen implementatie van batch 2 gestart. De 18 resterende Text Animations blijven ongewijzigd Planned.
+
+Git is uitsluitend read-only gebruikt. De lokale HEAD veranderde op 17 november buiten de Git-opdrachten van de agent (onder meer 6cc7285); geen externe commits teruggedraaid. Geen nieuwe bron-ZIP, deployment, Git-mutatie of push uitgevoerd. Eindlogs: artifacts/phase7-production-e2e-final.log, artifacts/phase7-build-final.log en artifacts/phase7-performance.json. De eerdere rondes staan onder artifacts/phase7-*.log; tijdelijke /tmp-logs van 17 november zijn niet meer aanwezig.
+
+Lokale teardown: alleen de door de agent gestarte Vite-processen op 5175 en 4175 zijn na de geslaagde eindronde gestopt; overige servers zijn niet aangepast.
 
 ## Fase 6 — Text Animations, batches 1 en 2
 
-Status: batches 1 en 2 geïmplementeerd, visueel gecontroleerd en volledig getest; tien zelfstandige modules gebouwd; geen andere Planned-categorieën aangepast. De huidige catalogus bevat 239 records, **40 Ready / 199 Planned**, met **16 Ready / 18 Planned** bij Text Animations. Alle oorspronkelijke 30 Ready-componenten, routes, dataflows, themes en architectuur blijven behouden. Geen Git-mutatieopdrachten, deployment of nieuwe ZIP door de agent.
+Status: batches 1 en 2 geïmplementeerd, visueel gecontroleerd en volledig getest; tien zelfstandige modules gebouwd; geen andere Planned-categorieën aangepast. De toenmalige catalogus bevatte 239 records, **40 Ready / 199 Planned**, met **16 Ready / 18 Planned** bij Text Animations. Alle oorspronkelijke 30 Ready-componenten, routes, dataflows, themes en architectuur blijven behouden. Geen Git-mutatieopdrachten, deployment of nieuwe ZIP door de agent.
 
 ### Batch 1
 

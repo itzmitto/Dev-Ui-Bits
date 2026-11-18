@@ -1,6 +1,6 @@
 # DevUI Bits
 
-Een zelfstandige bibliotheek met **239 catalogusitems: 40 werkende React-componenten en 199 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Gebouwd op het bestaande DevUI Bits-project: alle 29 bestaande effecten en functies zijn behouden.
+Een zelfstandige bibliotheek met **239 catalogusitems: 45 werkende React-componenten en 194 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Gebouwd op het bestaande DevUI Bits-project: alle 29 bestaande effecten en functies zijn behouden.
 
 **Start hier:** [SETUP-GITHUB-VERCEL.md](SETUP-GITHUB-VERCEL.md) beschrijft ZIP → VS Code → GitHub → publieke Vercel-site, met exacte commando's en controles vóór Git-initialisatie of remote-wijzigingen.
 
@@ -33,12 +33,12 @@ Op Linux eventueel `npx playwright install --with-deps chromium`. De testconfigu
 
 ## Complete componentcatalogus
 
-`/browse` en `/get-started/index` openen dezelfde volledige catalogus. Deze bevat alle 217 aangeleverde namen in de gevraagde volgorde plus 22 bestaande namen die nog niet in die lijst stonden: **239 unieke records**, waarvan **40 Ready** en **199 Planned**. In fase 4 zijn uitsluitend catalogus en placeholders gebouwd. Fase 5 voegt Tech Text toe. Fase 6 wordt in gecontroleerde batches uitgevoerd; Crystalized Ball blijft gepland.
+`/browse` en `/get-started/index` openen dezelfde volledige catalogus. Deze bevat alle 217 aangeleverde namen in de gevraagde volgorde plus 22 bestaande namen die nog niet in die lijst stonden: **239 unieke records**, waarvan **45 Ready** en **194 Planned**. In fase 4 zijn uitsluitend catalogus en placeholders gebouwd. Fase 5 voegt Tech Text toe. Fase 6 leverde tien extra Text Animations. Fase 7 ontwikkelt uitsluitend Animations, te beginnen met vijf bestaande planned records.
 
 | Categorie | Totaal | Ready | Planned |
 | --- | ---: | ---: | ---: |
 | Text Animations | 34 | 16 | 18 |
-| Animations | 41 | 3 | 38 |
+| Animations | 41 | 8 | 33 |
 | Components | 56 | 10 | 46 |
 | Micro Interactions | 39 | 5 | 34 |
 | Backgrounds | 69 | 6 | 63 |
@@ -206,4 +206,22 @@ Sandpack laat package-relatieve font-URL’s in CSS onveranderd. Alleen het bewe
 
 Optionele lokale renderproef na `npm run preview`: `PLAYWRIGHT_BASE_URL=http://localhost:4173 node scripts/profile-text-effects.mjs`. Installeer eerst Playwright Chromium zoals hierboven. Deze proef telt echte canvas-/WebGL-draws of DOM/SVG-mutaties en controleert offscreenstilstand. Het is geen algemene FPS- of geheugenlekgarantie.
 
-Laatste verificatie op de definitieve build: **strict TypeScript, 25/25 Vitest, productiebuild en 128/128 Playwright-tests geslaagd**. Getest zijn onder meer de behouden componenten/routes/editor/IndexedDB-flows, alle tien nieuwe bronnen in Sandpack, daadwerkelijke fontassetlading, controls/presets, responsive themes, pointer/touch, glyphmetingen, video-lifecycle en observer-/RAF-cleanup. De eerdere proef en reparaties staan in PROGRESS.md. Fase 6 is nog niet geheel afgerond: batch 3 tot en met 6 blijven Planned.
+Verificatie bij afronding van fase 6, batches 1–2: **strict TypeScript, 25/25 Vitest, productiebuild en 128/128 Playwright-tests geslaagd**. Getest zijn onder meer de behouden componenten/routes/editor/IndexedDB-flows, alle tien nieuwe bronnen in Sandpack, daadwerkelijke fontassetlading, controls/presets, responsive themes, pointer/touch, glyphmetingen, video-lifecycle en observer-/RAF-cleanup. De eerdere proef en reparaties staan in PROGRESS.md. Fase 6 is nog niet geheel afgerond: batch 3 tot en met 6 blijven Planned.
+
+## Animations — fase 7, batch 1
+
+De bestaande routes van **Crystalized Ball, Electric Logo, Dither Veil, Glow Cursor en Scroll Expand** zijn aangesloten op eigen implementaties. Alle 40 eerdere Ready-componenten en de 18 overige Planned Text Animations zijn behouden. De resterende 33 aangevraagde Animations blijven Planned. Er zijn geen nieuwe dependencies geïnstalleerd.
+
+- Crystalized Ball: native WebGL met echte 3D-particleposities, maximaal 40.000 GPU-punten, meerdere elektrische randfilamenten, flares, diepte, haze, pointerstroming en click kick. Contextverlies/herstel en een expliciete geanimeerde Canvas-fallback met maximaal 2.200 deeltjes. De fallback is eenvoudiger dan de WebGL-renderer.
+- Electric Logo: eigen marching-squares-alpha-tracing, uniforme contoursampling, gecachete normalen, fluctuerende filamenten en springende arcs. Standaard een eigen DevUI-codevorm; eigen CORS-afbeeldingen kunnen via Image URL worden gebruikt. Bloom rendert op halve resolutie, de scherpe kern op volledige DPR.
+- Dither Veil: echte Floyd–Steinberg-/Atkinson-error diffusion en Bayer-, noise- en lijnendithering; duotone/RGB, kleurreveal, celgewijs terugkeren, reverse en click waves. Standaard eigen iriserend artwork. De kwaliteit begrenst het werkrooster adaptief tot circa 50.000/100.000/180.000 cellen; op grote previews kan de effectieve pixelgrootte daardoor toenemen.
+- Glow Cursor: verbonden, geadveceerde lichtfilamenten, koelende kleuren, geleidelijke uitdoving en click-vortices. Geen vloeistofsolver; dit is een eigen lichttrailtechniek, niet de nog Planned Splash Cursor.
+- Scroll Expand: een eigen scrollcontainer met pinned stage, werkelijk scrollgestuurde frameafmetingen, radius en zoom, verdwijnende titel en inkomende overlay. Afbeelding/video, toegankelijk scrollfocus en optionele window-scroll. Eigen landschapsillustratie als standaardmedia. Window-scroll verwacht een natuurlijke documentflow met voldoende ruimte voor de lange track; gebruik in begrensde previewpanelen de standaard interne scroller.
+
+Iedere module heeft eigen TSX/CSS, complete presets, werkende schema-controls, daadwerkelijke bronexports en de bestaande geïsoleerde Sandpack-editor. Effectachtergronden zijn bewust onafhankelijk van het app-thema. De getoonde algoritmen en presetafstemming zijn zelfstandig geschreven; eigen logo/artwork verschillen van de officiële demo-assets. Er wordt geen pixelperfecte of identieke interne simulatie geclaimd.
+
+De renderers gebruiken de bestaande visibility-aware klok en begrenzen DPR op maximaal 2. De gedeelde klok synchroniseert zijn reduced-motionstatus ook in het frame, omdat een gewijzigde mediawaarde in Chromium al vóór het change-event zichtbaar kan zijn. Er zijn geen nieuwe Text Animation-effecten gebouwd. De Seed-initialisatie en grote ditherroosters gebruiken beperkte/per-rij-lussen, zodat Sandpacks veiligheidslimiet intact kan blijven.
+
+Teststatus en laatste visuele/performance-uitkomsten staan in PROGRESS.md. Herhaal de lokale renderproef met `PLAYWRIGHT_BASE_URL=http://localhost:4173 node scripts/profile-animation-effects.mjs` na het starten van een production preview. De proef telt renderupdates en offscreen/reduced-motionstilstand; dit is geen algemene hardware-FPS-garantie. Het precieze vervolgpunt is batch 2: Ripple Distortion, Elastic Mesh, Swarm Cursor, Halftone Reveal en Pixel Swap.
+
+Definitieve verificatie van fase 7, batch 1 (18 november): **strict TypeScript, 31/31 Vitest, productiebuild en 154/154 Playwright-tests geslaagd**. De suite bevat alle behouden regressies plus 26 nieuwe checks voor rendering, controls, presets, werkelijke Sandpack-compilatie, GPU-/observer-/RAF-cleanup, contextverlies/fallback, eigen afbeeldingen/video, diepe routes, touch/DPR, geschaalde pointerposities en acht viewportmaten in beide thema’s. Lokale Chromium-renderproef: circa 59–60 Canvas/WebGL-updates/s voor de vier grafische effecten, nul offscreen/reduced-motion-draws in de gemeten intervallen. De DOM-animatie Scroll Expand wordt niet door deze drawprofiler geteld. Dit is geen algemene hardware-, browser- of geheugenlekgarantie. Batch 2 is nog niet geïmplementeerd.

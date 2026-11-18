@@ -8,3 +8,6 @@ export function useAnimationCanvas(host:RefObject<HTMLElement|null>,canvas:RefOb
 }
 export const rgb=(hex:string)=>{const h=/^#[0-9a-f]{6}$/i.test(hex)?hex:'#a78bfa';return [parseInt(h.slice(1,3),16)/255,parseInt(h.slice(3,5),16)/255,parseInt(h.slice(5,7),16)/255] as const;};
 export const rgba=(hex:string,alpha:number)=>{const c=rgb(hex);return `rgba(${c.map(x=>Math.round(x*255)).join(',')},${Math.max(0,Math.min(1,alpha))})`;};
+
+/** Map visual pointer coordinates back into canvas CSS pixels, also in scaled catalog cards. */
+export function canvasPoint(node:HTMLElement,clientX:number,clientY:number){const rect=node.getBoundingClientRect();return {x:(clientX-rect.left)*node.clientWidth/Math.max(1,rect.width),y:(clientY-rect.top)*node.clientHeight/Math.max(1,rect.height)};}

@@ -7,8 +7,8 @@ export function useTextAnimation(host:RefObject<HTMLElement|SVGSVGElement|null>,
   const node=host.current;if(!node)return;
   let frame=0,last=0,time=0,visible=true,dead=false;
   const media=matchMedia('(prefers-reduced-motion: reduce)');
-  const wake=()=>{if(dead)return;node.dataset.motion=!visible||document.hidden?'paused':media.matches?'reduced':'running';if(!visible||document.hidden){cancelAnimationFrame(frame);frame=0;last=0;}else if(!frame)frame=requestAnimationFrame(tick);};
-  const tick=(now:number)=>{frame=0;if(dead||!visible||document.hidden)return;const dt=last?Math.min(.04,(now-last)/1000):1/60;last=now;if(!media.matches)time+=dt;if(latest.current(dt,time,media.matches)&&!media.matches)wake();else last=0;};
+  const wake=()=>{if(dead)return;const motion=!visible||document.hidden?'paused':media.matches?'reduced':'running';if(node.dataset.motion!==motion)node.dataset.motion=motion;if(!visible||document.hidden){cancelAnimationFrame(frame);frame=0;last=0;}else if(!frame)frame=requestAnimationFrame(tick);};
+  const tick=(now:number)=>{frame=0;if(dead||!visible||document.hidden)return;const motion=media.matches?'reduced':'running';if(node.dataset.motion!==motion)node.dataset.motion=motion;const dt=last?Math.min(.04,(now-last)/1000):1/60;last=now;if(!media.matches)time+=dt;if(latest.current(dt,time,media.matches)&&!media.matches)wake();else last=0;};
   const observer=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;wake();});observer.observe(node);
   document.addEventListener('visibilitychange',wake);media.addEventListener('change',wake);wakeRef.current=wake;wake();
   return()=>{dead=true;wakeRef.current=()=>{};cancelAnimationFrame(frame);observer.disconnect();document.removeEventListener('visibilitychange',wake);media.removeEventListener('change',wake);};

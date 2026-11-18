@@ -1,8 +1,9 @@
 import { useEffect,useRef,useState } from 'react';
 import { num,str,type EffectProps } from './types';
 import { useTextAnimation } from './textRuntime';
-import { useAnimationCanvas,rgba } from './animationCanvas';
+import { useAnimationCanvas } from './animationCanvas';
 import { ballSeeds,createBallRenderer,type BallFrame } from './CrystalizedBall.renderer';
+import { drawBallFallback } from './CrystalizedBall.fallback';
 import './CrystalizedBall.css';
 export function CrystalizedBall(p:EffectProps){
  const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),fallbackCanvas=useRef<HTMLCanvasElement>(null),latest=useRef(p);latest.current=p;
@@ -10,7 +11,7 @@ export function CrystalizedBall(p:EffectProps){
  const state=useRef({time:0,dust:0,age:0,x:0,y:0,px:0,py:0,hover:0,inside:false,kick:0,renderer:null as ReturnType<typeof createBallRenderer>,lost:false});
  const wake=useTextAnimation(host,(dt,_time,reduced)=>{const s=state.current,q=latest.current,b=box.current;const animate=!q.paused&&!reduced;if(animate){s.time+=dt*num(q,'speed',1);s.dust+=dt*num(q,'dustSpeed',1);s.age+=dt;}const factor=reduced?1:1-Math.exp(-dt*7);s.x+=(s.px-s.x)*factor;s.y+=(s.py-s.y)*factor;s.hover+=((q.interactive!==false&&s.inside?num(q,'hoverStrength',.7):0)-s.hover)*factor;s.kick*=Math.exp(-dt*5);
  const f:BallFrame={width:b.width,height:b.height,time:s.time,dustTime:s.dust,size:num(q,'size',.7),color:str(q,'color','#f25bd0'),background:str(q,'background','#120f17'),strands:num(q,'strands',6),crackle:num(q,'crackle',.85),flares:num(q,'flares',.65),glow:num(q,'glow',.9),sparks:num(q,'sparks',.6),particleCount:num(q,'particleCount',15000),fill:num(q,'fill',.5),motion:['rise','fall','drift','orbit'].indexOf(str(q,'motion','rise')),round:q.particleShape==='round',depth:num(q,'depth',.6),sway:num(q,'sway',.5),twinkle:num(q,'twinkle',.5),haze:num(q,'haze',.7),pointerX:s.x,pointerY:s.y,hover:s.hover,intro:q.intro===false||reduced?1:Math.min(1,s.age/1.2),kick:reduced?0:s.kick,light:q.theme==='light'};
- if(s.renderer)s.renderer.draw(f);else if(fallbackCanvas.current){const el=fallbackCanvas.current;if(el.width!==canvas.current!.width||el.height!==canvas.current!.height){el.width=canvas.current!.width;el.height=canvas.current!.height;}const c=el.getContext('2d')!;c.setTransform(b.dpr,0,0,b.dpr,0,0);c.clearRect(0,0,b.width,b.height);const radius=Math.min(b.width,b.height)*f.size/2,cx=b.width/2,cy=b.height/2;c.strokeStyle=f.color;c.shadowColor=f.color;c.shadowBlur=f.glow*14;c.lineWidth=1.2;for(let k=0;k<f.strands;k++){c.beginPath();for(let i=0;i<=360;i++){const a=i*Math.PI/180,r=radius+(Math.sin(a*43+s.time*8+k)*.8+Math.sin(a*79-s.time*14+k)*.7)*f.crackle;const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;i?c.lineTo(x,y):c.moveTo(x,y);}c.stroke();}c.shadowBlur=0;seeds.current??=ballSeeds(2200);for(let i=0;i<Math.min(2200,f.particleCount);i++){const u=(seeds.current[i*4+1]+s.dust*.046)%1,y=-.99+1.98*Math.pow(u,Math.max(.28,3.8-f.fill*4)),a=seeds.current[i*4]*Math.PI*2+Math.sin(s.dust*.2)*f.sway,r=Math.sqrt(seeds.current[i*4+2])*Math.sqrt(1-y*y),x=Math.cos(a)*r;c.fillStyle=rgba(f.color,.3+seeds.current[i*4+3]*.6);c.fillRect(cx+x*radius+s.x*s.hover*5,cy-y*radius,1.2,1.2);}}
+ if(s.renderer)s.renderer.draw(f);else if(fallbackCanvas.current){const el=fallbackCanvas.current;if(el.width!==canvas.current!.width||el.height!==canvas.current!.height){el.width=canvas.current!.width;el.height=canvas.current!.height;}seeds.current??=ballSeeds(2200);drawBallFallback(el,f,seeds.current);}
  return animate&&(num(q,'speed',1)>0||num(q,'dustSpeed',1)>0||f.intro<1)||Math.abs(s.x-s.px)+Math.abs(s.y-s.py)+s.kick>.001||Math.abs(s.hover-(q.interactive!==false&&s.inside?num(q,'hoverStrength',.7):0))>.001;
  });
  const box=useAnimationCanvas(host,canvas,wake,str(p,'quality','high'));
