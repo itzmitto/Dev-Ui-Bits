@@ -6,6 +6,7 @@ export function paperNoise(x:number,y:number,seed=1){
  const hash=(a:number,b:number)=>{const v=Math.sin(a*127.1+b*311.7+seed*74.7)*43758.5453;return v-Math.floor(v);};
  const ix=Math.floor(x),iy=Math.floor(y),tx=x-ix,ty=y-iy,sx=tx*tx*(3-2*tx),sy=ty*ty*(3-2*ty),a=hash(ix,iy)*(1-sx)+hash(ix+1,iy)*sx,b=hash(ix,iy+1)*(1-sx)+hash(ix+1,iy+1)*sx;return a*(1-sy)+b*sy;
 }
+export function quadraticPoint(ax:number,ay:number,cx:number,cy:number,bx:number,by:number,t:number){const u=1-t;return{x:u*u*ax+2*u*t*cx+t*t*bx,y:u*u*ay+2*u*t*cy+t*t*by};}
 export const brushPressure=(speed:number)=>.5+.6/(1+Math.max(0,speed)*.0025);
 export const pigmentMix=(distance:number,cycle:number)=>cycle>0?.5-.5*Math.cos(distance/cycle*Math.PI*2):0;
 export type BrushOptions={a:string;b:string;rough:number;grain:number;edge:number;gouache:boolean;quality:string};

@@ -1,13 +1,13 @@
 import { useRef } from 'react';
 import { str,type EffectProps } from './types';
 import { usePaintCursor,PaintSurface,value,fadeInk,clamp01 } from './paintCursorRuntime';
-import { createBrushAtlas,brushPressure,pigmentMix,brushEdge,type BrushAtlas } from './pigmentBrush';
+import { createBrushAtlas,brushPressure,pigmentMix,quadraticPoint,brushEdge,type BrushAtlas } from './pigmentBrush';
 export { brushEdge } from './pigmentBrush';
 type Ink={x:number;y:number;radius:number;age:number;distance:number;angle:number;stretch:number;seed:number};
 type Drop={x:number;y:number;vx:number;vy:number;radius:number;age:number;distance:number;seed:number};
 /** Distance-spaced wet stamps overlap into a continuous brush, never a line of separate circles. */
 export function PigmentTrail(p:EffectProps){
- const state=useRef({points:[] as Ink[],drops:[] as Drop[],distance:0,residual:0,lastX:0,lastY:0,connected:false,atlas:null as BrushAtlas|null,grainPattern:null as CanvasPattern|null});
+ const state=useRef({points:[] as Ink[],drops:[] as Drop[],distance:0,residual:0,lastX:0,lastY:0,rawX:0,rawY:0,connected:false,atlas:null as BrushAtlas|null,grainPattern:null as CanvasPattern|null});
  const engine=usePaintCursor({...p,followSpeed:value(p,'followSpeed',.06,.001,.5)},f=>{
   const s=state.current,c=f.ctx,size=value(p,'brushSize',14,1,80),fade=value(p,'fadeDuration',3.5,.1,15),bleed=value(p,'bleed',.5,0,2),bloom=value(p,'bloom',.9,.02,4),edge=value(p,'edgeSoftness',.6,0,1),rough=value(p,'roughness',.3,0,1),grain=value(p,'grain',.35,0,1),intensity=value(p,'intensity',1,0,3),cycle=value(p,'colorCycle',700,0,3000);
   const mode=str(p,'mode','auto'),gouache=mode==='gouache'||mode==='auto'&&f.dark;
@@ -18,10 +18,17 @@ export function PigmentTrail(p:EffectProps){
   s.points=s.points.filter(v=>v.age<fade);s.drops=s.drops.filter(v=>v.age<fade+.3);
   if(f.entered||!f.active)s.connected=false;
   if(f.moved){
-   if(!s.connected){s.lastX=f.x-f.dx;s.lastY=f.y-f.dy;s.connected=true;s.residual=0;}
-   const dx=f.x-s.lastX,dy=f.y-s.lastY,d=Math.hypot(dx,dy),angle=Math.atan2(dy,dx),spacing=Math.max(1.2,size*.18),steps=Math.min(100,Math.floor((d+s.residual)/spacing)),radius=size*brushPressure(f.speed);
-   for(let i=0;i<steps;i++){const along=Math.min(d,(i+1)*spacing-s.residual),t=d?along/d:0;s.distance+=spacing;s.points.push({x:s.lastX+dx*t,y:s.lastY+dy*t,radius,age:0,distance:s.distance,angle,stretch:1+Math.min(.35,f.speed*.00015),seed:s.distance*.017});}
-   s.residual=(s.residual+d)%spacing;s.lastX=f.x;s.lastY=f.y;
+   if(!s.connected){s.lastX=s.rawX=f.x-f.dx;s.lastY=s.rawY=f.y-f.dy;s.connected=true;s.residual=0;}
+   // Midpoint quadratics have matching tangents at their joins. This also smooths
+   // sparse pointer/touch samples instead of stamping a polygon through them.
+   const endX=(s.rawX+f.x)/2,endY=(s.rawY+f.y)/2,spacing=Math.max(1.2,size*.18),radius=size*brushPressure(f.speed),approx=Math.hypot(s.rawX-s.lastX,s.rawY-s.lastY)+Math.hypot(endX-s.rawX,endY-s.rawY),pieces=Math.min(100,Math.max(2,Math.ceil(approx/Math.max(1,size*.25))));
+   let previousX=s.lastX,previousY=s.lastY;
+   for(let piece=1;piece<=pieces;piece++){
+    const q=quadraticPoint(s.lastX,s.lastY,s.rawX,s.rawY,endX,endY,piece/pieces),dx=q.x-previousX,dy=q.y-previousY,d=Math.hypot(dx,dy),angle=Math.atan2(dy,dx),steps=Math.floor((d+s.residual)/spacing);
+    for(let i=0;i<steps;i++){const along=Math.min(d,(i+1)*spacing-s.residual),t=d?along/d:0;s.distance+=spacing;s.points.push({x:previousX+dx*t,y:previousY+dy*t,radius,age:0,distance:s.distance,angle,stretch:1+Math.min(.35,f.speed*.00015),seed:s.distance*.017});}
+    s.residual=(s.residual+d)%spacing;previousX=q.x;previousY=q.y;
+   }
+   s.lastX=endX;s.lastY=endY;s.rawX=f.x;s.rawY=f.y;
   }
   if(f.burst&&p.splash!==false){const count=f.reduced?3:25;for(let i=0;i<count;i++){const angle=i*2.399963+f.time*3,spread=(.25+(Math.sin(i*7.1)*.5+.5)*.75),velocity=size*(2+spread*9);s.drops.push({x:f.x,y:f.y,vx:Math.cos(angle)*velocity,vy:Math.sin(angle)*velocity,radius:size*(i===0?1.1:.12+spread*.28),age:0,distance:s.distance+i*11,seed:i*2.7});}}
   if(s.points.length>1800)s.points.splice(0,s.points.length-1800);if(s.drops.length>200)s.drops.splice(0,s.drops.length-200);
