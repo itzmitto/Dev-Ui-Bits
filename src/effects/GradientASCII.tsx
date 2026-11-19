@@ -20,17 +20,18 @@ export function GradientASCII(p:GradientASCIIProps){
   if(!reduced){s.time+=dt*speed;s.intro+=dt;pointer.current.heat*=Math.exp(-dt*5);for(const pulse of s.pulses)pulse.age+=dt;}else{s.intro=3;pointer.current.heat=0;s.pulses=[];}
   s.pulses=s.pulses.filter(v=>v.age<1.2);
   const colors=parseASCIIColors(p.colors),characters=Array.from(p.characterStyle==='custom'?p.characters||styles.letters:styles[p.characterStyle||'']||p.characters||styles.letters).slice(0,32).join('')||' .#';
+  const sequence=Array.from(characters);
   const font=p.fontFamily||'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',tones=16,tile=Math.min(96,Math.ceil(cell*dpr*1.7)),key=JSON.stringify([colors,characters,cell,dpr,font,lightMode,dof,glow]);
   if(s.atlas?.key!==key){
-   const atlas=document.createElement('canvas');atlas.width=tile*characters.length;atlas.height=tile*tones*2;const a=atlas.getContext('2d')!;a.textAlign='center';a.textBaseline='middle';a.font=`${cell*dpr*.8}px ${font}`;
-   for(let blur=0;blur<2;blur++)for(let tone=0;tone<tones;tone++){const rgb=paletteRGB(colors,tone/(tones-1));a.fillStyle=`rgb(${rgb.map(v=>Math.round(lightMode?v*.42:v+(255-v)*.22*tone/(tones-1))).join(',')})`;a.shadowColor=a.fillStyle;a.shadowBlur=blur?cell*dpr*.18:glow*cell*dpr*.12;for(let i=0;i<characters.length;i++)a.fillText(characters[i],(i+.5)*tile,(blur*tones+tone+.5)*tile);}
+   const atlas=document.createElement('canvas');atlas.width=tile*sequence.length;atlas.height=tile*tones*2;const a=atlas.getContext('2d')!;a.textAlign='center';a.textBaseline='middle';a.font=`${cell*dpr*.8}px ${font}`;
+   for(let blur=0;blur<2;blur++)for(let tone=0;tone<tones;tone++){const rgb=paletteRGB(colors,tone/(tones-1));a.fillStyle=`rgb(${rgb.map(v=>Math.round(lightMode?v*.42:v+(255-v)*(.15+.5*tone/(tones-1)))).join(',')})`;a.shadowColor=a.fillStyle;a.shadowBlur=blur?cell*dpr*.18:glow*cell*dpr*.12;for(let i=0;i<sequence.length;i++)a.fillText(sequence[i],(i+.5)*tile,(blur*tones+tone+.5)*tile);}
    s.atlas={key,canvas:atlas,tile,characters,tones,palette:Array.from({length:256},(_,i)=>paletteRGB(colors,i/255))};
   }
   // Reuse a small raster for the wash; interpolate it to the HiDPI destination.
   const step=p.quality==='low'?12:6,sw=Math.ceil(w/step)+1,sh=Math.ceil(h/step)+1;
   if(!s.wash){s.wash=document.createElement('canvas');}
   if(s.wash.width!==sw||s.wash.height!==sh||!s.image){s.wash.width=sw;s.wash.height=sh;s.image=s.wash.getContext('2d')!.createImageData(sw,sh);}
-  const shape=p.shape||'horizon',intro=p.intro===false?1:unit(s.intro/1.8),sample=(x:number,y:number)=>asciiLight(x,y,s.time,shape,soft,scale,flow,variation);
+  const shape=p.shape||'horizon',intro=p.intro===false?1:unit(s.intro/1.8),sample=(x:number,y:number)=>asciiLight(x,y,s.time,shape,soft,scale,flow,variation,w/h);
   const image=s.image,data=image.data;
   for(let y=0;y<sh;y++)for(let x=0;x<sw;x++){const brightness=sample(x/(sw-1),y/(sh-1)),rgb=s.atlas.palette[Math.round(brightness*255)],n=(noise(x,y,variation+Math.floor(s.time*15))-.5)*grain*55,i=(y*sw+x)*4;for(let k=0;k<3;k++)data[i+k]=Math.max(0,Math.min(255,rgb[k]+n));data[i+3]=unit(brightness*1.35)*bound(p.gradientOpacity,.9,0,1)*intro*(lightMode?.38:1)*255;}
   s.wash.getContext('2d')!.putImageData(image,0,0);c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);c.imageSmoothingEnabled=true;c.drawImage(s.wash,0,0,w,h);
@@ -40,7 +41,7 @@ export function GradientASCII(p:GradientASCIIProps){
    if(density===0||n<threshold||b<.025||intro<noise(x,y,3)*.45)continue;
    let disturbance=p.mouseInteraction===false?0:Math.exp(-Math.pow(Math.hypot(px-pointer.current.x,py-pointer.current.y)/h/radius,2))*pointer.current.heat;
    for(const pulse of s.pulses)disturbance=Math.max(disturbance,clickInfluence(Math.hypot(px-pulse.x,py-pulse.y)/h,pulse.age,p.clickEffect||'wave'));
-   const shimmer=(noise(x,y,Math.floor(s.time*7))-.5)*flicker*.18,brightness=unit(b+shimmer),index=disturbance>.15?Math.floor(noise(x,y,Math.floor(s.time*20)+7)*characters.length):glyphIndex(brightness,characters.length),tone=Math.min(tones-1,Math.floor(brightness*(tones-1))),blur=n<dof?1:0,fade=unit(b*2)*intro;
+   const shimmer=(noise(x,y,Math.floor(s.time*7))-.5)*flicker*.18,brightness=unit(b+shimmer),index=disturbance>.15?Math.floor(noise(x,y,Math.floor(s.time*20)+7)*sequence.length):glyphIndex(brightness,sequence.length),tone=Math.min(tones-1,Math.floor(brightness*(tones-1))),blur=n<dof?1:0,fade=unit(b*2)*intro;
    c.globalAlpha=opacity*fade*(.65+.35*brightness);c.drawImage(atlas.canvas,index*tile,(blur*tones+tone)*tile,tile,tile,px-tile/dpr/2,py-tile/dpr/2,tile/dpr,tile/dpr);glyphs++;
   }
   c.globalAlpha=1;if(host.current){host.current.dataset.glyphs=String(glyphs);host.current.dataset.shape=shape;host.current.dataset.pulses=String(s.pulses.length);}

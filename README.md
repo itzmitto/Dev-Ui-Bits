@@ -1,6 +1,6 @@
 # DevUI Bits
 
-Een zelfstandige bibliotheek met **246 catalogusitems: 58 werkende React-componenten en 188 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Alle 52 vóór fase 9 werkende componenten, bestaande routes en functies zijn behouden.
+Een zelfstandige bibliotheek met **246 catalogusitems: 62 werkende React-componenten en 184 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Alle 58 vóór fase 11 werkende componenten, bestaande routes en functies zijn behouden.
 
 **Start hier:** [SETUP-GITHUB-VERCEL.md](SETUP-GITHUB-VERCEL.md) beschrijft ZIP → VS Code → GitHub → publieke Vercel-site, met exacte commando's en controles vóór Git-initialisatie of remote-wijzigingen.
 
@@ -33,15 +33,15 @@ Op Linux eventueel `npx playwright install --with-deps chromium`. De testconfigu
 
 ## Complete componentcatalogus
 
-`/browse` en `/get-started/index` openen dezelfde volledige catalogus. Deze bevat alle 217 aangeleverde namen in de gevraagde volgorde plus 22 bestaande namen en zeven originele Cursor Trails: **246 unieke records**, waarvan **52 Ready** en **194 Planned**. In fase 4 zijn uitsluitend catalogus en placeholders gebouwd. Fase 5 voegt Tech Text toe. Fase 6 leverde tien extra Text Animations. Fase 7 ontwikkelt uitsluitend Animations, te beginnen met vijf bestaande planned records.
+`/browse` en `/get-started/index` openen dezelfde volledige catalogus. Deze bevat alle 217 aangeleverde namen in de gevraagde volgorde plus 22 bestaande namen en zeven originele Cursor Trails: **246 unieke records**, waarvan **62 Ready** en **184 Planned**. In fase 4 zijn uitsluitend catalogus en placeholders gebouwd. Fase 5 voegt Tech Text toe. Fase 6 leverde tien extra Text Animations. Fase 7 ontwikkelt uitsluitend Animations, te beginnen met vijf bestaande planned records.
 
 | Categorie | Totaal | Ready | Planned |
 | --- | ---: | ---: | ---: |
 | Text Animations | 34 | 16 | 18 |
 | Animations | 41 | 8 | 33 |
-| Components | 56 | 10 | 46 |
+| Components | 56 | 16 | 40 |
 | Micro Interactions | 39 | 5 | 34 |
-| Backgrounds | 69 | 6 | 63 |
+| Backgrounds | 69 | 10 | 59 |
 | Cursor Trails | 7 | 7 | 0 |
 
 De sidebar bevat GET STARTED, EXPLORE en de zes inklapbare categorieën. De lange lijst scrollt zelfstandig, markeert de actieve entry en opent automatisch de geselecteerde categorie. Op mobiel blijft het de bestaande drawer met Escape en focusherstel. Er is geen Search Components-veld of Create Component-navigatie.
@@ -273,3 +273,19 @@ Fase 9 is daadwerkelijk gecontroleerd met strict typecheck, 42 unit-tests, de pr
 ## Arc Cursor en Pigment Trail — fase 10
 
 De twee bestaande Cursor Trails hebben nieuwe eigen Canvas-renderers. Arc gebruikt vloeiende verweven elektrische filamenten, getaperde lichte cores, Ink/Glow/Auto, charge en vertakte ontladingen. Pigment gebruikt lokaal gegenereerde brush-/papiertexturen, velocity-pressure, droogrand, wet bleeding, kleurmenging en landende splashes in Watercolor/Gouache/Auto. Bestaande propnamen en routes blijven bruikbaar; de nieuwe modi, quality, autoplay speed en idle delay staan in het bestaande Customize-schema en in de echte bronexport. Geen extra dependencies of externe textures. Zie PROGRESS.md voor daadwerkelijke visuele controles, testuitkomsten en beperkingen.
+
+
+## Backgrounds — fase 11, batch 1
+
+Vier bestaande Planned-items hebben een zelfstandige implementatie: **Gradient ASCII**, **Holo Mosaic**, **Flux Lines** en **Pattern Waves**. **Micro Slats** was al Ready en is ongewijzigd behouden. De officiële 64 namen zijn vergeleken met de bestaande catalogus; er zijn geen records toegevoegd. Backgrounds bevat daarnaast vijf eerdere eigen namen: 69 records, waarvan 10 Ready en 59 Planned. De overige categorieën behouden hun renderers.
+
+- `/backgrounds/gradient-ascii`: eigen Canvas-lichtveld met Horizon/Pinch/Rise/Eclipse, luminance-mapped glyphs, gecachte atlas, kleurpalet, lokale scrambling, Wave/Burst/None, intro en light mode. `colors` accepteert een stringarray of een komma-/spatiegescheiden lijst van twee tot acht hexkleuren; de bestaande Customize-schema’s gebruiken het bewerkbare hexlijstveld. Bij een ongeldige of te korte lijst valt de renderer terug op de standaardkleuren. `characterStyle="custom"` gebruikt het bewerkbare `characters`-veld. Maximaal 32 ASCII-tekens houden de atlas begrensd.
+- `/backgrounds/holo-mosaic`: eigen WebGL rounded-tile SDF, geëtste reflectie, onafhankelijke kleurinterferentie, glints, lokale normals en flipgolven.
+- `/backgrounds/flux-lines`: eigen WebGL impliciete contouren met domeinvervorming, numerieke gradiënten voor pixelbreedte, gloed, cursor-magnetisme en klikvortices.
+- `/backgrounds/pattern-waves`: eigen Canvas-hoogteveld met afgeleide normals, belichting, verplaatste dots/squares/pluses/contourlijnen/glyphs en pointer-/klikgolven.
+
+Geen nieuwe dependencies of externe assets. De normale Code-tab toont de daadwerkelijke TSX, helpers, CSS en eigen GLSL; Edit in Playground gebruikt de bestaande Sandpack-editor. WebGL-onbeschikbaarheid en contextverlies schakelen de twee GPU-effecten naar een **zichtbaar gelabelde, vereenvoudigde Canvas-preview**. Die fallback is geen gelijkwaardige optische reconstructie.
+
+Verschillen blijven bestaan in lichtprofiel, glyphfont, reflectiepatronen, contourtopologie en golfgeometrie. Dit zijn onafhankelijke procedurele benaderingen, geen exacte upstream-API of fysieke vloeistof-/diffractiesimulatie. Alleen daadwerkelijk uitgevoerde tests en metingen worden in PROGRESS.md vermeld. De vier renderers blijven lazy; de synchrone broncode voor documentatie vergroot de hoofdbundel en veroorzaakt nu een waarschuwing boven de bestaande 750-kB-grens. De grens is niet verhoogd.
+
+Volgende achtergrondbatch: **Shape Waves → Aero Shards → Ghost Fibers → CRT Warp → Molten Metal**. Alle 59 resterende officiële backgrounds blijven Planned. Zie ADDING-COMPONENTS.md en LICENSE_REVIEW.md.

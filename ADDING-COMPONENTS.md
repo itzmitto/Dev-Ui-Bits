@@ -161,3 +161,18 @@ Nieuwe regressies staan in playground.spec.ts, glass-components.spec.ts, codeDoc
 De raw-sourceglob sluit `*.config.ts` uit: dit zijn registry-/controlsmetadata, geen runtimebestanden voor de component. Zo worden de metadata niet ook nog als ongebruikte bronstrings in de startbundel opgenomen. Een runtimehelper die werkelijk nodig is moet bij supportingFiles staan en mag niet de naam van een registryconfigbestand krijgen.
 
 Customize-specifieke legacyregels zijn uit styles.css verwijderd. Houd de gedeelde control-styling in playground.css, zodat oude breakpointregels geen tweede layout blijven afdwingen.
+
+
+## Backgrounds batch 1 — integratiepatroon
+
+`backgroundBatchOne.config.ts` registreert bestaande catalogusnamen, complete defaults, schema’s en volledige presets. `registry.ts` verbindt deze entries aan lazy renderers; voeg geen tweede record of route toe. De vier nieuwe routes zijn gradient-ascii, holo-mosaic, flux-lines en pattern-waves. Micro Slats blijft aan de bestaande Field-renderer gekoppeld.
+
+Elke engine heeft zijn eigen module en renderinglogica. `GradientASCII.field.ts` bevat vier onafhankelijke lichtvelden, paletinterpolatie, glyph mapping en klikvelden. De component ondersteunt echte kleurenarrays; de bestaande eenvoudige controls gebruiken bewust een gevalideerd hexlijstveld. Voeg alle runtimebestanden toe aan `helpers`; registryconfigbestanden horen niet in de standalone runtime.
+
+`backgroundGL.tsx` deelt uitsluitend GPU-lifecycle, uniforms, lokale pointercoördinaten, HiDPI/visibility en expliciete fallback. `HoloMosaic.shader.ts` en `FluxLines.shader.ts` bevatten verschillende, zelfstandig geschreven GLSL-algoritmen. Gebruik CSS-pixelcoördinaten via `pixelRatio`, zodat frequentie en lijndikte bij HiDPI/resize gelijk blijven. Shaderoutput gebruikt straight alpha: de context is daarom `premultipliedAlpha:false`. Verwijder program, buffer en beide shaders bij unmount/contextverlies en bouw ze bij contextrestauratie opnieuw op. Geen textures nodig voor deze twee engines.
+
+`PatternWaves.field.ts` levert een eigen hoogteveld en fadefuncties. Dot-, square-, plus-, line- en glyph-modus tekenen dezelfde verlichte geometrie; laat bijvoorbeeld fade/opacity ook in lijnmodus werken. Motion pause stopt hier alleen de onderliggende golffase; bestaande cursor-ripples mogen uitdoven. Offscreen/document-hidden en reduced motion stoppen de gedeelde klok.
+
+`backgroundBatchOne.defaults.ts` is een klein runtimebestand met volledige standalone defaults. De documentatie-export moet dit en alle transitieve helpers/CSS bevatten; de nieuwe unit-test controleert die imports. Geen interne import zonder meegeleverd bronbestand. De bestaande 58 Ready-implementaties blijven behouden; bij nieuwe promoties moeten historische hardcoded tellers in tests worden bijgewerkt, niet de catalogus uitgebreid.
+
+Tests: `src/backgroundBatchOne.test.ts` en `tests/background-batch-one.spec.ts`. Controleer echte canvaspixels, afzonderlijke shapes/marks, presets/reset/restart, GPU/context/fallback, touch/DPR, beide themes, alle negen viewportgroottes, echte Sandpack-compilatie en verborgen/reduced/unmount-gedrag. `scripts/profile-background-batch-one.mjs` meet draw-updates en CPU-callbackduur, geen gegarandeerde scherm-FPS of GPU-tijd. Voer het zonder parallelle browsertests uit. De referentieonderzoeken blijven genegeerde artifacts, geen website-assets.
