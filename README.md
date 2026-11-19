@@ -290,4 +290,4 @@ Verschillen blijven bestaan in lichtprofiel, glyphfont, reflectiepatronen, conto
 
 Volgende achtergrondbatch: **Shape Waves → Aero Shards → Ghost Fibers → CRT Warp → Molten Metal**. Alle 59 resterende officiële backgrounds blijven Planned. Zie ADDING-COMPONENTS.md en LICENSE_REVIEW.md.
 
-Eindcontrole fase 11: strict typecheck, 56 unit-tests, productiebuild, 104 brede productie-browsertests en na de laatste enginewijzigingen 29 volledige batchchecks geslaagd. Een aparte 62-Ready-schemaflow slaagt eveneens. De suites overlappen; zie PROGRESS.md voor precieze versies, logs, de bundelwaarschuwing en de acht korte software-GPU/Canvas-meetgevallen.
+Eindcontrole fase 11: strict typecheck, 56 unit-tests, productiebuild, 104 brede productie-browsertests en na de laatste enginewijzigingen 29 volledige batchchecks plus een gerichte Pause/Restart-hertest geslaagd. Een aparte 62-Ready-schemaflow slaagt eveneens. De suites overlappen; zie PROGRESS.md voor precieze versies, logs, de bundelwaarschuwing en de acht korte software-GPU/Canvas-meetgevallen.

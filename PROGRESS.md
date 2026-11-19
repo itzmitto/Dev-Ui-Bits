@@ -35,12 +35,14 @@ De overige drie hebben verschillende eigen algoritmen en relevante werkende sche
 
 ### Daadwerkelijke eindtests
 
-- `npm run typecheck`: **geslaagd**, strict TypeScript; `artifacts/phase11/typecheck-complete.log`.
-- `npm test`: **56/56 tests, 13 bestanden geslaagd**; `artifacts/phase11/unit-complete.log`. Lichtvelden, paletvalidatie, glyphmapping, onderscheiden clickvelden, aspectgeometrie, Pattern-hoogten/fades, registry en complete transitieve exports/presets.
-- `npm run build`: **geslaagd**; `artifacts/phase11/build-complete.log`. Hoofdbundel **759,70 kB / 238,04 kB gzip**. De bestaande 750-kB-waarschuwing wordt nu gegeven en is niet onderdrukt of verhoogd. Renderers blijven lazy; de bestaande eager broncodeteksten voor documentatie vergroten de startbundel. Async bronloading is een vervolgpunt voor schaalbaarheid.
+- `npm run typecheck`: **geslaagd**, strict TypeScript; `artifacts/phase11/typecheck-paused-final.log`.
+- `npm test`: **56/56 tests, 13 bestanden geslaagd**; `artifacts/phase11/unit-paused-final.log`. Lichtvelden, paletvalidatie, glyphmapping, onderscheiden clickvelden, aspectgeometrie, Pattern-hoogten/fades, registry en complete transitieve exports/presets.
+- `npm run build`: **geslaagd**; `artifacts/phase11/build-paused-final.log`. Hoofdbundel **759,81 kB / 238,08 kB gzip**. De bestaande 750-kB-waarschuwing wordt nu gegeven en is niet onderdrukt of verhoogd. Renderers blijven lazy; de bestaande eager broncodeteksten voor documentatie vergroten de startbundel. Async bronloading is een vervolgpunt voor schaalbaarheid.
 - Brede productie-regressie: **104/104 geslaagd, 5,8 minuten**; `artifacts/phase11/e2e-production.log`. Inclusief alle **246** catalogusroutes, filters/tellers, sidebar, homepage, themes, GitHub-link, oorspronkelijke Micro Slats, alle toenmalige 62 Ready-routes, bestaande clickcomponenten, IndexedDB, import/export, live editorbewerking/fouten/reset en gedeelde copy-/Code-/Playgroundflows.
 - Aanvullend **1/1 geslaagd, 56,6 seconden**: alle **62 Ready-schema’s** met gewijzigde controls, actuele Usage, tabwissels en Reset; `artifacts/phase11/e2e-all-ready.log`.
-- Na de laatste Gradient-polish, sampling en echte glyphblur: **29/29 definitieve batchtests geslaagd, 2,9 minuten**, op de definitieve productiebuild; `artifacts/phase11/e2e-complete.log`. Alle vier nieuwe Sandpack-voorbeelden compileren werkelijk. Shapes, markmodes, pointer/klik, alle relevante controls, presets, Reset/Restart, echte pixels/opacity, touch/DPR, fullscreen, refresh, contextverlies/herstel, fallback en unmount zijn gecontroleerd. Browserconsole/pageerrors worden in de relevante preview-/Sandpacktests verzameld; geen fouten.
+- Na de laatste Gradient-polish, sampling en echte glyphblur: **29/29 definitieve batchtests geslaagd, 2,9 minuten**, op de productiebuild vóór de laatste Pause/Restart-randfix; `artifacts/phase11/e2e-complete.log`. Alle vier nieuwe Sandpack-voorbeelden compileren werkelijk. Shapes, markmodes, pointer/klik, alle relevante controls, presets, Reset/Restart, echte pixels/opacity, touch/DPR, fullscreen, refresh, contextverlies/herstel, fallback en unmount zijn gecontroleerd. Browserconsole/pageerrors worden in de relevante preview-/Sandpacktests verzameld; geen fouten.
+
+**Laatste randfix:** Restart terwijl Paused actief is initialiseert Gradient ASCII en de GPU-effecten nu met een zichtbaar stilstaand beeld, in plaats van een blijvend lege intro. Deze aanvullende flow is voor alle vier nieuwe engines uitgevoerd: **1/1 geslaagd, 4,8 seconden**, `artifacts/phase11/e2e-paused-final.log`. Typecheck, alle 56 unit-tests en de build zijn daarna opnieuw geslaagd. De nieuwe batch heeft daarmee 30 gecontroleerde scenario’s, uitgevoerd als 29 batchchecks plus deze gerichte hertest.
 
 De brede regressie dateert van vóór de laatste uitsluitend nieuwe-engine-verfijningen; de volledige nieuwe batch is daarna opnieuw getest. De 104- en 29-testselecties overlappen en worden niet als 133 unieke scenario's voorgesteld. Tussentijdse geslaagde 12-/26-/14-testcontroles blijven als extra logs bewaard, niet dubbelgeteld in de eindresultaten. De eerste Gradient-browsertest gebruikte een verkeerde fullscreenknopnaam en is onderbroken na die fout; de selector is naar de echte bestaande knopnaam gecorrigeerd vóór de geslaagde hertests.
 
@@ -52,20 +54,20 @@ De checksums van Arc Cursor, Pigment Trail, hun paint-/brushhelpers en cursorcon
 
 `scripts/profile-background-batch-one.mjs` is na de eindtests zonder parallelle browsertests uitgevoerd op de definitieve productiebuild. Vier seconden opwarmtijd; twee seconden meetinterval per geval. Bewijs: `artifacts/phase11/performance.log` / `performance.json`.
 
-| Engine | Viewportbreedte | Draw-updates/s | Gem. JS-callback ms | GPU-samplingfactor |
+| Engine | Viewportbreedte | Draw-updates/s | Gem. JS-callback ms | GPU-sampling begin → einde |
 | --- | ---: | ---: | ---: | ---: |
-| gradient-ascii | 1440 | 60.1 | 3.08 | n.v.t. |
-| holo-mosaic | 1440 | 58.9 | 0.17 | 1.000 |
-| flux-lines | 1440 | 59.9 | 0.12 | 0.820 |
-| pattern-waves | 1440 | 60.2 | 3.15 | n.v.t. |
-| gradient-ascii | 375 | 59.9 | 1.14 | n.v.t. |
-| holo-mosaic | 375 | 59.9 | 0.14 | 1.000 |
-| flux-lines | 375 | 59.8 | 0.14 | 1.000 |
-| pattern-waves | 375 | 59.9 | 1.25 | n.v.t. |
+| gradient-ascii | 1440 | 60.2 | 3.25 | n.v.t. |
+| holo-mosaic | 1440 | 59.4 | 0.18 | 0.820 → 0.672 |
+| flux-lines | 1440 | 60.1 | 0.14 | 0.820 |
+| pattern-waves | 1440 | 60.2 | 3.67 | n.v.t. |
+| gradient-ascii | 375 | 59.9 | 1.13 | n.v.t. |
+| holo-mosaic | 375 | 59.9 | 0.16 | 1.000 |
+| flux-lines | 375 | 59.8 | 0.13 | 1.000 |
+| pattern-waves | 375 | 59.9 | 1.45 | n.v.t. |
 
-Alle acht gevallen: **0 nieuwe canvassen tijdens de steekproef, 0 verborgen-preview-draws en 0 doorlopende reduced-motion-draws; geen pageerrors**. Atlas/rasterbuffers worden hergebruikt. Pattern-markdichtheid is begrensd; pointergolven, klikvelden en glyphatlas zijn bounded. Dit zijn korte draw-update-/JS-callbackmetingen, geen gegarandeerde scherm-FPS, GPU-tijdmeting of langdurige heapgarantie.
+Alle acht gevallen: **0 nieuwe canvassen tijdens de steekproef, 0 verborgen-preview-draws en 0 doorlopende reduced-motion-draws; geen pageerrors**. Atlas/rasterbuffers worden hergebruikt. Pattern-markdichtheid is begrensd; pointergolven, klikvelden en glyphatlas zijn bounded. Dit zijn korte draw-update-/JS-callbackmetingen, adaptatie kan tijdens het meetvenster nog veranderen. Geen gegarandeerde scherm-FPS, GPU-tijdmeting of langdurige heapgarantie.
 
-De GPU-backend is hier **ANGLE/SwiftShader (software)**. Een eerste Holo-steekproef kwam op 1440px uit op 26,8 updates/s; de herhaalde opgewarmde eindproef op 58,9. Deze verandering kan niet uitsluitend aan adaptatie worden toegeschreven: Holo gebruikte in die eindsteekproef factor 1,000. Flux gebruikte op desktop factor 0,820. De oorspronkelijke baseline staat in `performance-before-adaptive.json` en `.log`. Warm-up, belasting en software-GPU variëren; geen hardwareclaim.
+De GPU-backend is hier **ANGLE/SwiftShader (software)**. Een eerste Holo-steekproef kwam op 1440px uit op 26,8 updates/s; de herhaalde opgewarmde eindproef op 59,4. Tijdens dat meetvenster ging Holo van factor 0,820 naar 0,672; Flux bleef op desktop op 0,820. De begin- en eindfactor zijn direct rond de meetsteekproef vastgelegd. Deze verandering kan niet uitsluitend aan adaptatie worden toegeschreven: warm-up en software-GPU-belasting variëren eveneens. De oorspronkelijke baseline staat in `performance-before-adaptive.json` en `.log`. Warm-up, belasting en software-GPU variëren; geen hardwareclaim.
 
 Medium verlaagt bij onvoldoende gemeten framecadans de GPU-sampling in begrensde stappen, minimaal 0,55; High blijft native tot de DPR-cap en Low gebruikt factor 0,72. Geen op-en-neer oscillerende resolutie. Een aparte **synthetische** vertraagde-draw-test bewijst dat Medium reageert en High native blijft; die kunstmatige belasting is niet gebruikt in bovenstaande benchmark. Lagere sampling kan fijne randen verzachten. De fallback is eenvoudiger dan de normale GPU-renderer.
 
@@ -76,6 +78,10 @@ Gradient ASCII heeft een eigen licht-/kleurprofiel, drift en systeemmonospace in
 README.md, ADDING-COMPONENTS.md en LICENSE_REVIEW.md zijn bijgewerkt. De actuele gratis upstreamlicentie beperkt herdistributie van de componenten zelf; daarom is geen upstream componentcode of shader opgenomen. Geen nieuwe dependency/font/texture/afbeelding. Geen juridische garantie.
 
 **Exact vervolgpunt: batch 2, eerst Shape Waves, daarna Aero Shards, Ghost Fibers, CRT Warp en Molten Metal.** Alle 59 resterende officiële backgrounds blijven Planned; batches 2–13 zijn niet gestart. Volgende uitvoering: lees deze resultaten, onderzoek de eigen publieke demo en promoveer alleen werkelijk werkende items, zonder dubbele records. Geen nieuwe project-ZIP, Git-mutaties, commits, pushes, PR's of deployments door deze uitvoering.
+
+
+
+De eigen tijdelijke testservers op 5175 en 4175 zijn na verificatie afgesloten.
 
 ---
 
