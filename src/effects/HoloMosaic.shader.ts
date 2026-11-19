@@ -9,7 +9,7 @@ void main(){
  float ring=hasClick*exp(-pow((length(uv-click.xy)-click.z*.55)/.055,2.0))*exp(-click.z);float flip=(1.0-intro)*clamp(length(center/resolution)*2.0,0.0,1.0)*1.5+ring*3.14159;
  local.x/=max(.025,abs(cos(flip)));local+=vec2(sin(seed*6.28),cos(seed*6.28))*magnet*.06;
  float radius=.02+roundness*.18;vec2 q=abs(local)-vec2(.5-gap*.5-radius);float sdf=length(max(q,0.0))+min(max(q.x,q.y),0.0)-radius;
- if(sdf>0.0){gl_FragColor=vec4(baseColor,opacity);return;}
+ if(sdf>0.0){gl_FragColor=vec4(lightMode>.5?vec3(.94):baseColor,opacity);return;}
  vec2 p=(center+local*cell)/resolution.y;float field=surface(p*2.0+seed*scatter*.3);float angle=field+seed*scatter*3.0+time*.08+magnet*.8;
  vec2 edgeNormal=sign(local)*smoothstep(.42,.5,abs(local));vec3 normal=normalize(vec3(edgeNormal*bevel*.7+vec2(sin(seed*5.0),cos(seed*4.0))*tilt*.4,1.0));
  float reflection=pow(.5+.5*sin(angle*3.0+normal.x*4.0+normal.y*2.0),3.0-softness*1.5);
