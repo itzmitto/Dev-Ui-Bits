@@ -21,6 +21,7 @@ export function BackgroundGL({p,name,fragment,uniforms,fallback}:Props){
   if(el.width!==targetWidth)el.width=targetWidth;if(el.height!==targetHeight)el.height=targetHeight;
   if(host.current)host.current.dataset.sampling=s.sampling.toFixed(3);
   
+  if(p.paused===true&&!s.drawn)s.intro=3;
   if(!reduced&&p.paused!==true){s.time+=dt*bound(p.speed,.5,0,3);s.intro+=dt;s.clickAge+=dt;}else if(reduced){s.intro=3;s.clickAge=9;}
   const follow=p.paused===true?0:1-Math.exp(-dt/Math.max(.001,bound(p.mouseDampening,.15,0,.5)));s.x+=(pointer.current.x-s.x)*follow;s.y+=(pointer.current.y-s.y)*follow;
   const f:BackgroundFrame={width,height,time:s.time,intro:p.intro===false?1:Math.min(1,s.intro/1.5),mouse:[s.x/Math.max(1,width),1-s.y/Math.max(1,height)],active:pointer.current.inside&&p.mouseInteraction!==false?1:0,click:[s.clickX/width,1-s.clickY/height,s.clickAge],hasClick:s.clickAge<2?1:0,reduced};

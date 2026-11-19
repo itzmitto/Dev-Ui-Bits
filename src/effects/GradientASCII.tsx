@@ -12,11 +12,11 @@ const styles:Record<string,string>={letters:' =+xX0S8#@',binary:' 01',symbols:' 
 /** Cached glyph atlas and a sampled procedural light field. No DOM updates on pointer movement. */
 export function GradientASCII(p:GradientASCIIProps){
  const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null);
- const pointer=useRef({x:-10,y:-10,heat:0,inside:false}),state=useRef({time:0,intro:0,pulses:[] as Pulse[],atlas:null as Cache|null,wash:null as HTMLCanvasElement|null,image:null as ImageData|null});
+ const pointer=useRef({x:-10,y:-10,heat:0,inside:false}),state=useRef({time:0,intro:0,drawn:false,pulses:[] as Pulse[],atlas:null as Cache|null,wash:null as HTMLCanvasElement|null,image:null as ImageData|null});
  const wake=useTextAnimation(host,(dt,_time,reduced)=>{
   const el=canvas.current,c=el?.getContext('2d');if(!c||!el)return false;
   const s=state.current,{width:w,height:h,dpr}=box.current,cell=bound(p.cellSize,18,8,40),density=bound(p.density,.8,0,1),speed=bound(p.speed,1,0,3),flow=bound(p.flow,.5,0,2),soft=bound(p.softness,.5,0,1),scale=bound(p.scale,1,.4,2.5),variation=bound(p.variation,0,0,100),grain=bound(p.grain,.08,0,.4),glow=bound(p.glow,.2,0,1.5),flicker=bound(p.flicker,.2,0,1),dof=bound(p.depthOfField,0,0,1),lightMode=p.lightMode===true;
-  if(p.paused)return false;
+  if(p.paused&&s.drawn)return false;if(p.paused)s.intro=3;
   if(!reduced){s.time+=dt*speed;s.intro+=dt;pointer.current.heat*=Math.exp(-dt*5);for(const pulse of s.pulses)pulse.age+=dt;}else{s.intro=3;pointer.current.heat=0;s.pulses=[];}
   s.pulses=s.pulses.filter(v=>v.age<1.2);
   const colors=parseASCIIColors(p.colors),characters=Array.from(p.characterStyle==='custom'?p.characters||styles.letters:styles[p.characterStyle||'']||p.characters||styles.letters).slice(0,32).join('')||' .#';
@@ -44,8 +44,8 @@ export function GradientASCII(p:GradientASCIIProps){
    const shimmer=(noise(x,y,Math.floor(s.time*7))-.5)*flicker*.18,brightness=unit(b+shimmer),index=disturbance>.15?Math.floor(noise(x,y,Math.floor(s.time*20)+7)*sequence.length):glyphIndex(brightness,sequence.length),tone=Math.min(tones-1,Math.floor(brightness*(tones-1))),blur=n<dof?1:0,fade=unit(b*2)*intro;
    c.globalAlpha=opacity*fade*(.65+.35*brightness);c.drawImage(atlas.canvas,index*tile,(blur*tones+tone)*tile,tile,tile,px-tile/dpr/2,py-tile/dpr/2,tile/dpr,tile/dpr);glyphs++;
   }
-  c.globalAlpha=1;if(host.current){host.current.dataset.glyphs=String(glyphs);host.current.dataset.shape=shape;host.current.dataset.pulses=String(s.pulses.length);}
-  return !reduced&&(speed>0||s.pulses.length>0||pointer.current.heat>.01||p.intro!==false&&s.intro<1.8);
+  c.globalAlpha=1;s.drawn=true;if(host.current){host.current.dataset.glyphs=String(glyphs);host.current.dataset.shape=shape;host.current.dataset.pulses=String(s.pulses.length);}
+  return !reduced&&!p.paused&&(speed>0||s.pulses.length>0||pointer.current.heat>.01||p.intro!==false&&s.intro<1.8);
  });
  const box=useAnimationCanvas(host,canvas,wake,p.quality||'medium');
  const move=(e:PointerEvent<HTMLDivElement>)=>{if(p.mouseInteraction===false||p.paused)return;Object.assign(pointer.current,canvasPoint(e.currentTarget,e.clientX,e.clientY),{heat:1,inside:true});wake();};
