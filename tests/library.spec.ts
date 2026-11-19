@@ -10,7 +10,7 @@ test('Micro Slats controls, responsive preview, reset and fullscreen',async({pag
 });
 test('homepage navigation, categories, all 62 ready routes and effect runtime',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');await page.getByRole('link',{name:'Explore Components',exact:true}).click();await expect(page).toHaveURL(/\/browse$/);await page.locator('.component-link').filter({hasText:'Glitch Text'}).click();await expect(page.locator('.glitch')).toBeVisible();
- const paths=await page.locator('.component-link[data-status=ready]').evaluateAll(els=>els.map(e=>e.getAttribute('href')!));expect(paths).toHaveLength(62);
+ const paths=await page.locator('.component-link[data-status=ready]').evaluateAll(els=>els.map(e=>e.getAttribute('href')!));expect(paths).toHaveLength(63);
  for(const path of paths){await page.goto(path);await expect(page.getByRole('heading',{level:1})).toBeVisible();await expect(page.locator('.preview-device').first()).toBeVisible();expect(await page.locator('.preview-device').evaluate(e=>e.childElementCount)).toBeGreaterThan(0);}
  for(const category of ['text-animations','animations','components','backgrounds','micro-interactions','cursor-trails']){await page.goto('/'+category);expect(await page.locator('.collection-card').count()).toBeGreaterThanOrEqual(4);}
  expect(errors).toEqual([]);

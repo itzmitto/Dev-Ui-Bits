@@ -12,27 +12,29 @@ type GPU={gl:WebGLRenderingContext;program:WebGLProgram;uniforms:Record<string,W
 /** A subdivided image strip refracts through an original screen-space glass lens.
  * Motion lives in refs; pointer samples never trigger React renders. */
 export function FlexCarousel(p:Props){
- const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),caption=useRef<HTMLSpanElement>(null),counter=useRef<HTMLSpanElement>(null),gpu=useRef<GPU|null>(null);
+ const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),caption=useRef<HTMLSpanElement>(null),counter=useRef<HTMLSpanElement>(null),link=useRef<HTMLAnchorElement>(null),gpu=useRef<GPU|null>(null);
  const items=useMemo(()=>parseImages(p.images,flexImages),[p.images]);
  const [status,setStatus]=useState('Loading photographs…'),[fallback,setFallback]=useState(false);
- const state=useRef({offset:0,velocity:0,target:0,snapping:false,drag:false,hover:false,focus:false,insideFocus:false,lastX:0,lastT:0,travel:0,width:200,height:280,step:212,cycle:2120,index:0,draws:0});
+ const state=useRef({offset:0,velocity:0,target:0,snapping:false,drag:false,hover:false,focus:false,insideFocus:false,lastX:0,lastT:0,travel:0,width:200,height:280,step:212,cycle:2120,index:0,draws:0,focusMix:0});
  const wake=useTextAnimation(host,(dt,_time,reduced)=>{
   const node=host.current,r=gpu.current,s=state.current;if(!node||!r)return false;
   const {width:w,height:h}=box.current;
   s.width=Math.min(bound(p.imageWidth,190,80,600),w*.58);s.height=Math.min(bound(p.imageHeight,280,100,650),h*.58);s.step=s.width+bound(p.gap,12,0,80);s.cycle=s.step*items.length;
   if(s.snapping&&!s.drag){const delta=relative(s.target-s.offset,s.cycle);s.offset+=delta*(reduced?1:1-Math.exp(-dt*11));if(Math.abs(delta)<.15){s.offset=s.target;s.snapping=false;}s.velocity=0;}
   else if(!s.drag&&!reduced){s.offset+=s.velocity*dt;s.velocity=coast(s.velocity,dt,bound(p.momentum,.85,0,1));if(Math.abs(s.velocity)<.15)s.velocity=0;if(p.autoplay!==false&&!(p.pauseOnHover!==false&&s.hover)&&!s.focus&&!s.insideFocus){s.offset+=(p.direction==='right'?-1:1)*bound(p.speed,28,0,250)*dt;}}
+  s.focusMix+=(Number(s.focus)-s.focusMix)*(reduced?1:1-Math.exp(-dt*10));
   s.offset=wrap(s.offset,s.cycle);s.index=wrap(Math.round(s.offset/s.step),items.length);
   if(caption.current)caption.current.textContent=items[s.index]?.title||items[s.index]?.alt||'Gallery';if(counter.current)counter.current.textContent=`${s.index+1} / ${items.length}`;
+  if(link.current){const href=items[s.index]?.href;link.current.hidden=!href;if(href)link.current.href=href;}
   node.dataset.offset=s.offset.toFixed(3);node.dataset.velocity=s.velocity.toFixed(2);node.dataset.index=String(s.index);node.dataset.draws=String(++s.draws);node.dataset.dragging=String(s.drag);
   const {gl,program,uniforms:u,textures}=r;gl.viewport(0,0,gl.drawingBufferWidth,gl.drawingBufferHeight);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);
-  gl.uniform2f(u.viewport,w,h);gl.uniform2f(u.card,s.width,s.height);gl.uniform1f(u.distortion,bound(p.distortion,.85,0,2));gl.uniform1f(u.edgeWidth,bound(p.edgeWidth,.65,.1,1.3));gl.uniform1f(u.glass,bound(p.glassStrength,1,0,3));gl.uniform1f(u.radius,bound(p.borderRadius,0,0,60));gl.uniform1f(u.blur,bound(p.blur,0,0,8));gl.uniform1f(u.velocity,s.velocity);gl.uniform1f(u.focus,s.focus?1:0);gl.uniform1i(u.image,0);
+  gl.uniform2f(u.viewport,w,h);gl.uniform2f(u.card,s.width,s.height);gl.uniform1f(u.distortion,bound(p.distortion,.85,0,2));gl.uniform1f(u.edgeWidth,bound(p.edgeWidth,.65,.1,1.3));gl.uniform1f(u.glass,bound(p.glassStrength,1,0,3));gl.uniform1f(u.radius,bound(p.borderRadius,0,0,60));gl.uniform1f(u.blur,bound(p.blur,0,0,8));gl.uniform1f(u.velocity,s.velocity);gl.uniform1f(u.focus,s.focusMix);gl.uniform1i(u.image,0);
   // Repeating virtual slots cover even a one-image data set without a seam.
   const slots=Math.ceil(w/s.step)+6,base=Math.floor(s.offset/s.step);for(let slot=base-Math.ceil(slots/2);slot<=base+Math.ceil(slots/2);slot++){
    const index=wrap(slot,items.length),texture=textures[index];if(!texture)continue;const x=slot*s.step-s.offset;if(Math.abs(x)>w*.5+s.width*1.4)continue;
-   gl.uniform2f(u.center,x,0);gl.uniform1f(u.scale,bound(p.scale,1,.5,1.5)*(s.focus&&index===s.index?1.35:1));gl.uniform2f(u.imageSize,texture.width,texture.height);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture.texture);gl.drawArrays(gl.TRIANGLES,0,32*8*6);
+   gl.uniform2f(u.center,x,0);gl.uniform1f(u.scale,bound(p.scale,1,.5,1.5)*(index===s.index?1+.35*s.focusMix:1));gl.uniform2f(u.imageSize,texture.width,texture.height);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture.texture);gl.drawArrays(gl.TRIANGLES,0,32*8*6);
   }
-  return !reduced&&(s.snapping||Math.abs(s.velocity)>.15||p.autoplay!==false&&bound(p.speed,28,0,250)>0&&!(p.pauseOnHover!==false&&s.hover)&&!s.focus&&!s.insideFocus);
+  return !reduced&&(Math.abs(Number(s.focus)-s.focusMix)>.001||s.snapping||Math.abs(s.velocity)>.15||p.autoplay!==false&&bound(p.speed,28,0,250)>0&&!(p.pauseOnHover!==false&&s.hover)&&!s.focus&&!s.insideFocus);
  });
  const box=useAnimationCanvas(host,canvas,wake,'medium');
  useEffect(()=>{
@@ -47,7 +49,7 @@ export function FlexCarousel(p:Props){
     const mesh:number[]=[];for(let x=0;x<32;x++)for(let y=0;y<8;y++)mesh.push(x/32,y/8,(x+1)/32,y/8,x/32,(y+1)/8,x/32,(y+1)/8,(x+1)/32,y/8,(x+1)/32,(y+1)/8);
     gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(mesh),gl.STATIC_DRAW);const attr=gl.getAttribLocation(program,'uv');gl.enableVertexAttribArray(attr);gl.vertexAttribPointer(attr,2,gl.FLOAT,false,0,0);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
     const uniforms=Object.fromEntries(['viewport','card','center','distortion','edgeWidth','scale','focus','velocity','image','imageSize','glass','blur','radius'].map(key=>[key,gl.getUniformLocation(program,key)]));gpu.current={gl,program,uniforms,textures,dispose};
-    let loaded=0,failed=0;items.forEach((item,i)=>{const image=new Image();image.crossOrigin='anonymous';image.decoding='async';image.onload=()=>{if(dead||resourcesDisposed)return;const texture=gl.createTexture()!;gl.bindTexture(gl.TEXTURE_2D,texture);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);textures[i]={texture,width:image.naturalWidth,height:image.naturalHeight};loaded++;setStatus(failed?`${failed} image(s) could not be loaded`:'');wake();};image.onerror=()=>{if(!dead&&!resourcesDisposed){failed++;setStatus(`${failed} image(s) could not be loaded`);}};image.src=item.src;});wake();
+    let failed=0;items.forEach((item,i)=>{const image=new Image();image.crossOrigin='anonymous';image.decoding='async';image.onload=()=>{if(dead||resourcesDisposed)return;const texture=gl.createTexture()!;gl.bindTexture(gl.TEXTURE_2D,texture);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);textures[i]={texture,width:image.naturalWidth,height:image.naturalHeight};setStatus(failed?`${failed} image(s) could not be loaded`:'');wake();};image.onerror=()=>{if(!dead&&!resourcesDisposed){failed++;setStatus(`${failed} image(s) could not be loaded`);}};image.src=item.src;});wake();
    }catch{dispose();setFallback(true);setStatus('WebGL initialization failed · simplified image strip');}
   };
   const lost=(e:Event)=>{e.preventDefault();dispose();},restore=()=>{if(!dead){setFallback(false);init();}};el.addEventListener('webglcontextlost',lost);el.addEventListener('webglcontextrestored',restore);init();
@@ -68,6 +70,6 @@ export function FlexCarousel(p:Props){
  {fallback&&<div className="flex-carousel-fallback">{items.map((item,i)=><img key={i} src={item.src} alt={item.alt||''} loading="lazy"/>)}</div>}
  {status&&<div className="flex-carousel-status" role="status">{status}</div>}
  {p.showCaptions!==false&&<div className="flex-carousel-caption"><span ref={caption}/><span>DRAG TO EXPLORE</span></div>}
- <div className="flex-carousel-footer"><button aria-label="Previous image" onClick={()=>step(-1)}>←</button><span ref={counter} aria-live="off"/><button aria-label="Next image" onClick={()=>step(1)}>→</button>{items[state.current.index]?.href&&<a href={items[state.current.index].href} target="_blank" rel="noopener noreferrer">Open image</a>}</div>
+ <div className="flex-carousel-footer"><button aria-label="Previous image" onClick={()=>step(-1)}>←</button><span ref={counter} aria-live="off"/><button aria-label="Next image" onClick={()=>step(1)}>→</button><a ref={link} hidden target="_blank" rel="noopener noreferrer">Open image</a></div>
  </div>;
 }

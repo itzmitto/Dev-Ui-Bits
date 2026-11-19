@@ -2,7 +2,7 @@
 export const flexVertex=`precision highp float;
 attribute vec2 uv;uniform vec2 viewport,card,center;uniform float distortion,edgeWidth,scale,focus,velocity;varying vec2 vUv;varying float vEdge;
 void main(){vUv=uv;vec2 p=center+(uv-.5)*card*scale;float q=p.x/(viewport.x*.5);float a=smoothstep(1.-edgeWidth,1.35,abs(q));float signX=sign(q);float bend=a*a*distortion*(1.-focus);p.y+=signX*bend*viewport.y*.34;p.x-=signX*bend*card.x*.12;float squeeze=1.-min(.13,abs(velocity)*.00004)*(1.-focus);p.y=center.y+(p.y-center.y)*squeeze;vEdge=a*(1.-focus);gl_Position=vec4(p.x/(viewport.x*.5),-p.y/(viewport.y*.5),0.,1.);}`;
-export const flexFragment=`precision mediump float;uniform sampler2D image;uniform vec2 card,imageSize;uniform float distortion,glass,blur,radius;varying vec2 vUv;varying float vEdge;
+export const flexFragment=`precision highp float;uniform sampler2D image;uniform vec2 card,imageSize;uniform float distortion,glass,blur,radius;varying vec2 vUv;varying float vEdge;
 void main(){vec2 p=vUv-.5;vec2 size=card;float r=min(radius,min(size.x,size.y)*.49);vec2 d=abs(p*size)-(size*.5-r);float dist=length(max(d,0.))+min(max(d.x,d.y),0.)-r;if(dist>0.)discard;
 vec2 st=vUv;float sourceAspect=imageSize.x/imageSize.y,target=card.x/card.y;if(sourceAspect>target)st.x=.5+(st.x-.5)*target/sourceAspect;else st.y=.5+(st.y-.5)*sourceAspect/target;
 float e=vEdge*vEdge*distortion;st.x+=sin(vUv.y*3.14159)*e*.09;st.y+=sin(vUv.x*6.28318)*e*.045;vec2 split=vec2(e*glass*.009,0.);vec3 col=vec3(texture2D(image,st+split).r,texture2D(image,st).g,texture2D(image,st-split).b);
