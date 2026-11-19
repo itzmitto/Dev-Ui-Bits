@@ -43,7 +43,7 @@ import {
   WandSparkles,
   X,
 } from "lucide-react";
-import { builtinFiles, registry, findComponent } from "./registry";
+import { registry, findComponent } from "./registry";
 import {
   categories,
   categorySlug,
@@ -64,6 +64,7 @@ import {
 } from "./storage";
 import { download, exportJSON, exportProject } from "./export";
 import { aiContext, copyText, type Documentation } from './codeDocumentation';
+import {materializeAssets} from './portableAssets';
 import { Controls } from "./Controls";
 import { Field } from "./effects/Field";
 import { starterFiles } from "./templates";
@@ -283,7 +284,14 @@ function ComponentPage({
     [previewBg, setPreviewBg] = useState("#120f17"),
     [showContent, setShowContent] = useState(false),
     [editorOpened,setEditorOpened] = useState(false);
-  const files = useMemo(()=>own ? customFiles(item, values) : builtinFiles(item, values),[item,values,own]);
+  const [sourceBuilder,setSourceBuilder]=useState<typeof import('./builtinFiles').builtinFiles|null>(null);
+  useEffect(()=>{let active=true;void import('./builtinFiles').then(module=>{if(active)setSourceBuilder(()=>module.builtinFiles);});return()=>{active=false;};},[]);
+  const baseFiles=useMemo(()=>own?customFiles(item,values):sourceBuilder?sourceBuilder(item,values):{},[item,values,own,sourceBuilder]);
+  const [portable,setPortable]=useState<{base:FileMap;files:FileMap}|null>(null),[sourceError,setSourceError]=useState('');
+  useEffect(()=>{if(tab==='preview'||!Object.keys(baseFiles).length)return;let active=true;setSourceError('');void materializeAssets(baseFiles).then(files=>{if(active)setPortable({base:baseFiles,files});}).catch(error=>{if(active)setSourceError(String(error));});return()=>{active=false;};},[baseFiles,tab]);
+  const files=portable?.base===baseFiles?portable.files:baseFiles;
+  const filesReady=Object.keys(baseFiles).length>0&&(!baseFiles['/effects/flexImages.ts']||portable?.base===baseFiles);
+
   const doc:Documentation={name:item.name,description:item.description,schema:item.schema,values,defaults:item.defaults,dependencies:item.dependencies??{},files,primaryFile:own?`/Component.${item.language}`:`/effects/${item.source}.tsx`,usageFile:own?`/App.${item.language}`:'/App.tsx',language:own&&item.language==='jsx'?'JavaScript':'TypeScript',styling:own&&item.styling==='tailwind'?'Tailwind':'CSS'};
   const selectTab=(next:string)=>{if(next==='editor')setEditorOpened(true);setTab(next);};
   const deps = item.dependencies ?? {};
@@ -396,6 +404,7 @@ function ComponentPage({
                 </button></>}
           <button
             className="icon-button"
+            disabled={!Object.keys(baseFiles).length}
             aria-label="Copy component code"
             title="Copy component code"
             onClick={() =>
@@ -408,7 +417,7 @@ function ComponentPage({
           >
             <Copy size={15} />
           </button>
-          <button className="ai-copy-button" onClick={()=>void copy(aiContext(doc))}>Copy for AI</button>
+          <button className="ai-copy-button" onClick={()=>void materializeAssets(baseFiles).then(files=>copy(aiContext({...doc,files}))).catch(error=>notify(String(error)))}>Copy for AI</button>
           {own && (
             <Link className="small-button" to={`/edit/${item.id}`}>
               Edit
@@ -532,8 +541,9 @@ function ComponentPage({
               presets={!own ? item.presets : undefined}
             />
           </div>}
-        {tab==='code'&&<Suspense fallback={<div className="loading-state">Loading source documentation…</div>}><CodeDocumentation doc={doc} onEdit={()=>selectTab('editor')} notify={notify}/></Suspense>}
-        {editorOpened&&<div className="editor-tab-panel" hidden={tab!=='editor'}><Suspense fallback={<div className="loading-state">Loading isolated playground…</div>}><Editor files={files} name={item.name} dependencies={deps} tailwind={own&&item.styling==='tailwind'} notify={notify} onSave={own?async(updated)=>{await useLibrary.getState().save({...item,files:updated,updatedAt:Date.now()});notify('Component saved to your library');}:undefined}/></Suspense></div>}
+        {tab==='code'&&!filesReady&&<div className="loading-state">{sourceError||'Preparing portable source files and local images…'}</div>}
+        {tab==='code'&&filesReady&&<Suspense fallback={<div className="loading-state">Loading source documentation…</div>}><CodeDocumentation doc={doc} onEdit={()=>selectTab('editor')} notify={notify}/></Suspense>}
+        {editorOpened&&filesReady&&<div className="editor-tab-panel" hidden={tab!=='editor'}><Suspense fallback={<div className="loading-state">Loading isolated playground…</div>}><Editor files={files} name={item.name} dependencies={deps} tailwind={own&&item.styling==='tailwind'} notify={notify} onSave={own?async(updated)=>{await useLibrary.getState().save({...item,files:updated,updatedAt:Date.now()});notify('Component saved to your library');}:undefined}/></Suspense></div>}
 
       </div>
       {tab==='preview'&&<section className="installation" id="installation">
