@@ -24,7 +24,7 @@ export function GradientASCII(p:GradientASCIIProps){
   const font=p.fontFamily||'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',tones=16,tile=Math.min(96,Math.ceil(cell*dpr*1.7)),key=JSON.stringify([colors,characters,cell,dpr,font,lightMode,dof,glow]);
   if(s.atlas?.key!==key){
    const atlas=document.createElement('canvas');atlas.width=tile*sequence.length;atlas.height=tile*tones*2;const a=atlas.getContext('2d')!;a.textAlign='center';a.textBaseline='middle';a.font=`${cell*dpr*.8}px ${font}`;
-   for(let blur=0;blur<2;blur++)for(let tone=0;tone<tones;tone++){const rgb=paletteRGB(colors,tone/(tones-1));a.fillStyle=`rgb(${rgb.map(v=>Math.round(lightMode?v*.42:v+(255-v)*(.15+.5*tone/(tones-1)))).join(',')})`;a.shadowColor=a.fillStyle;a.shadowBlur=blur?cell*dpr*.18:glow*cell*dpr*.12;for(let i=0;i<sequence.length;i++)a.fillText(sequence[i],(i+.5)*tile,(blur*tones+tone+.5)*tile);}
+   for(let blur=0;blur<2;blur++)for(let tone=0;tone<tones;tone++){const rgb=paletteRGB(colors,tone/(tones-1));a.fillStyle=`rgb(${rgb.map(v=>Math.round(lightMode?v*.42:v+(255-v)*(.15+.5*tone/(tones-1)))).join(',')})`;a.shadowColor=a.fillStyle;a.filter=blur?`blur(${cell*dpr*.12}px)`:"none";a.shadowBlur=glow*cell*dpr*.12;for(let i=0;i<sequence.length;i++)a.fillText(sequence[i],(i+.5)*tile,(blur*tones+tone+.5)*tile);}
    s.atlas={key,canvas:atlas,tile,characters,tones,palette:Array.from({length:256},(_,i)=>paletteRGB(colors,i/255))};
   }
   // Reuse a small raster for the wash; interpolate it to the HiDPI destination.

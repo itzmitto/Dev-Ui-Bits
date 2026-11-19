@@ -10,10 +10,16 @@ const vertex='attribute vec2 position;void main(){gl_Position=vec4(position,0.0,
 export const backgroundPrelude=`precision highp float;uniform vec2 resolution;uniform float time,intro,active,hasClick,pixelRatio;uniform vec2 mouse;uniform vec3 click;float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}mat2 rot(float a){return mat2(cos(a),-sin(a),sin(a),cos(a));}`;
 /** Minimal owned WebGL lifecycle: no scene library, one full-screen triangle pair, no GPU textures. */
 export function BackgroundGL({p,name,fragment,uniforms,fallback}:Props){
- const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),fallbackCanvas=useRef<HTMLCanvasElement>(null),gpu=useRef<{gl:WebGLRenderingContext;program:WebGLProgram;locations:Map<string,WebGLUniformLocation|null>;dispose:()=>void}|null>(null),pointer=useRef({x:0,y:0,inside:false}),state=useRef({time:0,intro:0,x:0,y:0,clickX:0,clickY:0,clickAge:9,drawn:false});
+ const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),fallbackCanvas=useRef<HTMLCanvasElement>(null),gpu=useRef<{gl:WebGLRenderingContext;program:WebGLProgram;locations:Map<string,WebGLUniformLocation|null>;dispose:()=>void}|null>(null),pointer=useRef({x:0,y:0,inside:false}),state=useRef({time:0,intro:0,x:0,y:0,clickX:0,clickY:0,clickAge:9,drawn:false,sampling:1,average:1/60,budgetTime:0,lastQuality:'',width:0,height:0});
  const [failed,setFailed]=useState(false);
  const wake=useTextAnimation(host,(dt,_time,reduced)=>{
-  const {width,height,dpr}=box.current,s=state.current;
+  const {width,height,dpr:baseDpr}=box.current,s=state.current,quality=String(p.quality||'medium');
+  // A bounded, downward-only budget avoids resolution oscillation. High stays native.
+  if(s.lastQuality!==quality||s.width!==width||s.height!==height){s.lastQuality=quality;s.width=width;s.height=height;s.sampling=quality==='low'?.72:1;s.average=1/60;s.budgetTime=0;}
+  if(quality==='medium'&&!reduced&&p.paused!==true&&s.intro>.75){s.average=s.average*.88+dt*.12;s.budgetTime+=dt;if(s.budgetTime>.9&&s.average>1/48&&s.sampling>.55){s.sampling=Math.max(.55,s.sampling*.82);s.budgetTime=0;s.average=1/60;}}
+  const targetWidth=Math.max(1,Math.round(width*baseDpr*s.sampling)),dpr=targetWidth/width,targetHeight=Math.max(1,Math.round(height*dpr)),el=canvas.current!;
+  if(el.width!==targetWidth)el.width=targetWidth;if(el.height!==targetHeight)el.height=targetHeight;
+  if(host.current)host.current.dataset.sampling=s.sampling.toFixed(3);
   
   if(!reduced&&p.paused!==true){s.time+=dt*bound(p.speed,.5,0,3);s.intro+=dt;s.clickAge+=dt;}else if(reduced){s.intro=3;s.clickAge=9;}
   const follow=p.paused===true?0:1-Math.exp(-dt/Math.max(.001,bound(p.mouseDampening,.15,0,.5)));s.x+=(pointer.current.x-s.x)*follow;s.y+=(pointer.current.y-s.y)*follow;

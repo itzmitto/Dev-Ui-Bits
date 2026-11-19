@@ -1,3 +1,84 @@
+## Fase 11 — Backgrounds batch 1 afgerond (19 november 2026)
+
+**Actueel: 246 catalogusitems / 62 Ready / 184 Planned.** Bij de start waren er daadwerkelijk 58 Ready en 188 Planned. Vier bestaande Planned-items zijn nu geïmplementeerd; geen nieuwe records, duplicaten, aliases of categorieën. Alle 58 eerdere Ready-componenten blijven behouden. Backgrounds bevat 69 items: de 64 namen uit de publieke officiële catalogus plus vijf bestaande eigen namen; **10 Ready / 59 Planned**. Andere categorieën zijn niet ontwikkeld of van status veranderd.
+
+| Batch-1-item | Route | Resultaat | Zelfstandige techniek |
+| --- | --- | --- | --- |
+| Gradient ASCII | /backgrounds/gradient-ascii | Nieuw Ready | Canvas-lichtvelden, luminance/glyphmapping, herbruikbare rasterbuffer en gekleurde glyphatlas |
+| Holo Mosaic | /backgrounds/holo-mosaic | Nieuw Ready | Eigen WebGL tile-SDF, normals, geëtste reflecties, interferentiekleuren en flipgolven |
+| Flux Lines | /backgrounds/flux-lines | Nieuw Ready | Eigen WebGL impliciete contouren, domeinvervorming, numerieke gradiënten, magnetisme en klikvortices |
+| Pattern Waves | /backgrounds/pattern-waves | Nieuw Ready | Canvas-hoogtevelden, afgeleide normals, verplaatste halftone-marks, contourlijnen en cursor-ripples |
+| Micro Slats | /backgrounds/micro-slats | Bestaand Ready behouden | Bestaande Field-renderer en controls ongewijzigd |
+
+### Referentieonderzoek en visuele iteraties
+
+De publieke catalogus en de vier echte demo's zijn met Chromium/Playwright bezocht. Alleen Preview, zichtbare controls, keuzemenu's en openbare propertybeschrijvingen bekeken; geen upstream componentbroncode, shaders, interne assets, Copy for AI of BG Studio-export. De actuele catalogus telt 64 Backgrounds, overeenkomend met de reeds geregistreerde officiële lijst. Geen nieuwe dependencies of assets.
+
+Gradient ASCII is bediend met echte horizontale/verticale/cirkel-/zigzagbewegingen, korte/snelle en langzamere stappen, cursorstilstand en klikken. De vier shapes zijn bekeken; character-/preset-/clickkeuzes, openbare defaults/ranges, Density/Glow/Speed via toetsenbord, Light Mode, intro, fullscreen en mobiel zijn onderzocht. De eerste promotiedialoog en een buitenbeeld vallend dropdownmenu verstoorden vroege captures; de dialoog is via de zichtbare Close-bediening gesloten en de openbare menus zijn met een hogere viewport opnieuw onderzocht. Vroege bedekte/lege captures zijn niet als visueel bewijs gebruikt.
+
+Zie `artifacts/phase11/*public-description.txt`, `*public-controls.json`, `gradient-final-observations.json`, de referentiescreenshots en browseronderzoeksscripts. Voor Holo Mosaic, Flux Lines en Pattern Waves zijn ook echte cirkelbewegingen en klikken uitgevoerd en de openbare eigenschappen vastgelegd. Dat is geen claim dat elke mogelijke officiële preset/parametercombinatie volledig is geanalyseerd.
+
+De lokale engines zijn in meerdere rondes daadwerkelijk bekeken. Gevonden en hersteld:
+
+- Gradient ASCII had eerst een te grijze middenband en zwakke glyphcontrast. Het eigen kleurprofiel en de glyphkleuren zijn naar diepere blauwe schaduw en helderdere letters bijgesteld. Eclipse gebruikt een aspectgecorrigeerde schermruimteradius. De glyphatlas telt volledige codepunten en bevat echte gecachte blur voor Depth of Field, geen enkel extra shadow-effect als vervanging voor focusvervaging.
+- Flux Lines gaf in de eerste visuele proef een wit vlak doordat straight-alpha shaderoutput via een premultiplied context werd samengesteld. De eigen context gebruikt nu `premultipliedAlpha:false`; aparte pixeltests bewaken nul alpha bij Opacity nul. De contourfrequentie en glow zijn daarna gericht bijgesteld.
+- Holo Mosaic had te brede, felle bevelranden; die zijn smaller/subtieler gemaakt. Pattern Waves kreeg kleinere speculaire highlights. De lijnmodus gebruikt nu per-segment shading/fade, zodat fade en opacity daar eveneens de echte rendering beïnvloeden.
+- Voor de laatste vergelijking zijn de echte lokale componenten ook in een **genegeerde meetharness van 754×598** vastgelegd, gelijk aan de publieke previewmaat: `calibrated-final.json` en `*-calibrated-final.png`. Dit is uitsluitend onderzoek, geen tweede productarchitectuur. De gewone productiepagina's en mobiele screenshots zijn eveneens bekeken. Gekalibreerde captures tonen native sampling; Medium kan onder belasting adaptief lager bemonsteren.
+
+### Functionaliteit, broncode en lifecycle
+
+Gradient ASCII heeft Horizon/Pinch/Rise/Eclipse; Letters/Binary/Symbols/Blocks/Custom; Wave/Burst/None; twee tot acht kleuren; alle gevraagde numerieke controls; intro, light mode, mouse interaction, pause en volledige eigen presets. De component accepteert `colors` als array of hexlijst. Het bestaande schema gebruikt een bewerkbaar hexlijstveld; ongeldige/onvoldoende kleuren vallen terug op defaults. De begrensde atlas ondersteunt maximaal 32 codepunten. Wash en glyphs samplen hetzelfde eigen scalaire lichtveld, geen los tekstlaagje boven CSS-gradients.
+
+De overige drie hebben verschillende eigen algoritmen en relevante werkende schema’s/presets, geen generieke herkleurde particle-engine. Bestaande Preview/Code/Editor, viewportknoppen, Reset/Restart, fullscreen, Install/Usage/Code, copyfuncties en lazy Sandpack worden hergebruikt. Alle runtimehelpers, CSS, defaults en de eigen GLSL-bestanden zijn onderdeel van de daadwerkelijke bronexport en compileren in Sandpack. Geen fictieve installatiecommando's of extra codevarianten.
+
+`backgroundGL.tsx` deelt alleen input/GPU-lifecycle/quality. Program, vertexbuffer en beide shaders worden opgeruimd bij unmount en contextverlies, en hersteld bij contextrestauratie. Onbeschikbaar WebGL krijgt een **zichtbaar gelabelde vereenvoudigde Canvas-preview**, die niet dezelfde optische kwaliteit claimt. Bestaande visibility-/ResizeObserver-/HiDPI-hooks worden gebruikt; pointercoördinaten en shadergeometrie blijven in CSS-pixels. Geen globale cursorlaag.
+
+### Daadwerkelijke eindtests
+
+- `npm run typecheck`: **geslaagd**, strict TypeScript; `artifacts/phase11/typecheck-complete.log`.
+- `npm test`: **56/56 tests, 13 bestanden geslaagd**; `artifacts/phase11/unit-complete.log`. Lichtvelden, paletvalidatie, glyphmapping, onderscheiden clickvelden, aspectgeometrie, Pattern-hoogten/fades, registry en complete transitieve exports/presets.
+- `npm run build`: **geslaagd**; `artifacts/phase11/build-complete.log`. Hoofdbundel **759,70 kB / 238,04 kB gzip**. De bestaande 750-kB-waarschuwing wordt nu gegeven en is niet onderdrukt of verhoogd. Renderers blijven lazy; de bestaande eager broncodeteksten voor documentatie vergroten de startbundel. Async bronloading is een vervolgpunt voor schaalbaarheid.
+- Brede productie-regressie: **104/104 geslaagd, 5,8 minuten**; `artifacts/phase11/e2e-production.log`. Inclusief alle **246** catalogusroutes, filters/tellers, sidebar, homepage, themes, GitHub-link, oorspronkelijke Micro Slats, alle toenmalige 62 Ready-routes, bestaande clickcomponenten, IndexedDB, import/export, live editorbewerking/fouten/reset en gedeelde copy-/Code-/Playgroundflows.
+- Aanvullend **1/1 geslaagd, 56,6 seconden**: alle **62 Ready-schema’s** met gewijzigde controls, actuele Usage, tabwissels en Reset; `artifacts/phase11/e2e-all-ready.log`.
+- Na de laatste Gradient-polish, sampling en echte glyphblur: **29/29 definitieve batchtests geslaagd, 2,9 minuten**, op de definitieve productiebuild; `artifacts/phase11/e2e-complete.log`. Alle vier nieuwe Sandpack-voorbeelden compileren werkelijk. Shapes, markmodes, pointer/klik, alle relevante controls, presets, Reset/Restart, echte pixels/opacity, touch/DPR, fullscreen, refresh, contextverlies/herstel, fallback en unmount zijn gecontroleerd. Browserconsole/pageerrors worden in de relevante preview-/Sandpacktests verzameld; geen fouten.
+
+De brede regressie dateert van vóór de laatste uitsluitend nieuwe-engine-verfijningen; de volledige nieuwe batch is daarna opnieuw getest. De 104- en 29-testselecties overlappen en worden niet als 133 unieke scenario's voorgesteld. Tussentijdse geslaagde 12-/26-/14-testcontroles blijven als extra logs bewaard, niet dubbelgeteld in de eindresultaten. De eerste Gradient-browsertest gebruikte een verkeerde fullscreenknopnaam en is onderbroken na die fout; de selector is naar de echte bestaande knopnaam gecorrigeerd vóór de geslaagde hertests.
+
+Alle negen gevraagde viewportgroottes zijn daadwerkelijk getest: **375×812, 430×932, 768×1024, 1366×768, 1440×900, 1920×1080, 2560×1440, 3440×1440, 3840×2160**. Beide themes, bounds, fullscreen, correcte DPI en geen horizontale overflow. Extra native touchcontext op 375px/DPR 2. Alleen Chromium/Linux (Chrome 155.0.8059.39, Node 24.22.2), geen fysieke telefoon- of Safari/Firefox-validatie.
+
+De checksums van Arc Cursor, Pigment Trail, hun paint-/brushhelpers en cursorconfig stemmen nog overeen met de eindverificatie van fase 10 (`artifacts/phase10-resume-source.sha256`). Geen implementaties uit andere categorieën aangepast; alleen verwachte catalogustellers in bestaande tests zijn bijgewerkt.
+
+### Gemeten performance en grenzen
+
+`scripts/profile-background-batch-one.mjs` is na de eindtests zonder parallelle browsertests uitgevoerd op de definitieve productiebuild. Vier seconden opwarmtijd; twee seconden meetinterval per geval. Bewijs: `artifacts/phase11/performance.log` / `performance.json`.
+
+| Engine | Viewportbreedte | Draw-updates/s | Gem. JS-callback ms | GPU-samplingfactor |
+| --- | ---: | ---: | ---: | ---: |
+| gradient-ascii | 1440 | 60.1 | 3.08 | n.v.t. |
+| holo-mosaic | 1440 | 58.9 | 0.17 | 1.000 |
+| flux-lines | 1440 | 59.9 | 0.12 | 0.820 |
+| pattern-waves | 1440 | 60.2 | 3.15 | n.v.t. |
+| gradient-ascii | 375 | 59.9 | 1.14 | n.v.t. |
+| holo-mosaic | 375 | 59.9 | 0.14 | 1.000 |
+| flux-lines | 375 | 59.8 | 0.14 | 1.000 |
+| pattern-waves | 375 | 59.9 | 1.25 | n.v.t. |
+
+Alle acht gevallen: **0 nieuwe canvassen tijdens de steekproef, 0 verborgen-preview-draws en 0 doorlopende reduced-motion-draws; geen pageerrors**. Atlas/rasterbuffers worden hergebruikt. Pattern-markdichtheid is begrensd; pointergolven, klikvelden en glyphatlas zijn bounded. Dit zijn korte draw-update-/JS-callbackmetingen, geen gegarandeerde scherm-FPS, GPU-tijdmeting of langdurige heapgarantie.
+
+De GPU-backend is hier **ANGLE/SwiftShader (software)**. Een eerste Holo-steekproef kwam op 1440px uit op 26,8 updates/s; de herhaalde opgewarmde eindproef op 58,9. Deze verandering kan niet uitsluitend aan adaptatie worden toegeschreven: Holo gebruikte in die eindsteekproef factor 1,000. Flux gebruikte op desktop factor 0,820. De oorspronkelijke baseline staat in `performance-before-adaptive.json` en `.log`. Warm-up, belasting en software-GPU variëren; geen hardwareclaim.
+
+Medium verlaagt bij onvoldoende gemeten framecadans de GPU-sampling in begrensde stappen, minimaal 0,55; High blijft native tot de DPR-cap en Low gebruikt factor 0,72. Geen op-en-neer oscillerende resolutie. Een aparte **synthetische** vertraagde-draw-test bewijst dat Medium reageert en High native blijft; die kunstmatige belasting is niet gebruikt in bovenstaande benchmark. Lagere sampling kan fijne randen verzachten. De fallback is eenvoudiger dan de normale GPU-renderer.
+
+### Eerlijke visuele beperkingen en vervolg
+
+Gradient ASCII heeft een eigen licht-/kleurprofiel, drift en systeemmonospace in plaats van een meegeleverd referentiefont; de Eclipse-rand en glow zijn niet identiek. Holo heeft een andere interferentie-/studioverdeling en geen volledige fysieke spectrale optica. Flux gebruikt analytische impliciete contouren, geen volledige vloeistofsolver; topologie en timing verschillen. Pattern Waves heeft een eigen hoogteveld/markgeometrie, waardoor de positie van glints en vouwen afwijkt. Geen pixel-perfecte of officiële API-compatibiliteitsclaim.
+
+README.md, ADDING-COMPONENTS.md en LICENSE_REVIEW.md zijn bijgewerkt. De actuele gratis upstreamlicentie beperkt herdistributie van de componenten zelf; daarom is geen upstream componentcode of shader opgenomen. Geen nieuwe dependency/font/texture/afbeelding. Geen juridische garantie.
+
+**Exact vervolgpunt: batch 2, eerst Shape Waves, daarna Aero Shards, Ghost Fibers, CRT Warp en Molten Metal.** Alle 59 resterende officiële backgrounds blijven Planned; batches 2–13 zijn niet gestart. Volgende uitvoering: lees deze resultaten, onderzoek de eigen publieke demo en promoveer alleen werkelijk werkende items, zonder dubbele records. Geen nieuwe project-ZIP, Git-mutaties, commits, pushes, PR's of deployments door deze uitvoering.
+
+---
+
 ## Fase 10 — Arc Cursor & Pigment Trail afgerond (19 november 2026)
 
 **246 catalogusitems / 58 Ready / 188 Planned.** De twee bestaande registraties, routes en alle overige 56 Ready-componenten zijn behouden. Geen nieuwe componenten, dependencies, assets of statuswijzigingen. Bij deze hervatting zijn de verbeterde renderers bewust niet herschreven; alleen eindcontroles, genegeerde onderzoeksartefacten en dit verslag zijn bijgewerkt.
