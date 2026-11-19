@@ -11,7 +11,7 @@ void main(){
  float radius=.02+roundness*.18;vec2 q=abs(local)-vec2(.5-gap*.5-radius);float sdf=length(max(q,0.0))+min(max(q.x,q.y),0.0)-radius;
  if(sdf>0.0){gl_FragColor=vec4(baseColor,opacity);return;}
  vec2 p=(center+local*cell)/resolution.y;float field=surface(p*2.0+seed*scatter*.3);float angle=field+seed*scatter*3.0+time*.08+magnet*.8;
- vec2 edgeNormal=sign(local)*smoothstep(.3,.5,abs(local));vec3 normal=normalize(vec3(edgeNormal*bevel*2.0+vec2(sin(seed*5.0),cos(seed*4.0))*tilt*.4,1.0));
+ vec2 edgeNormal=sign(local)*smoothstep(.42,.5,abs(local));vec3 normal=normalize(vec3(edgeNormal*bevel*.7+vec2(sin(seed*5.0),cos(seed*4.0))*tilt*.4,1.0));
  float reflection=pow(.5+.5*sin(angle*3.0+normal.x*4.0+normal.y*2.0),3.0-softness*1.5);
  float spec=pow(max(0.0,dot(normal,normalize(vec3(.4+magnet,.6,.8)))),24.0)*sheen;
  vec3 spectral=.5+.5*cos(vec3(0.0,2.094,4.188)+angle*6.2831);

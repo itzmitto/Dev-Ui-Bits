@@ -14,9 +14,9 @@ export function BackgroundGL({p,name,fragment,uniforms,fallback}:Props){
  const [failed,setFailed]=useState(false);
  const wake=useTextAnimation(host,(dt,_time,reduced)=>{
   const {width,height,dpr}=box.current,s=state.current;
-  if(p.paused===true&&s.drawn)return false;
-  if(!reduced){s.time+=dt*bound(p.speed,.5,0,3);s.intro+=dt;s.clickAge+=dt;}else{s.intro=3;s.clickAge=9;}
-  const follow=1-Math.exp(-dt/Math.max(.001,bound(p.mouseDampening,.15,0,.5)));s.x+=(pointer.current.x-s.x)*follow;s.y+=(pointer.current.y-s.y)*follow;
+  
+  if(!reduced&&p.paused!==true){s.time+=dt*bound(p.speed,.5,0,3);s.intro+=dt;s.clickAge+=dt;}else if(reduced){s.intro=3;s.clickAge=9;}
+  const follow=p.paused===true?0:1-Math.exp(-dt/Math.max(.001,bound(p.mouseDampening,.15,0,.5)));s.x+=(pointer.current.x-s.x)*follow;s.y+=(pointer.current.y-s.y)*follow;
   const f:BackgroundFrame={width,height,time:s.time,intro:p.intro===false?1:Math.min(1,s.intro/1.5),mouse:[s.x/Math.max(1,width),1-s.y/Math.max(1,height)],active:pointer.current.inside&&p.mouseInteraction!==false?1:0,click:[s.clickX/width,1-s.clickY/height,s.clickAge],hasClick:s.clickAge<2?1:0,reduced};
   const resource=gpu.current;
   if(resource&&!failed){const{gl,program,locations}=resource;gl.viewport(0,0,gl.drawingBufferWidth,gl.drawingBufferHeight);gl.useProgram(program);
@@ -31,13 +31,13 @@ export function BackgroundGL({p,name,fragment,uniforms,fallback}:Props){
  const box=useAnimationCanvas(host,canvas,wake,String(p.quality||'medium'));
  useEffect(()=>{
   const el=canvas.current!;let disposed=false;
-  const init=()=>{const gl=el.getContext('webgl',{alpha:true,antialias:false,preserveDrawingBuffer:true});if(!gl){setFailed(true);return;}
+  const init=()=>{const gl=el.getContext('webgl',{alpha:true,antialias:false,premultipliedAlpha:false,preserveDrawingBuffer:true});if(!gl){setFailed(true);return;}
    let program:WebGLProgram|null=null,buffer:WebGLBuffer|null=null;const shaders:WebGLShader[]=[];
    const dispose=()=>{if(buffer)gl.deleteBuffer(buffer);if(program)gl.deleteProgram(program);for(const shader of shaders)gl.deleteShader(shader);};
    try{program=gl.createProgram();if(!program)throw Error('Unable to create shader program');for(const [kind,source]of [[gl.VERTEX_SHADER,vertex],[gl.FRAGMENT_SHADER,fragment]] as const){const shader=gl.createShader(kind)!;shaders.push(shader);gl.shaderSource(shader,source);gl.compileShader(shader);if(!gl.getShaderParameter(shader,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(shader)||'Shader compilation failed');gl.attachShader(program,shader);}gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program)||'Shader link failed');buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);const pos=gl.getAttribLocation(program,'position');gl.enableVertexAttribArray(pos);gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);gpu.current={gl,program,locations:new Map(),dispose};setFailed(false);wake();}catch(e){dispose();if(host.current)host.current.dataset.shaderError=String(e);setFailed(true);}
   };
   const lost=(e:Event)=>{e.preventDefault();gpu.current?.dispose();gpu.current=null;setFailed(true);};const restored=()=>{if(!disposed)init();};el.addEventListener('webglcontextlost',lost);el.addEventListener('webglcontextrestored',restored);init();return()=>{disposed=true;el.removeEventListener('webglcontextlost',lost);el.removeEventListener('webglcontextrestored',restored);gpu.current?.dispose();gpu.current=null;};
  },[fragment]);
- const point=(e:PointerEvent<HTMLDivElement>)=>{const q=canvasPoint(e.currentTarget,e.clientX,e.clientY);Object.assign(pointer.current,q,{inside:true});wake();return q;};
+ const point=(e:PointerEvent<HTMLDivElement>)=>{const q=canvasPoint(e.currentTarget,e.clientX,e.clientY);if(p.paused===true)return q;Object.assign(pointer.current,q,{inside:true});wake();return q;};
  return <div ref={host} className="background-engine" data-background={name} style={{background:p.lightMode===true?'#f4f5f8':String(p.backgroundColor||p.color||'#120f17')}} onPointerMove={point} onPointerLeave={()=>{pointer.current.inside=false;wake();}} onPointerDown={e=>{const q=point(e);if(p.paused===true||p.mouseInteraction===false||p.flipOnClick===false||p.clickSwirl===false)return;Object.assign(state.current,{clickX:q.x,clickY:q.y,clickAge:0});wake();}}><canvas ref={canvas} aria-label={`${name} procedural background`} role="img" style={{visibility:failed?'hidden':'visible'}}/>{failed&&<><canvas ref={fallbackCanvas} aria-label={`${name} simplified Canvas fallback`} role="img"/><span className="background-fallback" role="status">WebGL unavailable · simplified Canvas preview</span></>}</div>;
 }
