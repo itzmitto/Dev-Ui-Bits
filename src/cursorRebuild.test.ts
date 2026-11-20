@@ -1,7 +1,8 @@
 import {describe,it,expect} from 'vitest';
 import {paperNoise,brushPressure,pigmentMix,quadraticPoint} from './effects/pigmentBrush';
 import {fadeInk,followAlpha} from './effects/paintCursorRuntime';
-import {registry,findComponent,builtinFiles} from './registry';
+import {registry, findComponent} from './registry';
+import {builtinFiles} from './builtinFiles';
 import {cursorTrails} from './effects/cursorTrails.config';
 describe('Arc / Pigment rebuild',()=>{
  it('retains all existing records and routes',()=>{expect(registry).toHaveLength(246);expect(registry.filter(c=>c.status==='ready')).toHaveLength(63);for(const slug of ['arc-cursor','pigment-trail'])expect(registry.filter(c=>c.id===slug)).toHaveLength(1);});

@@ -3,7 +3,8 @@ import {ballSeeds} from './effects/CrystalizedBall.renderer';
 import {resampleOutline,keyOpaqueBackdrop} from './effects/ElectricLogo.geometry';
 import {ditherImage} from './effects/DitherVeil.dither';
 import {animationBatchOne} from './effects/animationBatchOne.config';
-import {builtinFiles,findComponent,registry} from './registry';
+import {findComponent, registry} from './registry';
+import {builtinFiles} from './builtinFiles';
 import {validateSchema} from './storage';
 describe('independent animation batch one',()=>{
  it('generates repeatable 3D particle seeds without exceeding normalized bounds',()=>{const a=ballSeeds(15000);expect(a.length).toBe(60000);expect(a).toEqual(ballSeeds(15000));expect(a.some(v=>v<0||v>=1)).toBe(false);expect(new Set(a.slice(0,400)).size).toBe(400);});

@@ -1,6 +1,6 @@
 # DevUI Bits
 
-Een zelfstandige bibliotheek met **246 catalogusitems: 62 werkende React-componenten en 184 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Alle 58 vóór fase 11 werkende componenten, bestaande routes en functies zijn behouden.
+Een zelfstandige bibliotheek met **246 catalogusitems: 63 werkende React-componenten en 183 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Alle 62 vóór fase 12 werkende componenten, bestaande routes en functies zijn behouden.
 
 **Start hier:** [SETUP-GITHUB-VERCEL.md](SETUP-GITHUB-VERCEL.md) beschrijft ZIP → VS Code → GitHub → publieke Vercel-site, met exacte commando's en controles vóór Git-initialisatie of remote-wijzigingen.
 
@@ -33,13 +33,13 @@ Op Linux eventueel `npx playwright install --with-deps chromium`. De testconfigu
 
 ## Complete componentcatalogus
 
-`/browse` en `/get-started/index` openen dezelfde volledige catalogus. Deze bevat alle 217 aangeleverde namen in de gevraagde volgorde plus 22 bestaande namen en zeven originele Cursor Trails: **246 unieke records**, waarvan **62 Ready** en **184 Planned**. In fase 4 zijn uitsluitend catalogus en placeholders gebouwd. Fase 5 voegt Tech Text toe. Fase 6 leverde tien extra Text Animations. Fase 7 ontwikkelt uitsluitend Animations, te beginnen met vijf bestaande planned records.
+`/browse` en `/get-started/index` openen dezelfde volledige catalogus. Deze bevat alle 217 aangeleverde namen in de gevraagde volgorde plus 22 bestaande namen en zeven originele Cursor Trails: **246 unieke records**, waarvan **63 Ready** en **183 Planned**. In fase 4 zijn uitsluitend catalogus en placeholders gebouwd. Fase 5 voegt Tech Text toe. Fase 6 leverde tien extra Text Animations. Fase 7 ontwikkelt uitsluitend Animations, te beginnen met vijf bestaande planned records.
 
 | Categorie | Totaal | Ready | Planned |
 | --- | ---: | ---: | ---: |
 | Text Animations | 34 | 16 | 18 |
 | Animations | 41 | 8 | 33 |
-| Components | 56 | 16 | 40 |
+| Components | 56 | 17 | 39 |
 | Micro Interactions | 39 | 5 | 34 |
 | Backgrounds | 69 | 10 | 59 |
 | Cursor Trails | 7 | 7 | 0 |
@@ -291,3 +291,11 @@ Verschillen blijven bestaan in lichtprofiel, glyphfont, reflectiepatronen, conto
 Volgende achtergrondbatch: **Shape Waves → Aero Shards → Ghost Fibers → CRT Warp → Molten Metal**. Alle 59 resterende officiële backgrounds blijven Planned. Zie ADDING-COMPONENTS.md en LICENSE_REVIEW.md.
 
 Eindcontrole fase 11: strict typecheck, 56 unit-tests, productiebuild, 104 brede productie-browsertests en na de laatste enginewijzigingen 29 volledige batchchecks plus een gerichte Pause/Restart-hertest geslaagd. Een aparte 62-Ready-schemaflow slaagt eveneens. De suites overlappen; zie PROGRESS.md voor precieze versies, logs, de bundelwaarschuwing en de acht korte software-GPU/Canvas-meetgevallen.
+
+## Fase 12 — Flex Carousel
+
+`/components/flex-carousel` gebruikt een zelfstandige WebGL-mesh met 32×8 subdivisions per kaart, gebogen lensranden, refractieve UV-verplaatsing en lokale chromatische spreiding. De rij herhaalt virtuele slots naadloos, ondersteunt pointer/touch drag, tijdafhankelijke inertia, autoplay, pause-on-hover/focus, pijltjestoetsen, focus en Escape. Er zijn vier volledige presets en eigen controls voor media, geometrie, glas en beweging. De overige negen gevraagde fase-12-items blijven Planned.
+
+Tien originele lokale PNG’s: zie [IMAGE_ASSETS.md](IMAGE_ASSETS.md). Code/Sandpack bevatten de beelden als zelfstandig data-URL-module; de hoofdpreview gebruikt public-paden. De fallback bij ontbrekend WebGL is eerlijk gelabeld als vereenvoudigde afbeeldingenrij. Geen extra dependency.
+
+Bronarchief `src/builtinFiles.ts` wordt dynamisch geladen, gescheiden van de registry. De gemeten productie-hoofdbundle is circa 418 kB minified; bronarchief circa 363 kB, Sandpack/Editor circa 624 kB apart. De eerdere 750 kB-waarschuwing is opgelost zonder de grens te verhogen. Definitieve testresultaten en visuele beperkingen staan bovenaan PROGRESS.md.

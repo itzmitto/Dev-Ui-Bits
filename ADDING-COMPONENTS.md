@@ -180,3 +180,11 @@ Tests: `src/backgroundBatchOne.test.ts` en `tests/background-batch-one.spec.ts`.
 GPU-quality: Medium past de sampling in begrensde stappen omlaag aan bij onvoldoende framecadans; de ondergrens is 0,55 van de normale sampling. Er is geen heen-en-weer schakelende resolutielus. High blijft native; Low gebruikt factor 0,72. Een nieuwe viewport/qualitykeuze reset het budget. Shaderuniforms blijven in CSS-pixels via de werkelijke pixelRatio. De profiler wacht vier seconden voor de steekproef om intro en adaptatie te laten stabiliseren. Dit kan de scherpte van zeer fijne randen verminderen; het is een expliciete kwaliteit/prestatie-afweging.
 
 Een gepauzeerde component moet ook bij eerste mount/Restart een zichtbaar statisch beeld kunnen tekenen; laat een intro met fase nul niet permanent leeg blijven. De aparte paused-restartcheck controleert deze combinatie. Het profiel registreert de sampling direct vóór en na het meetvenster, zodat eventuele verdere adaptatie zichtbaar blijft.
+
+## Fase 12: media en lazy bronarchief
+
+`builtinFiles` staat nu in `src/builtinFiles.ts`, niet in de runtime-registry. Importeer het in broncode/unit-tests uit die module. De app laadt die functie dynamisch op een detailpagina; het bronarchief hoort niet in de homepagebundel. De effectrenderer zelf blijft via de bestaande effectModules-glob lazy geladen.
+
+Flex Carousel is één bestaand catalogusrecord; registratie, defaults en controls staan in FlexCarousel.config.ts. Exporthelpers: FlexCarousel.math.ts, FlexCarousel.shader.ts, flexImages.ts, textRuntime.ts, animationCanvas.ts, textCanvas.ts. `styles` bevat FlexCarousel.css. Voeg elke transitieve import toe aan supportingFiles.
+
+Nieuwe publieke binaire assets moeten een bewuste portable strategie krijgen. Voor deze carousel zet portableAssets.ts de tien bekende PNG’s voor documentatie/editor om naar data-URL’s. Custom gebruikersmedia wordt niet stilzwijgend gedownload. Kopieer daarvoor de assets of gebruik geschikte eigen CORS-URLs. Zie IMAGE_ASSETS.md. Behoud de file-map-identiteit zolang de inhoud hetzelfde blijft, zodat themaschakelingen en tabwissels geen Sandpack-drafts wissen.

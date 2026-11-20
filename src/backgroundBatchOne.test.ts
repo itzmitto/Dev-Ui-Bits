@@ -2,7 +2,8 @@ import {describe,it,expect} from 'vitest';
 import {asciiLight,parseASCIIColors,glyphIndex,clickInfluence,paletteRGB} from './effects/GradientASCII.field';
 import {patternHeight,patternFade} from './effects/PatternWaves.field';
 import {backgroundBatchOne} from './effects/backgroundBatchOne.config';
-import {findComponent,builtinFiles} from './registry';
+import {findComponent} from './registry';
+import {builtinFiles} from './builtinFiles';
 describe('independent ASCII light engine',()=>{
  it('validates editable palettes and preserves useful fallback colors',()=>{expect(parseASCIIColors('#aa00ff, #00ffcc')).toEqual(['#aa00ff','#00ffcc']);expect(parseASCIIColors('invalid')).toHaveLength(4);expect(parseASCIIColors(Array(12).fill('#ffffff'))).toHaveLength(8);expect(paletteRGB(['#000000','#ffffff'],.5)).toEqual([127.5,127.5,127.5]);});
  it('samples four distinct bounded evolving light distributions',()=>{const signatures=[];for(const shape of ['horizon','pinch','rise','eclipse'] as const){const a=Array.from({length:100},(_,i)=>asciiLight(i%10/9,Math.floor(i/10)/9,0,shape)),b=Array.from({length:100},(_,i)=>asciiLight(i%10/9,Math.floor(i/10)/9,4,shape));expect(a.every(x=>Number.isFinite(x)&&x>=0&&x<=1)).toBe(true);expect(b).not.toEqual(a);signatures.push(a.join(','));}expect(new Set(signatures).size).toBe(4);});

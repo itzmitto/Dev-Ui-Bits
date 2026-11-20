@@ -1,6 +1,7 @@
 import {it,expect} from 'vitest';
 import {aiContext,allFiles,installation,type Documentation} from './codeDocumentation';
-import {builtinFiles,readyComponents} from './registry';
+import {readyComponents} from './registry';
+import {builtinFiles} from './builtinFiles';
 import {validHex,clampControl} from './Controls';
 const item=readyComponents.find(x=>x.slug==='blur-text')!;
 const doc:Documentation={name:item.name,description:item.description,schema:item.schema,values:item.defaults,defaults:item.defaults,dependencies:item.dependencies,files:builtinFiles(item,item.defaults),primaryFile:`/effects/${item.source}.tsx`,usageFile:'/App.tsx',language:'TypeScript',styling:'CSS'};

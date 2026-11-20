@@ -5,7 +5,8 @@ import { glyphAlphabet } from './effects/GlyphStream';
 import { brushEdge } from './effects/PigmentTrail';
 import { arcOffset } from './effects/ArcCursor';
 import { mixColor } from './effects/cursorRuntime';
-import { registry,findComponent,builtinFiles } from './registry';
+import {registry, findComponent} from './registry';
+import {builtinFiles} from './builtinFiles';
 import { validateSchema } from './storage';
 describe('original cursor effects',()=>{
  it('keeps lightning offsets bounded and coherent over time',()=>{for(let i=0;i<50;i++){const a=arcOffset(i,2,1,1.5);expect(Math.abs(a)).toBeLessThanOrEqual(1);expect(Math.abs(a-arcOffset(i,2,1.001,1.5))).toBeLessThan(.1);}});

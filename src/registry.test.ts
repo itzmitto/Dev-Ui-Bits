@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { builtinFiles, registry, readyComponents, findComponent } from './registry';
+import {registry, readyComponents, findComponent} from './registry';
+import {builtinFiles} from './builtinFiles';
 import { componentPath, categorySlug } from './types';
 import { validateSchema } from './storage';
 

@@ -136,4 +136,3 @@ for (const entry of registry) {
   }
 }
 export const findComponent = (category: string, slug: string) => routes.get(`/${category}/${slug}`);
-export {builtinFiles} from './builtinFiles';

@@ -3,7 +3,8 @@ import { loopPath } from './effects/TextLoop';
 import { flapOrder,flapPhrases } from './effects/SplitFlapText';
 import { particleTargets } from './effects/particleTargets';
 import { textBatchOne } from './effects/textBatchOne.config';
-import { builtinFiles,findComponent,registry } from './registry';
+import {findComponent, registry} from './registry';
+import {builtinFiles} from './builtinFiles';
 import { validateSchema } from './storage';
 describe('batch 1 independent text engines',()=>{
  it('creates distinct continuous SVG curves with finite coordinates',()=>{const paths=['wave','circle','infinity','arch','line'].map(shape=>loopPath(shape,90));expect(new Set(paths).size).toBe(5);for(const path of paths){expect(path.startsWith('M')).toBe(true);expect(path).not.toMatch(/NaN|Infinity|undefined/);}expect(loopPath('wave',0)).not.toBe(loopPath('wave',90));});

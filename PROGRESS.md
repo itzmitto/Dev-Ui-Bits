@@ -1,3 +1,47 @@
+## Fase 12 — batch 1 afgerond: Flex Carousel + lokale PNG’s (19 november 2026)
+
+**Actueel: 246 catalogusitems / 63 Ready / 183 Planned.** Start: 246 / 62 / 184. Uitsluitend de bestaande Flex Carousel-entry is van Planned naar Ready gegaan. Geen nieuwe catalogusrecords, routes, categorieën, dependencies of project-ZIP. Alle 62 eerdere Ready-componenten zijn behouden. Components: **56 totaal / 17 Ready / 39 Planned**; Backgrounds blijft **69 / 10 / 59**. De overige negen fase-12-componenten zijn niet ontwikkeld of van status veranderd.
+
+### Opgeleverd
+
+- `/components/flex-carousel`: oorspronkelijke WebGL-renderer met 32×8 meshsubdivisions per zichtbare kaart, S-vormige geometrievervorming door een onzichtbare lens, refractieve UV-verplaatsing en plaatselijke chromatische lichtsplitsing. Geen overgenomen upstream componentcode, shaders of demo-assets; geen blurmasker als vervanging voor vervorming.
+- Naadloze virtuele slots, wrapping in beide richtingen (ook één afbeelding), echte pointer/touch drag, tijdafhankelijke momentumdemping, instelbare continue autoplay, hover-/focuspauze, pijltjestoetsen, klikfocus, Escape en vorige/volgende. Focus schaalt vloeiend en geeft naburige kaarten ruimte. Resize behoudt de relatieve positie. Instellingen werken via het bestaande schema; Liquid/Ribbon/Prism/Still zijn volledige eigen presets.
+- Tien originele gegenereerde PNG’s in `public/images/flex-carousel/`, 900×1200, samen **5.857.124 bytes**. Werkelijke signatuur en IHDR-afmetingen getest. De contact sheet is bekeken. Zie `IMAGE_ASSETS.md` en `public/images/ASSET_CREDITS.md` voor prompts, alttekst, herkomst, optimalisatie en rechtenbeperkingen.
+- Default image-array en JSON/pad-invoer; captions, altteksten en optionele veilige http(s)-links. Alleen zichtbare/nabije textures worden opgevraagd; onbekende/beschadigde/CORS-geblokkeerde media worden zichtbaar gemeld. WebGL-onbeschikbaarheid krijgt een gelabelde, vereenvoudigde scrollbare afbeeldingenrij.
+- Bestaande Install/Usage/Code, Copy All Files, Copy for AI en Playground behouden. Voor portable broncode worden de tien default PNG’s op verzoek gevalideerd en in `flexImages.ts` ingebed. Sandpack compileert en laadt deze zonder localhost-/parent-origin-URLs. De hoofdpreview blijft gewone lokale public-paden gebruiken. Custom aangeleverde media blijft de verantwoordelijkheid van de gebruiker; die wordt niet stilzwijgend gedownload of hergelicentieerd.
+- Het bronarchief is verplaatst van de registry naar dynamisch geladen `src/builtinFiles.ts`. De homepage laadt dit archief niet. Laatste productie-output: hoofdchunk **418,73 kB / 131,63 kB gzip**, bronarchief **362,82 kB / 113,55 kB gzip**, Editor **624,05 kB** apart. De eerdere circa 760 kB-hoofdchunkwaarschuwing is opgelost; de waarschuwingsgrens van 750 kB is niet verhoogd.
+
+### Werkelijk uitgevoerd en geslaagd
+
+- Strict TypeScript: `npm run typecheck`, laatste resultaat `artifacts/phase12/typecheck-final.log`.
+- Vitest: **64 tests in 15 bestanden**, `npm test`, laatste resultaat `unit-final.log`.
+- Productiebuild: `npm run build`, `build-final.log`; geen chunk-size-waarschuwing.
+- Brede productie-regressie: **109 Playwright-tests geslaagd (6,1 min)**, `e2e-production.log`. Inclusief alle **246 catalogusroutes**, runtime/navigatie van alle **63 Ready-modules**, hun schema-controls en huidige instellingen in Code, homepage, categorieën, dark/light, IndexedDB, import/export, bestaande editorbewerking/compilerfouten/reset en de zes glasscomponenten.
+- Na lazy-media/broncode-optimalisaties: **25 productiechecks geslaagd (1,0 min)**, `e2e-final.log`: 14 Flex-tests en 11 gedeelde Playground/copy/responsive-checks.
+- Na de laatste shader-, contrast- en toegankelijkheidsverfijning: **15 Flex-productietests geslaagd (36,4 s)**, `e2e-polish.log`. Deze controleren echte GPU-rendering, beide dragrichtingen, momentum, autoplay/hover, custom media, kapotte media, presets, reset/restart, fullscreen, Code, echte Sandpack-compilatie met PNG’s, portable kopieeracties, hidden/reduced motion, contextverlies, native touchinput, directe route/refresh, lazy PNG-loading en **alle GPU-objecten vrij na SPA-unmount**. De drie aantallen overlappen; ze zijn niet opgeteld als unieke tests.
+- Nieuwe Flex-viewports: **375×812, 768×1024, 1440×900, 1920×1080, 2560×1440, 3440×1440**, beide thema’s en geen horizontale overflow. Bestaande gedeelde interface daarnaast tot 3840×2160 getest.
+- Bestaande Arc Cursor/Pigment Trail/runtime/config/brusher hashes uit `artifacts/phase10-resume-source.sha256` opnieuw gecontroleerd: **5× OK**, geen rendererwijzigingen daar.
+
+### Referentie en visuele iteraties
+
+De echte publieke Flex Carousel is met Chrome DevTools en Chromium/Playwright onderzocht bij 1440×1100: idle, langzame/snelle drags naar beide richtingen, klikken, Escape, autoplay en de zichtbare presets/props. Geen upstream broncode, shaders, assets of Copy for AI gebruikt. Onderzoek: `artifacts/phase12/reference-*.png`, `reference-visible.txt`, `research.mjs` en `observations.md`.
+
+De lokale preview is meerdere keren bekeken, inclusief alle zes bovengenoemde formaten en Distortion 0 versus 1,3. Een echte gevonden shader-precisiemismatch veroorzaakte aanvankelijk de fallback; verholpen. Daarna de buigrichting omgedraaid naar de waargenomen richting, te sterke kleursplitsing gereduceerd, focus geïnterpoleerd, captionmutaties beperkt en witte previewachtergronden leesbaar gemaakt. De laatste screenshots zijn opnieuw geïnspecteerd. Een vroege dev-test werd beïnvloed door gelijktijdige HMR-wijzigingen; de definitieve runs gebruiken de stabiele productiebuild.
+
+**Resterende visuele verschillen:** onze originele beelden en uniforme cover-kaarten verschillen van de gemengde natuurlijke beeldverhoudingen in de referentie. De eigen lens gebruikt een vast vloeiend S-profiel en bevat niet iedere upstream optie voor een roteerbare elliptische lens. Continue autoplay volgt de opdracht; de actuele publieke referentie gebruikt intervalstappen. Er is geen fysisch volledige raytracing/transmissie van een echte glazen lens. De screenshots delen een browserviewport, maar de bestaande DevUI-template heeft een andere previewmaat. Geen claim van pixel-perfect overeenkomst.
+
+### Performance en beperkingen
+
+`profile-flex-carousel.mjs` meet daadwerkelijke renderupdates na opwarming, niet fysieke monitor-FPS of GPU-tijd. Chromium met **ANGLE/Vulkan SwiftShader software-rendering** gaf na de laatste optimalisatie **60,1 updates/s bij 375px, 59,9 bij 1440px en 43,1 bij 2560px**. In alle drie: **0 doorlopende draws bij idle met autoplay uit, verborgen preview en reduced motion**, en geen pageerrors. Details: `performance.json` en `performance.log`. De eerdere shader gebruikte onnodig vijf texture-samples en zware multisampling: die redundante samples zijn conditioneel gemaakt en MSAA vervangen door zachte shader-randen. Het eerdere meetbestand `performance-before-shader-optimization.json` toont 59,7 / 40,7 / 23,6 updates/s. Dit zijn afzonderlijke korte tests, geen garantie dat alle winst alleen door één wijziging komt.
+
+QHD op een software-GPU blijft onder 60 updates/s. Er is geen constant-60-FPS-claim of hardware-/energieprofiel. DPR is begrensd op 1,5; er is geen onbeperkte adaptieve opschaling. PNG’s zijn gepalettiseerd: zeer subtiele korrel/banding kan voorkomen. De standalone data-URL-module is groot; de gewone lokale public-paden zijn praktischer voor eigen productie-apps. De vereenvoudigde fallback behoudt niet alle optische/dragfunctionaliteit van WebGL.
+
+### Exact vervolgpunt
+
+**Fase 12 batch 2:** onderzoek eerst de echte publieke Circular Carousel-demo en bouw vervolgens Circular Carousel, Depth Carousel, Bounce Cards en Drift Wall afzonderlijk met de bestaande lokale PNG-set. Daarna batch 3: Shape Waves, Aero Shards, Ghost Fibers, CRT Warp, Molten Metal. **Alle negen blijven nu Planned.** De andere categorieën en eerdere Ready-renderers niet herschrijven. Geen Git-mutaties, pushes of deployments door deze uitvoering.
+
+---
+
 ## Fase 11 — Backgrounds batch 1 afgerond (19 november 2026)
 
 **Actueel: 246 catalogusitems / 62 Ready / 184 Planned.** Bij de start waren er daadwerkelijk 58 Ready en 188 Planned. Vier bestaande Planned-items zijn nu geïmplementeerd; geen nieuwe records, duplicaten, aliases of categorieën. Alle 58 eerdere Ready-componenten blijven behouden. Backgrounds bevat 69 items: de 64 namen uit de publieke officiële catalogus plus vijf bestaande eigen namen; **10 Ready / 59 Planned**. Andere categorieën zijn niet ontwikkeld of van status veranderd.

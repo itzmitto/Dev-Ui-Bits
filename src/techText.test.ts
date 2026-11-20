@@ -2,7 +2,8 @@ import { describe,it,expect } from 'vitest';
 import { falloff,spring,traceAlpha } from './effects/TechText.geometry';
 import { normalizeTechText,techTextDefaults } from './effects/TechText.types';
 import { techTextControls,techTextPresets } from './effects/TechText.config';
-import { builtinFiles,findComponent,registry } from './registry';
+import {findComponent, registry} from './registry';
+import {builtinFiles} from './builtinFiles';
 import { validateSchema } from './storage';
 
 describe('original Tech Text geometry and integration',()=>{

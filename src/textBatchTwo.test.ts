@@ -3,7 +3,8 @@ import { circularAngles } from './effects/CircularText';
 import { mixEchoColor } from './effects/EchoText';
 import { staggerRanks,textEase } from './effects/textLayout';
 import { textBatchTwo } from './effects/textBatchTwo.config';
-import { builtinFiles,findComponent,registry } from './registry';
+import {findComponent, registry} from './registry';
+import {builtinFiles} from './builtinFiles';
 import { validateSchema } from './storage';
 describe('batch 2 independent typography engines',()=>{
  it('places filled rings evenly and natural rings according to measured advance',()=>{expect(circularAngles([10,30,10,30],80,true,0)).toEqual([0,90,180,270]);const natural=circularAngles([10,30,10],80,false,2);expect(natural[1]-natural[0]).toBeCloseTo(22/(160*Math.PI)*360);expect(circularAngles([],0,true,0)).toEqual([]);});
