@@ -188,3 +188,14 @@ Een gepauzeerde component moet ook bij eerste mount/Restart een zichtbaar statis
 Flex Carousel is één bestaand catalogusrecord; registratie, defaults en controls staan in FlexCarousel.config.ts. Exporthelpers: FlexCarousel.math.ts, FlexCarousel.shader.ts, flexImages.ts, textRuntime.ts, animationCanvas.ts, textCanvas.ts. `styles` bevat FlexCarousel.css. Voeg elke transitieve import toe aan supportingFiles.
 
 Nieuwe publieke binaire assets moeten een bewuste portable strategie krijgen. Voor deze carousel zet portableAssets.ts de tien bekende PNG’s voor documentatie/editor om naar data-URL’s. Custom gebruikersmedia wordt niet stilzwijgend gedownload. Kopieer daarvoor de assets of gebruik geschikte eigen CORS-URLs. Zie IMAGE_ASSETS.md. Behoud de file-map-identiteit zolang de inhoud hetzelfde blijft, zodat themaschakelingen en tabwissels geen Sandpack-drafts wissen.
+
+
+## Fase 13: zelfstandige modules en gedeelde input
+
+`src/effects/expansion13.config.ts` bevat de zestien nieuwe implementaties met bestaande catalogusnamen, defaults, controls, volledige presets en runtimebestandslijsten. `registry.ts` koppelt ze aan de bestaande lazy module-loader. Gebruik bij verdere uitbreidingen hetzelfde record; maak geen duplicaat of alias als de route al bestaat.
+
+Iedere component heeft een eigen renderer. `galleryMotion.ts` deelt uitsluitend pointer/inertia/snap/keyboard/visibility; `galleryKit.tsx` deelt lokale media, controls, lightbox en ResizeObserver. Resize-callbacks lezen de actuele props. Dialogen houden hun pointerevents vast zodat een onderliggende drag-handler de sluitknop niet onderschept. `canvasBackground13.tsx` deelt de Canvas-lifecycle, geen effectalgoritme; Pause negeert daar pointermutaties. `nav13.ts` deelt alleen labelvalidatie en actuele metingen.
+
+Vermeld alle transitieve TSX/TS/CSS-bestanden in `helpers`/`styles`. De twee shaders zijn eigen modules; ze gebruiken de bestaande GPU-lifecycle en expliciete fallback. Registryconfigbestanden zijn geen standalone runtime. Dock declareert bestaande `lucide-react`; de andere nieuwe modules vereisen alleen React/native browser-API’s. Afbeeldingen gebruiken `flexImages.ts` plus de bestaande portable PNG-strategie; geen verborgen projectimports of localhost-paden in editorvoorbeelden.
+
+Gerichte controles: `src/expansion13.test.ts`, `src/registry.test.ts` en `tests/expansion13.spec.ts`. Test bij een nieuwe batch de relevante interactie, schema/bronexport en één representatief editorvoorbeeld; herhaal brede regressies alleen bij een concrete gedeelde wijziging. Houd historische tellerverwachtingen in catalogustests in overeenstemming met werkelijke promoties. Deze fase eindigt op 246 / 79 Ready / 167 Planned.

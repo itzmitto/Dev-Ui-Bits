@@ -1,0 +1,3 @@
+import {useLayoutEffect,useRef,type RefObject} from 'react';
+export function navLabels(value:unknown){const labels=String(value||'Home, Work, About, Contact').split(',').map(s=>s.trim().slice(0,24)).filter(Boolean).slice(0,6);return labels.length?labels:['Home'];}
+export function useNavMeasure(host:RefObject<HTMLElement|null>,measure:()=>void){const latest=useRef(measure);latest.current=measure;useLayoutEffect(()=>{if(!host.current)return;const observer=new ResizeObserver(()=>latest.current());observer.observe(host.current);latest.current();return()=>observer.disconnect();},[host]);useLayoutEffect(()=>{latest.current();});}

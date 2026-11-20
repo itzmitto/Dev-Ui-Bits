@@ -1,6 +1,6 @@
 # DevUI Bits
 
-Een zelfstandige bibliotheek met **246 catalogusitems: 63 werkende React-componenten en 183 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Alle 62 vóór fase 12 werkende componenten, bestaande routes en functies zijn behouden.
+Een zelfstandige bibliotheek met **246 catalogusitems: 79 werkende React-componenten en 167 geplande componenten**. De echte componenten hebben live previews, schema-gestuurde Customize-controls, broncode en Sandpack. Geplande componenten gebruiken één eenvoudige tekstplaceholder. Alle 63 vóór fase 13 werkende componenten, bestaande routes en functies zijn behouden.
 
 **Start hier:** [SETUP-GITHUB-VERCEL.md](SETUP-GITHUB-VERCEL.md) beschrijft ZIP → VS Code → GitHub → publieke Vercel-site, met exacte commando's en controles vóór Git-initialisatie of remote-wijzigingen.
 
@@ -33,15 +33,15 @@ Op Linux eventueel `npx playwright install --with-deps chromium`. De testconfigu
 
 ## Complete componentcatalogus
 
-`/browse` en `/get-started/index` openen dezelfde volledige catalogus. Deze bevat alle 217 aangeleverde namen in de gevraagde volgorde plus 22 bestaande namen en zeven originele Cursor Trails: **246 unieke records**, waarvan **63 Ready** en **183 Planned**. In fase 4 zijn uitsluitend catalogus en placeholders gebouwd. Fase 5 voegt Tech Text toe. Fase 6 leverde tien extra Text Animations. Fase 7 ontwikkelt uitsluitend Animations, te beginnen met vijf bestaande planned records.
+`/browse` en `/get-started/index` openen dezelfde volledige catalogus. Deze bevat alle 217 aangeleverde namen in de gevraagde volgorde plus 22 bestaande namen en zeven originele Cursor Trails: **246 unieke records**, waarvan **79 Ready** en **167 Planned**. In fase 4 zijn uitsluitend catalogus en placeholders gebouwd. Fase 5 voegt Tech Text toe. Fase 6 leverde tien extra Text Animations. Fase 7 ontwikkelt uitsluitend Animations, te beginnen met vijf bestaande planned records.
 
 | Categorie | Totaal | Ready | Planned |
 | --- | ---: | ---: | ---: |
 | Text Animations | 34 | 16 | 18 |
 | Animations | 41 | 8 | 33 |
-| Components | 56 | 17 | 39 |
+| Components | 56 | 28 | 28 |
 | Micro Interactions | 39 | 5 | 34 |
-| Backgrounds | 69 | 10 | 59 |
+| Backgrounds | 69 | 15 | 54 |
 | Cursor Trails | 7 | 7 | 0 |
 
 De sidebar bevat GET STARTED, EXPLORE en de zes inklapbare categorieën. De lange lijst scrollt zelfstandig, markeert de actieve entry en opent automatisch de geselecteerde categorie. Op mobiel blijft het de bestaande drawer met Escape en focusherstel. Er is geen Search Components-veld of Create Component-navigatie.
@@ -294,8 +294,21 @@ Eindcontrole fase 11: strict typecheck, 56 unit-tests, productiebuild, 104 brede
 
 ## Fase 12 — Flex Carousel
 
-`/components/flex-carousel` gebruikt een zelfstandige WebGL-mesh met 32×8 subdivisions per kaart, gebogen lensranden, refractieve UV-verplaatsing en lokale chromatische spreiding. De rij herhaalt virtuele slots naadloos, ondersteunt pointer/touch drag, tijdafhankelijke inertia, autoplay, pause-on-hover/focus, pijltjestoetsen, focus en Escape. Er zijn vier volledige presets en eigen controls voor media, geometrie, glas en beweging. De overige negen gevraagde fase-12-items blijven Planned.
+`/components/flex-carousel` gebruikt een zelfstandige WebGL-mesh met 32×8 subdivisions per kaart, gebogen lensranden, refractieve UV-verplaatsing en lokale chromatische spreiding. De rij herhaalt virtuele slots naadloos, ondersteunt pointer/touch drag, tijdafhankelijke inertia, autoplay, pause-on-hover/focus, pijltjestoetsen, focus en Escape. Er zijn vier volledige presets en eigen controls voor media, geometrie, glas en beweging. De overige negen gevraagde fase-12-items waren toen Planned en zijn in fase 13 ontwikkeld.
 
 Tien originele lokale PNG’s: zie [IMAGE_ASSETS.md](IMAGE_ASSETS.md). Code/Sandpack bevatten de beelden als zelfstandig data-URL-module; de hoofdpreview gebruikt public-paden. De fallback bij ontbrekend WebGL is eerlijk gelabeld als vereenvoudigde afbeeldingenrij. Geen extra dependency.
 
 Bronarchief `src/builtinFiles.ts` wordt dynamisch geladen, gescheiden van de registry. De gemeten productie-hoofdbundle is circa 418 kB minified; bronarchief circa 363 kB, Sandpack/Editor circa 624 kB apart. De eerdere 750 kB-waarschuwing is opgelost zonder de grens te verhogen. Definitieve testresultaten en visuele beperkingen staan bovenaan PROGRESS.md.
+
+
+## Fase 13 — carousels, backgrounds en navigatie
+
+Zestien bestaande records zijn nu Ready:
+
+- Circular Carousel, Depth Carousel, Bounce Cards, Drift Wall.
+- Shape Waves, Aero Shards, Ghost Fibers, CRT Warp, Molten Metal.
+- Morph Slider, Infinite Spiral, Dome Gallery, Stack, Dock, Pill Nav, Gooey Nav.
+
+Eigen CSS-3D-, Canvas-, spring- en GLSL-implementaties met schema-controls, volledige presets en echte Code-bestanden. De bestaande tien lokale PNG’s worden hergebruikt, inclusief portable export voor Playground. Geen nieuwe assets of dependencies; Dock gebruikt bestaande Lucide-icons. Geometrie, beweging en rendering kunnen zichtbaar afwijken van de publieke referenties; enkele publieke backgroundpreviews waren niet volledig zichtbaar.
+
+Gerichte controles: per batch typecheck/build en 6 + 6 + 9 browserchecks; eindcontrole 4 unit-tests, typecheck/build en 5 aanvullende browserchecks. Totaal 26 verschillende browserscenario’s, inclusief vier breedtes (375/768/1440/2560), touch-swipe, Code/copy en vier echte Sandpack-voorbeelden. Geen volledige regressiesuite of nieuwe FPS-benchmark. Resultaten, screenshots, bundelgrootte en beperkingen: [PROGRESS.md](PROGRESS.md).

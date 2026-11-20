@@ -1,10 +1,28 @@
-## Fase 13 — uitbreiding in uitvoering (20 november 2026)
+## Fase 13 — zestien componenten afgerond (20 november 2026)
 
-**246 items / 67 Ready / 179 Planned.** Batch 1: Circular Carousel, Depth Carousel, Bounce Cards en Drift Wall nieuw Ready; de eerdere 63 behouden. Eigen CSS-3D-layouts, springphysics en perspectivische drift, bestaande PNG’s en portable bronexports hergebruikt. Geen nieuwe dependencies/assets.
+**246 catalogusitems / 79 Ready / 167 Planned.** Alle 63 eerdere Ready-implementaties behouden; zestien bestaande Planned-records gepromoveerd, zonder nieuwe records, routes, categorieën, dependencies of afbeeldingen.
 
-Validatie batch 1: strict TypeScript, productiebuild, 2 gerichte unit-tests en 6 browserchecks geslaagd. Deze controleren de vier nieuwe interacties/Customize/Code, één echt Sandpack-voorbeeld en 375/768/1440/2560px zonder overflow. Lokale screenshots bekeken; de te smalle Drift Wall-layout is gecorrigeerd voor de volgende batchbuild. Circular gebruikt vlakke CSS-3D-kaarten, geen gekromde mesh zoals de referentie.
+| Batch | Nieuw Ready | Eigen techniek |
+| --- | --- | --- |
+| 1 | Circular Carousel, Depth Carousel, Bounce Cards, Drift Wall | CSS-3D-ring/rail, momentum/snap, spring-fan, perspectivische drift en lightbox |
+| 2 | Shape Waves, Aero Shards, Ghost Fibers, CRT Warp, Molten Metal | Canvas-hoogtevelden, gelaagde glass-facetten/vezels, twee afzonderlijke GLSL-engines |
+| 3 | Morph Slider, Infinite Spiral, Dome Gallery, Stack, Dock, Pill Nav, Gooey Nav | Canvas-pixelvervorming, 3D-helix/hemisfeer, swipe-springs, proximity-magnification, geanimeerde pill en SVG-goo |
 
-Vervolg: batch 2 — Shape Waves, Aero Shards, Ghost Fibers, CRT Warp, Molten Metal. Daarna de zeven websitecomponenten uit batch 3. Geen Git-mutaties/publicaties uitgevoerd.
+Alle zestien hebben eigen modules, volledige schema-controls/presets, echte bronbestanden en bestaande Install/Usage/Code/Playground-integratie. De tien bestaande lokale PNG’s en hun portable data-URL-export worden hergebruikt. Alleen Dock noemt de reeds aanwezige Lucide-dependency in de standalone installatie. Geen upstream componentcode, shaders, demo-assets of nieuwe externe code toegevoegd.
+
+**Uitgevoerd:** per batch strict TypeScript, productiebuild, de twee gerichte nieuwe unit-tests en respectievelijk **6, 6 en 9 browserchecks** geslaagd. Eindcontrole: **4 unit-tests in 2 bestanden** (expansion13 + registry), typecheck en build geslaagd; **5 aanvullende browserchecks** geslaagd. Daarmee **26 verschillende browserscenario’s** (24 nieuwe + 2 bestaande gedeelde), geen volledige regressiemarathon. Logs: `artifacts/phase13/batch{1,2,3}-*.log`, `final-{typecheck,unit,build,browser}.log`. Eerdere herhalingen van dezelfde unit-tests zijn niet opgeteld.
+
+De browserchecks controleren de zestien previews/interacties, gewijzigde controls, echte Usage/broncode, PNG-loading, reset waar getest, vier viewportbreedtes **375/768/1440/2560** en geen horizontale overflow. Echte Sandpack-compilatie gecontroleerd voor Circular Carousel (incl. PNG’s), Molten Metal (WebGL), Dock (Lucide) en Gooey Nav; de overige bronexports zijn transitief gecontroleerd en hun Code-viewer is geopend, maar niet elk editorvoorbeeld afzonderlijk gestart. Aanvullend native touch-swipe bij 375×812, Dome-drag/lightbox, Drift Wall live resize/thema/fullscreen, Canvas-pauze en bestaande clipboard-/editorstateflows. Geen pageerrors in de verzamelde componentchecks. Browser: Chromium/Linux via `/opt/google/chrome/chrome`; geen fysieke apparaten of Safari/Firefox gevalideerd.
+
+**Visueel onderzocht:** alle zestien publieke pagina’s bezocht, zichtbare controls vastgelegd en pointerbewegingen uitgevoerd. Shape Waves en Aero Shards bleven publiek leeg; Ghost Fibers bleef deels bedekt. Daar is volledige visuele vergelijking niet verifieerbaar. Lokale screenshots van alle zestien zijn bekeken (`*-local.png`); Dome en Drift Wall na gerichte reparaties opnieuw bekeken (`*-final.png`). Geen upstream bron-/netwerkextractie of Copy for AI gebruikt.
+
+**Gevonden en opgelost:** Drift Wall vulde het brede paneel onvoldoende; containerbreedte/zoom en actuele resize-callback gecorrigeerd. Een lightboxklik werd door de onderliggende drag-capture onderschept; pointerevents worden nu binnen de nieuwe galerijdialoog gehouden. De drie nieuwe Canvas-backgrounds negeren pointerfeedback tijdens Pause. Morph Slider gebruikt fijnere beeldstroken voor minder grove vervormingsstappen. Verwachte Ready/Planned-tellers in bestaande tests bijgewerkt; ongewijzigde renderers niet herschreven.
+
+**Grenzen:** Circular/Dome gebruiken vlakke CSS-3D-panelen, geen gekromde texture-mesh. Morph Slider gebruikt een eigen Canvas-strookvervorming in plaats van de upstream WebGL-aanpak. Aero Shards simuleert diepte/reflecties met Canvas-facetten; Molten Metal heeft een eigen caustic-/filamentstructuur. Beweging, optiek, kaartgeometrie en timing kunnen zichtbaar afwijken. Geen pixel-perfect-claim. Grote aantallen galerijpanelen of hoge fiber/shard-dichtheid kunnen zwaarder worden; visibility/reduced-motion/DPR-begrenzing en bestaande GPU-cleanup worden hergebruikt. Deze fase bevat geen nieuwe FPS-/GPU-benchmark of volledige lifecycle-regressie.
+
+Laatste build: hoofdchunk **439,30 kB / 137,74 kB gzip**, lazy bronarchief **418,13 kB**, aparte Editor **624,06 kB**; geen chunk-size-waarschuwing. Heavy previews en Sandpack blijven lazy. Geen nieuwe assets, dus IMAGE_ASSETS.md en LICENSE_REVIEW.md niet gewijzigd voor deze fase.
+
+**Vervolg:** alle zestien gevraagde fase-13-items zijn Ready. De overige 167 bestaande backlog-items blijven Planned. Eventuele verdere optische verfijning van bovenstaande benaderingen is gericht vervolgwerk. Geen Git-mutaties, publicaties, deployments of ZIP door deze uitvoering.
 
 ---
 

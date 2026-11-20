@@ -5,7 +5,7 @@ import {registry, findComponent} from './registry';
 import {builtinFiles} from './builtinFiles';
 import {cursorTrails} from './effects/cursorTrails.config';
 describe('Arc / Pigment rebuild',()=>{
- it('retains all existing records and routes',()=>{expect(registry).toHaveLength(246);expect(registry.filter(c=>c.status==='ready')).toHaveLength(63);for(const slug of ['arc-cursor','pigment-trail'])expect(registry.filter(c=>c.id===slug)).toHaveLength(1);});
+ it('retains all existing records and routes',()=>{expect(registry).toHaveLength(246);expect(registry.filter(c=>c.status==='ready')).toHaveLength(79);for(const slug of ['arc-cursor','pigment-trail'])expect(registry.filter(c=>c.id===slug)).toHaveLength(1);});
  it('uses coherent seeded paper noise rather than per-frame randomness',()=>{for(let i=0;i<40;i++){const n=paperNoise(i*.13,2.7);expect(n).toBeGreaterThanOrEqual(0);expect(n).toBeLessThanOrEqual(1);expect(n).toBe(paperNoise(i*.13,2.7));expect(Math.abs(n-paperNoise(i*.13+.001,2.7))).toBeLessThan(.002);}});
  it('joins midpoint brush curves with continuous tangents',()=>{expect(quadraticPoint(0,0,10,0,10,10,0)).toEqual({x:0,y:0});expect(quadraticPoint(0,0,10,0,10,10,1)).toEqual({x:10,y:10});const a=quadraticPoint(0,0,10,0,15,5,1-1e-5),b=quadraticPoint(15,5,20,10,20,20,1e-5);const ux=15-a.x,uy=5-a.y,vx=b.x-15,vy=b.y-5;expect(Math.abs(ux*vy-uy*vx)).toBeLessThan(1e-10);});
  it('narrows fast brush strokes and safely bounds pressure',()=>{expect(brushPressure(0)).toBe(1.1);expect(brushPressure(2000)).toBeLessThan(brushPressure(100));expect(brushPressure(-100)).toBe(brushPressure(0));expect(brushPressure(1e9)).toBeGreaterThanOrEqual(.5);});
