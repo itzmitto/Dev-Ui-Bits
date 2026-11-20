@@ -1,0 +1,11 @@
+import {useRef,type PointerEvent} from 'react';
+import {useTextAnimation,bound} from './textRuntime';
+import {useAnimationCanvas,canvasPoint} from './animationCanvas';
+import type {EffectProps} from './types';
+export type CanvasField13={width:number;height:number;time:number;mouseX:number;mouseY:number;active:boolean;clickX:number;clickY:number;clickAge:number;reduced:boolean};
+export function CanvasBackground13({p,name,draw}:{p:EffectProps;name:string;draw:(c:CanvasRenderingContext2D,f:CanvasField13)=>void}){const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),pointer=useRef({x:0,y:0,inside:false}),state=useRef({time:0,x:0,y:0,cx:0,cy:0,age:99,frame:0});
+ const wake=useTextAnimation(host,(dt,_time,reduced)=>{const s=state.current,{width,height,dpr}=box.current,c=canvas.current!.getContext('2d')!;if(!reduced&&p.paused!==true){s.time+=dt*bound(p.speed,1,0,3);s.age+=dt;}const blend=reduced?1:1-Math.exp(-dt*8);s.x+=(pointer.current.x-s.x)*blend;s.y+=(pointer.current.y-s.y)*blend;c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,width,height);c.fillStyle=String(p.background||'#120f17');c.fillRect(0,0,width,height);draw(c,{width,height,time:s.time,mouseX:s.x,mouseY:s.y,active:pointer.current.inside&&p.interactive!==false,clickX:s.cx,clickY:s.cy,clickAge:s.age,reduced});if(host.current){host.current.dataset.frame=String(++s.frame);host.current.dataset.burst=String(s.age<2);}return !reduced&&p.paused!==true&&(bound(p.speed,1,0,3)>0||s.age<2||Math.hypot(pointer.current.x-s.x,pointer.current.y-s.y)>.5);});
+ const box=useAnimationCanvas(host,canvas,wake,String(p.quality||'medium'));
+ const point=(e:PointerEvent<HTMLDivElement>)=>canvasPoint(e.currentTarget,e.clientX,e.clientY);
+ return <div ref={host} data-background={name} className="bg13-stage" onPointerMove={e=>{const q=point(e);pointer.current={...q,inside:true};wake();}} onPointerLeave={()=>{pointer.current.inside=false;wake();}} onPointerDown={e=>{if(p.interactive===false)return;const q=point(e);state.current.cx=q.x;state.current.cy=q.y;state.current.age=0;wake();}}><canvas ref={canvas} role="img" aria-label={name+' animated background'}/></div>;
+}

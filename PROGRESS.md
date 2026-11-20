@@ -1,3 +1,13 @@
+## Fase 13 — uitbreiding in uitvoering (20 november 2026)
+
+**246 items / 67 Ready / 179 Planned.** Batch 1: Circular Carousel, Depth Carousel, Bounce Cards en Drift Wall nieuw Ready; de eerdere 63 behouden. Eigen CSS-3D-layouts, springphysics en perspectivische drift, bestaande PNG’s en portable bronexports hergebruikt. Geen nieuwe dependencies/assets.
+
+Validatie batch 1: strict TypeScript, productiebuild, 2 gerichte unit-tests en 6 browserchecks geslaagd. Deze controleren de vier nieuwe interacties/Customize/Code, één echt Sandpack-voorbeeld en 375/768/1440/2560px zonder overflow. Lokale screenshots bekeken; de te smalle Drift Wall-layout is gecorrigeerd voor de volgende batchbuild. Circular gebruikt vlakke CSS-3D-kaarten, geen gekromde mesh zoals de referentie.
+
+Vervolg: batch 2 — Shape Waves, Aero Shards, Ghost Fibers, CRT Warp, Molten Metal. Daarna de zeven websitecomponenten uit batch 3. Geen Git-mutaties/publicaties uitgevoerd.
+
+---
+
 ## Fase 12 — batch 1 afgerond: Flex Carousel + lokale PNG’s (19 november 2026)
 
 **Actueel: 246 catalogusitems / 63 Ready / 183 Planned.** Start: 246 / 62 / 184. Uitsluitend de bestaande Flex Carousel-entry is van Planned naar Ready gegaan. Geen nieuwe catalogusrecords, routes, categorieën, dependencies of project-ZIP. Alle 62 eerdere Ready-componenten zijn behouden. Components: **56 totaal / 17 Ready / 39 Planned**; Backgrounds blijft **69 / 10 / 59**. De overige negen fase-12-componenten zijn niet ontwikkeld of van status veranderd.
